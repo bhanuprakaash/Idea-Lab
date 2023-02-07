@@ -1,3 +1,5 @@
 export const SET_USER = "SET_USER";
 export const SET_LOADING_STATUS = "SET_LOADING_STATUS";
 export const GET_ARTICLES = "GET_ARTICLES";
+export const UPLOAD_IMAGE = "UPLOAD_IMAGE";
+export const GET_USER_DETAILS = "GET_USER_DETAILS";

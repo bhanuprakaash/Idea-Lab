@@ -32,50 +32,9 @@ const PostModel = (props) => {
         if(e.target !== e.currentTarget){
             return;
         }
-        let videoURL = "";
-        if(videoLink){
-            // Use the cors-anywhere library to forward the request to the youtube server
-            const proxyUrl = "https://cors-anywhere.herokuapp.com/";
-            const targetUrl = videoLink;
-            fetch(proxyUrl + targetUrl)
-                .then((response) => response.text())
-                .then((data) => {
-                    // Handle the response data here
-                    videoURL = data;
-                    const fileExtension = videoLink.split('.').pop();
-                    const videoName = `${Date.now()}.${fileExtension}`;
-                    const storageRef = firebase.storage().ref();
-                    const videoRef = storageRef.child(`videos/${videoName}`);
-                    const videoTask = videoRef.putString(videoURL);
-                    videoTask.then(() => {
-                    videoRef.getDownloadURL().then(url => {
-                        //  Do something with the video url
-                        console.log("Video URL: ", url);
-                        const payload = {
-                            image: shareImage,
-                            video: videoURL,
-                            user: props.user,
-                            description: editorText,
-                            timestamp: firebase.firestore.Timestamp.now(),
-                        };
-                        props.postArticle(payload);
-                        reset(e);
-                        
-                    });
-            });
-                    // write the code to send the videoURL to firebase storage
-                    
-                })
-                .catch((error) => {
-                    console.log("Error fetching video URL: ", error);
-                });
-                
-        }
-        
-        
         const payload = {
             image: shareImage,
-            video: videoURL,
+            video: videoLink,
             user: props.user,
             description: editorText,
             timestamp: firebase.firestore.Timestamp.now(),
@@ -92,6 +51,7 @@ const PostModel = (props) => {
         setAssetArea("");
         props.handleClick(e);
     }
+    //https://youtu.be/cneoANZKBGk
     
     
 

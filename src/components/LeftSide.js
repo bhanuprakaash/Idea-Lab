@@ -1,6 +1,14 @@
 import styled from "styled-components";
 import {connect} from 'react-redux';
+import { getUserDetailsAPI } from "../actions";
+import { useEffect } from "react";
 const Leftside = (props) => {
+  useEffect(()=>{
+    if(props.user){
+      props.getUserDetails(props.user.uid);
+    }
+  }
+  )
   return (
     <Container>
       <ArtCard>
@@ -10,8 +18,7 @@ const Leftside = (props) => {
             <Photo>
               {
                 props.user && props.user.photoURL ? (
-                  <img src={props.user
-                    .photoURL} alt="" 
+                  <img src={props.userDetails.photoUrl} alt="" 
                     style={
                       {
                         width: "100%",
@@ -25,7 +32,7 @@ const Leftside = (props) => {
                 )
               }
             </Photo>
-            <Link>Welcome,{props.user ? props.user.displayName:"there"}!</Link>
+            <Link>Welcome,{props.user ? props.userDetails.name:"there"}!</Link>
           </a>
           <a>
             <AddPhotoText>Add a photo</AddPhotoText>
@@ -102,7 +109,7 @@ const CardBackground = styled.div`
 
 const Photo = styled.div`
   box-shadow: none;
-  background-image: url("/images/photo.svg");
+  background-image:"";
   width: 72px;
   height: 72px;
   box-sizing: border-box;
@@ -215,7 +222,11 @@ const CommunityCard = styled(ArtCard)`
 const mapStateToProps = (state) => {
   return {
     user: state.userState.user,
+    userDetails:state.userDetailsState.userDetails,
   };
 };
+const mapDispatchToProps = (dispatch) => ({
+  getUserDetails : (userId) =>dispatch(getUserDetailsAPI(userId)),
+});
 
-export default connect(mapStateToProps)(Leftside);
+export default connect(mapStateToProps,mapDispatchToProps)(Leftside); 

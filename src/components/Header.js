@@ -2,7 +2,16 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import {signOutAPI} from "../actions";
 import {Link} from "react-router-dom";
+import {getUserDetailsAPI} from "../actions";
+import { useEffect } from "react";
+
 const Header = (props) => {
+
+  useEffect(() => {
+    if (props.user) {
+      props.getUserDetails(props.user.uid);
+    }
+  }, []);
   
   const handleSearch = (e) => {
     e.preventDefault();
@@ -71,8 +80,7 @@ const Header = (props) => {
               <a>
                 {props.user && props.user.photoURL ? (
                   <Link to="/profile">
-                    <img src={props.user
-                    .photoURL} alt=""/>
+                    <img src={props.userDetails.photoUrl} alt=""/>
                   </Link>
                 ) : (
                   <Link to="/profile">
@@ -325,11 +333,13 @@ const SearchResultName = styled.p`
 const mapStateToProps = (state) => {
   return {
     user: state.userState.user,
+    userDetails:state.userDetailsState.userDetails,
   };
 };
 
 const mapDispatchToProps = (dispatch) => ({
   signOut: () => dispatch(signOutAPI()),
+  getUserDetails:(userId)=>dispatch(getUserDetailsAPI(userId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);

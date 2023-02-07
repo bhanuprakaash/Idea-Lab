@@ -1,76 +1,380 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
-import Grid from '@material-ui/core/Grid';
-import Avatar from '@material-ui/core/Avatar';
-import EditIcon from '@material-ui/icons/Edit';
+import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
+import {connect} from 'react-redux';
+import {getArticlesAPI, uploadImageAPI} from '../actions';
+import { getUserDetailsAPI } from '../actions';
 import IconButton from '@material-ui/core/IconButton';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import CameraAltIcon from '@material-ui/icons/CameraAlt';
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-    marginTop: theme.spacing(2),
-  },
-  card: {
-    minWidth: 275,
-  },
-  bullet: {
-    display: 'inline-block',
-    margin: '0 2px',
-    transform: 'scale(0.8)',
-  },
-  title: {
-    fontSize: 14,
-  },
-  pos: {
-    marginBottom: 12,
-  },
-  large: {
-    width: theme.spacing(12),
-    height: theme.spacing(12),
-    margin: 'auto',
-  },
-  grid: {
-    padding: theme.spacing(2),
+const BackgroundImage = styled.div`
+  width: 100%;
+  height: 200px;
+  background-image: url(${props => props.src});
+  background-size: cover;
+  background-position: center;
+  position:relative;
+`;
+const CameraIcon = styled.i`
+  position: absolute;
+  bottom: -25px;
+  right: -25px;
+  font-size: 40px;
+  color: white;
+  cursor: pointer;
+`;
+
+const ProfilePic = styled.div`
+  width: 150px;
+  height: 150px;
+  background-image: url(${props => props.src});
+  background-size: cover;
+  background-position: center;
+  border-radius: 75px;
+  margin-top: -75px;
+  border: 5px solid white;
+  position:relative;
+`;
+
+const Name = styled.h1`
+  font-size: 36px;
+  margin-top: 10px;
+`;
+
+const Work = styled.h2`
+  font-size: 24px;
+  margin-top: 10px;
+  color: gray;
+`;
+
+const Bio = styled.p`
+  font-size: 18px;
+  margin-top: 10px;
+  text-align: center;
+  width: 80%;
+`;
+
+const Skills = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 10px;
+`;
+
+const Skill = styled.div`
+  background-color: lightgray;
+  border-radius: 5px;
+  padding: 5px 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  font-size: 18px;
+`;
+
+const Posts = styled.div`
+  margin-top: 10px;
+  width: 50%;
+`;
+const CommonCard = styled.div`
+    text-align: center;
+    overflow: hidden;
+    margin-bottom: 8px;
+    background-color: #fff;
+    border-radius: 5px;
+    position: relative;
+    border: none;
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 15%), 0 0 0 rgb(0 0 0 / 20%);
+`;
+
+
+  const Article = styled(CommonCard)`
+    padding: 0;
+    margin: 0 0 8px;
+    overflow: visible;
+    `;
+  const SharedActor = styled.div`
+    padding-right: 40px;
+    flex-wrap: nowrap;
+    padding: 12px 16px 0;
+    margin-bottom: 8px;
+    align-items: center;
+    display: flex;
+    a {
+        margin-right: 12px;
+        flex-grow: 1;
+        overflow: hidden;
+        display: flex;
+        text-decoration: none;
+        img {
+            width: 48px;
+            height: 48px;
+        }
+        & > div {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            flex-basis: 0;
+            margin-left: 8px;
+            overflow: hidden;
+            span {
+                text-align: left;
+                &:first-child {
+                    font-size: 14px;
+                    font-weight: 700;
+                    color: rgba(0, 0, 0, 1);
+                }
+                &:nth-child(n + 1) {
+                    font-size: 12px;
+                    color: rgba(0, 0, 0, 0.6);
+                }
+            }
+        }
+    }
+    button {
+        position: absolute;
+        right: 12px;
+        top: 0;
+        background: transparent;
+        border: none;
+        outline: none;
+    }
+    `;
+    const Description = styled.div`
+        padding: 0 16px;
+        overflow: hidden;
+        color: rgba(0, 0, 0, 0.9);
+        font-size: 14px;
+        text-align: left;
+    `;
+    const SharedImg = styled.div`
+        margin-top: 8px;
+        width: 100%;
+        display: block;
+        position: relative;
+        background-color: #f9fafb;
+        img {
+            object-fit: contain;
+            width: 100%;
+            height: 100%;
+        }
+    `;
+    const SocialCounts = styled.ul`
+        line-height: 1.3;
+        display: flex;
+        align-items: flex-start;
+        overflow: auto;
+        margin: 0 16px;
+        padding: 8px 0;
+        border-bottom: 1px solid #e9e5df;
+        list-style: none;
+        li {
+            margin-right: 5px;
+            font-size: 12px;
+            button {
+                display: flex;
+            }
+        }
+    `;
+    const SocialActions = styled.div`
+        align-items: center;
+        display: flex;
+        justify-content: flex-start;
+        margin: 0;
+        min-height: 40px;
+        padding: 4px 8px;
+        button {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px;
+            color: #0a66c2;
+            background: transparent;
+            border: none;
+            @media (min-width: 768px) {
+                span {
+                    margin-left: 8px;
+                }
+            }
+        }
+    `;
+
+
+
+const Content = styled.div`
+    text-align: center;
+    & > img {
+        width: 30px;
+    }
+`;
+
+const Profile = (props) => {
+  const [image, setImage] = useState(null);
+
+  useEffect(() => {
+    if (props.user) {
+        props.getArticles(props.user.uid);
+      }
+},[]);
+
+  useEffect(() => {
+    if (props.user) {
+      props.getUserDetails(props.user.uid);
+    }
+  }, []);
+
+
+  if (!props.user) {
+    return <div>Loading...</div>;
   }
-}));
 
-export default function Profile(props) {
-  const classes = useStyles();
 
+  const handleChange = (e) => {
+    if (e.target.files[0]) {
+      setImage(e.target.files[0]);
+    }
+  };
+
+ 
+
+  const handleUpload = (imageType) => {
+    if(imageType === 'background'){
+      props.uploadImage(image,props.user.uid,'background');
+    }
+    else if(imageType === 'profile'){
+      props.uploadImage(image,props.user.uid,'profile');
+    }
+  };
 
   return (
-    <div className={classes.root}>
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={4}>
-          <Card className={classes.card}>
-            <CardContent>
-              <Avatar alt={"avatar"} src="" className={classes.large} />
-              <Typography variant="h5" component="h2">
-                {"Bhanu Prakash Sai"}
-              </Typography>
-              <IconButton aria-label="edit">
-                <EditIcon />
-              </IconButton>
-              <Typography className={classes.pos} color="textSecondary">
-                {"bhanuprakashsai13@gmail.com"}
-              </Typography>
-              <Typography variant="body2" component="p">
-                Bio: {"Student"}
-              </Typography>
-              <Typography variant="body2" component="p">
-                Skills: {"C++, Python, Java"}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={8} className={classes.grid}>
-          "Add code for displaying user's posts or projects here"
-          "fjfkjk"
-        </Grid>
-      </Grid>
-    </div>
+    <Container>   
+      <BackgroundImage src={props.userDetails.backGroundImageURL} onClick={() => document.querySelector("input[type='file']").click()}>
+            <input type="file" onChange={handleChange} accept="image/*" style={{ display: "none" }} />
+            <IconButton onClick={(e) => {e.stopPropagation(); handleUpload('background')}} style={{ position: 'absolute', bottom: '-15px',right:'0',padding:'5px', cursor:'pointer' }}>
+              <CloudUploadIcon />
+           </IconButton>
+      </BackgroundImage>
+      <ProfilePic src={props.userDetails.photoUrl} onClick={() => document.querySelector("input[type='file']").click()} >
+            <input type="file" onChange={handleChange} accept="image/*" style={{ display: "none" }}  /> 
+            <IconButton  style={{ position: 'absolute', bottom: '5px',right:'0',padding:'5px', cursor:'pointer' }} onClick={(e) =>{e.stopPropagation(); handleUpload('profile')}} >
+              <CloudUploadIcon />
+            </IconButton>
+      </ProfilePic>
+      <Name>{props.userDetails.name}</Name>
+      <Work>Work</Work>
+      <Bio>Bio</Bio>
+      <Skills>
+        Skill
+      </Skills>
+      <Posts>
+      { 
+        props.articles.length === 0 
+        ? 
+        <p>There are no articles</p>
+        :
+            <Content>
+                { 
+                    props.articles.length > 0 &&
+                    props.articles.map((article,key) => (
+                        <Article key={key}>
+                            <SharedActor>
+                                <a>
+                                    <img src={props.userDetails.photoUrl} alt="" style={{
+                                        width: "48px",
+                                        height: "48px",
+                                        borderRadius: "50%",
+                                        marginRight: "8px",
+                                        objectFit: "cover",
+                                    }}/>
+                                    <div>
+                                        <span>{props.userDetails.name}</span>
+                                        <span>{article.actor.description}</span>
+                                        <span>{article.actor.date.toDate().toLocaleDateString()}</span>
+                                    </div>
+                                </a>
+                                <button>
+                                    <img src="/images/ell.png"  alt="" />
+                                </button>
+                            </SharedActor>
+                            <Description>
+                                {article.description}
+                            </Description>
+                            <SharedImg>
+                                <a>
+                                    {
+                                        !article.sharedImg && article.video ? (
+                                           <iframe 
+                                             src={article.video}    
+                                                width="100%"
+                                                height="100%"
+                                                style={{border: "none"}}
+                                                allow="autoplay"
+                                                allowFullScreen
+                                                title={article.description}
+                                                accelometer="true"
+                                                autoplay="true"
+                                                loop="true"
+                                                muted="true"
+                                                playsInline="true"
+                                             />
+                                        ) : (
+                                            article.sharedImg && <img src={article.sharedImg} alt="" />
+                                        )
+                                    }
+                                </a>
+                            </SharedImg>
+                            <SocialCounts>
+                                <li>
+                                    <button>
+                                        <img src="/images/like-icon.svg" alt="" class="svg-icon count-like"/>
+                                        <img src="/images/like-icon-filled.svg" alt="" class="svg-icon count-like-filled"/>
+                                        <span class="count">75</span>
+                                    </button>
+                                </li>
+                                <li>
+                                    <a>{article.comments} comments</a>
+                                </li>
+                            </SocialCounts>
+                            <SocialActions>
+                                <button>
+                                    <img src="/images/like-icon.svg" alt="" class="svg-icon"/>
+                                    <span>Like</span>
+                                </button>
+                                <button>
+                                    <img src="/images/comment-icon.svg" alt="" class="svg-icon"/>
+                                    <span>Comments</span>
+                                </button>
+                                <button>
+                                    <img src="/images/share-icon.svg" alt="" class="svg-icon"/>
+                                    <span>Share</span>
+                                </button>
+                                <button>
+                                    <img src="/images/send-icon.svg" alt="" class="svg-icon"/>
+                                    <span>Send</span>
+                                </button>
+                            </SocialActions>
+                        </Article>
+                    ))
+                }
+            </Content>
+            }
+      </Posts>
+    </Container>
   );
-}
+};
+
+
+const mapStateToProps = (state) => {
+  return {
+    user: state.userState.user,
+    articles: state.articleState.articles,
+    userDetails: state.userDetailsState.userDetails,
+  };
+};
+const mapDispatchToProps = (dispatch) => ({
+  getArticles: (userId) => dispatch(getArticlesAPI(userId)),
+  uploadImage: (image,userId,imageType) => dispatch(uploadImageAPI(image,userId,imageType)),
+  getUserDetails: (userId) => dispatch(getUserDetailsAPI(userId)),
+});
+export default connect(mapStateToProps,mapDispatchToProps)(Profile);

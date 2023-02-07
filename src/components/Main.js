@@ -4,7 +4,7 @@ import "../App.css";
 import { useState,useEffect } from "react";
 import {connect} from "react-redux"
 import {getArticlesAPI} from "../actions";
-import ReactPlayer from "react-player";
+import { getUserDetailsAPI } from "../actions";
 
 const Main = (props) => {
     const [showModel, setShowModel] = useState("close");
@@ -13,6 +13,13 @@ const Main = (props) => {
             props.getArticles(props.user.uid);
           }
     },[]);
+
+    useEffect(() => {
+        if (props.user) {
+          props.getUserDetails(props.user.uid);
+        }
+      }, []);
+    
 
     const handleClick = (e) => {
         e.preventDefault();
@@ -39,7 +46,7 @@ const Main = (props) => {
             <ShareBox>
             <div>
                 { props.user && props.user.photoURL ?
-                <img src={props.user.photoURL} alt="" referrerpolicy="no-referrer"/>
+                <img src={props.userDetails.photoUrl} alt="" referrerPolicy="no-referrer"/>
                 :
                 <img src="/images/user.svg" alt="" />
                 }
@@ -81,7 +88,7 @@ const Main = (props) => {
                         <Article key={key}>
                             <SharedActor>
                                 <a>
-                                    <img src={article.actor.image} alt="" style={{
+                                    <img src={props.userDetails.photoUrl} alt="" style={{
                                         width: "48px",
                                         height: "48px",
                                         borderRadius: "50%",
@@ -105,7 +112,20 @@ const Main = (props) => {
                                 <a>
                                     {
                                         !article.sharedImg && article.video ? (
-                                           <ReactPlayer width={"100%"} url={article.video} />
+                                           <iframe 
+                                             src={article.video}    
+                                                width="100%"
+                                                height="100%"
+                                                style={{border: "none"}}
+                                                allow="autoplay"
+                                                allowFullScreen
+                                                title={article.description}
+                                                accelometer="true"
+                                                autoplay="true"
+                                                loop="true"
+                                                muted="true"
+                                                playsInline="true"
+                                             />
                                         ) : (
                                             article.sharedImg && <img src={article.sharedImg} alt="" />
                                         )
@@ -115,7 +135,7 @@ const Main = (props) => {
                             <SocialCounts>
                                 <li>
                                     <button>
-                                        <img src="/images/like-icon.svg" alt="" class="svg-icon count-like"/>
+                                        <img src="/images/liked-linkedin.svg" alt="" class="svg-icon count-like"/>
                                         <img src="/images/like-icon-filled.svg" alt="" class="svg-icon count-like-filled"/>
                                         <span class="count">75</span>
                                     </button>
@@ -349,14 +369,15 @@ const Content = styled.div`
 
 const mapStateToProps = (state) => {
     return {
-        loading: state.articleState.loading,
         user: state.userState.user,
         articles: state.articleState.articles,
-    };
+        userDetails: state.userDetailsState.userDetails,
+        };
 };
 
 const mapDispatchToProps = (dispatch) => ({
     getArticles: (userId) => dispatch(getArticlesAPI(userId)),
+    getUserDetails:(userId)=>dispatch(getUserDetailsAPI(userId)),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(Main);
 
