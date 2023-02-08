@@ -3,6 +3,7 @@ import Login from './components/Login';
 import Header from './components/Header';
 import Home from './components/Home';
 import Profile from './components/Profile';
+import MyNetwork from './components/MyNetwork';
 import './App.css';
 import { useEffect } from "react";
 import { getUserAuth } from "./actions";
@@ -20,7 +21,8 @@ function App(props) {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/home" element={[<Header/>,<Home/>]} />
-          <Route path="/profile" element={<Profile/>}/>
+          <Route path="/profile" element={[<Header/>,<Profile/>]}/>
+          <Route path="/my-network" element={[<Header/>,<MyNetwork/>]}/>
         </Routes>
       </Router>
     </div>

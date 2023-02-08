@@ -1,13 +1,36 @@
 import styled from "styled-components";
+import React from "react";
 import PostModel from './PostModel'
 import "../App.css";
 import { useState,useEffect } from "react";
 import {connect} from "react-redux"
 import {getArticlesAPI} from "../actions";
 import { getUserDetailsAPI } from "../actions";
+import { handleLikeAPI,handleCommentAPI,getLikesAPI } from "../actions";
+import { useDispatch, useSelector } from 'react-redux';
 
 const Main = (props) => {
     const [showModel, setShowModel] = useState("close");
+    const [showCommentInput, setShowCommentInput] = useState(false);
+    const [likes, setLikes] = useState([]);
+    const [comment, setComment] = useState("");
+    const commentRef = React.useRef({});
+    const likeRef = React.useRef({});
+
+    useEffect(() => {
+        likeRef.current = {};
+        props.articles.forEach(article => {
+            likeRef.current[article.pid] = false;
+        });
+        }, [props.articles]);
+
+    useEffect(() => {
+        commentRef.current = {};
+        props.articles.forEach(article => {
+          commentRef.current[article.pid] = false;
+        });
+      }, [props.articles]);
+
     useEffect(() => {
         if (props.user) {
             props.getArticles(props.user.uid);
@@ -19,8 +42,20 @@ const Main = (props) => {
           props.getUserDetails(props.user.uid);
         }
       }, []);
-    
 
+      const handleShowCommentInput = () => {
+        setShowCommentInput(!showCommentInput);
+      };
+
+      const handleShowComment = (pid) => {
+        commentRef.current[pid] = !commentRef.current[pid];
+      };
+
+      const handleShowLike = (pid) => {
+        likeRef.current[pid] = !likeRef.current[pid];
+        };
+    
+    
     const handleClick = (e) => {
         e.preventDefault();
         if(e.target !== e.currentTarget){
@@ -38,6 +73,16 @@ const Main = (props) => {
                 break;
         }
     }
+    const LikeHandler =(postId,userId)=>{
+        props.handleLike(postId,userId);
+    }
+
+    const commentHandler =(postId,userId,comment)=>{
+        props.handleComment(postId,userId,comment);
+        setShowCommentInput(false);
+        setComment("");
+    }
+
 
     return (
         <>
@@ -96,7 +141,7 @@ const Main = (props) => {
                                         objectFit: "cover",
                                     }}/>
                                     <div>
-                                        <span>{article.actor.title}</span>
+                                        <span>{props.userDetails.name}</span>
                                         <span>{article.actor.description}</span>
                                         <span>{article.actor.date.toDate().toLocaleDateString()}</span>
                                     </div>
@@ -134,22 +179,28 @@ const Main = (props) => {
                             </SharedImg>
                             <SocialCounts>
                                 <li>
-                                    <button>
-                                        <img src="/images/liked-linkedin.svg" alt="" class="svg-icon count-like"/>
-                                        <img src="/images/like-icon-filled.svg" alt="" class="svg-icon count-like-filled"/>
-                                        <span class="count">75</span>
+                                    <button onClick={()=>handleShowLike(article.pid)} style={{border:"none", backgroundColor:"white"}}>
+                                        <img src="/images/like-icon.svg" alt="" class="svg-icon count-like"/>
+                                        <span class="count">{article.likes}</span>
                                     </button>
                                 </li>
                                 <li>
-                                    <a>{article.comments} comments</a>
+                                    <button onClick={()=>handleShowComment(article.pid)} style={{border:"none", backgroundColor:"white"}}>
+                                        <img src="/images/comment-icon.svg" alt="" class="svg-icon count-comment"/>
+                                        <span class="count">
+                                             {
+                                                article.comments.length === 0 ? "0" : article.comments.length
+                                            }
+                                        </span>
+                                    </button>
                                 </li>
                             </SocialCounts>
                             <SocialActions>
-                                <button>
+                                <button onClick={()=>{LikeHandler(article.pid,props.user.uid)}}>
                                     <img src="/images/like-icon.svg" alt="" class="svg-icon"/>
                                     <span>Like</span>
                                 </button>
-                                <button>
+                                <button onClick={handleShowCommentInput} >
                                     <img src="/images/comment-icon.svg" alt="" class="svg-icon"/>
                                     <span>Comments</span>
                                 </button>
@@ -162,6 +213,70 @@ const Main = (props) => {
                                     <span>Send</span>
                                 </button>
                             </SocialActions>
+                            {showCommentInput && (
+                                <CommentInput>
+                                    <textarea value={comment} onChange={e=>setComment(e.target.value)}/>
+                                    <button onClick={()=>{commentHandler(article.pid,props.user.uid,comment)}}>Post</button>
+                                </CommentInput>
+                                )}
+                            {   
+                                article.comments.length > 0 &&
+                                !commentRef.current[article.pid] && (
+                                article.comments.slice(-1).map((comment,key)=>(
+                                    <CommentContainer key={key}>
+                                        <CommentHeader>
+                                            <CommentAvatar src={props.userDetails.photoUrl} alt="" />
+                                            <div>
+                                            <CommentUserName>{props.userDetails.name}</CommentUserName>
+                                            <span style={{fontSize:"10px"}}>{new Date().toLocaleDateString()}</span>
+                                            </div>
+                                        </CommentHeader>
+                                        <CommentText>{comment.comment}</CommentText> 
+                                    </CommentContainer>
+                                ))
+                                )
+                            }
+                            
+                                 
+                            {
+                                likes.map((like, index) => (
+                                    console.log(like)
+                                  ))
+                            }
+                            {
+                                likeRef.current[article.pid] &&
+                                (
+                                   props.getLikes(article.pid).each((like,key)=>(
+                                        <CommentContainer key={key}>
+                                            <CommentHeader>
+                                                <CommentAvatar src={like.photoUrl} alt="" />
+                                                <div>
+                                                <CommentUserName>{like.name}</CommentUserName>
+                                                <span style={{fontSize:"10px"}}>{new Date().toLocaleDateString()}</span>
+                                                </div>
+                                            </CommentHeader>
+                                        </CommentContainer>
+                                    ))
+
+                                )
+                            }
+                            {   commentRef.current[article.pid] &&
+                                (
+                                    article.comments.map((comment,key)=>(
+                                        <CommentContainer key={key}>
+                                            <CommentHeader>
+                                                <CommentAvatar src={props.userDetails.photoUrl} alt="" />
+                                                <div>
+                                                <CommentUserName>{props.userDetails.name}</CommentUserName>
+                                                <span style={{fontSize:"10px"}}>{new Date().toLocaleDateString()}</span>
+                                                </div>
+                                            </CommentHeader>
+                                            <CommentText>{comment.comment}</CommentText>
+                                        </CommentContainer>
+                                    ))
+                                )
+                            }
+                            
                         </Article>
                     ))
                 }
@@ -174,7 +289,40 @@ const Main = (props) => {
     )
 }
 
-            
+const CommentContainer = styled.div`
+display: flex;
+flex-direction: column;
+padding: 16px;
+background-color: #f2f2f2;
+border-radius: 8px;
+`
+
+const CommentHeader = styled.div`
+display: flex;
+align-items: center;
+margin-bottom: 8px;
+`
+
+const CommentAvatar = styled.img`
+width: 38px;
+height: 38px;
+border-radius: 50%;
+margin-right: 8px;
+object-fit: cover;
+`
+
+const CommentUserName = styled.span`
+font-weight: 400;
+font-size: 14px;
+margin-right: 8px;
+font-family: Arial, Helvetica, sans-serif;
+`
+
+const CommentText = styled.p`
+margin: 0;
+font-size: 14px;
+`
+
             
                 
 
@@ -193,6 +341,11 @@ const CommonCard = styled.div`
     box-shadow: 0 0 0 1px rgb(0 0 0 / 15%), 0 0 0 rgb(0 0 0 / 20%);
 `;
 
+const Comment = styled.p`
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: rgba(0, 0, 0, 0.6);
+`;
 
 const ShareBox = styled(CommonCard)`
   display: flex;
@@ -367,17 +520,42 @@ const Content = styled.div`
     }
 `;
 
+const CommentInput = styled.div`
+    border-radius: 20px;
+    padding: 0 16px;
+    margin: 8px 0;
+    display: flex;
+    align-items: center;
+    border: 1px solid #e6ecf0;
+    background-color: #f9fafb;
+    textarea {
+        resize: none;
+        width: 100%;
+        outline: none;
+        border: none;
+        background-color: transparent;
+        font-size: 16px;
+        margin-left: 5px;
+    }
+`;
+
+
+
 const mapStateToProps = (state) => {
     return {
         user: state.userState.user,
         articles: state.articleState.articles,
         userDetails: state.userDetailsState.userDetails,
+        likes: state.likesState.likes,
         };
 };
 
 const mapDispatchToProps = (dispatch) => ({
     getArticles: (userId) => dispatch(getArticlesAPI(userId)),
     getUserDetails:(userId)=>dispatch(getUserDetailsAPI(userId)),
+    handleLike:(userId,articleId)=>dispatch(handleLikeAPI(userId,articleId)),
+    handleComment:(userId,articleId,comment)=>dispatch(handleCommentAPI(userId,articleId,comment)),
+    getLikes:(userId)=>dispatch(getLikesAPI(userId)),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(Main);
 

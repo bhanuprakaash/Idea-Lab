@@ -41,17 +41,22 @@ const Header = (props) => {
         </Search>
         <Nav>
           <NavListWrap>
-            <NavList className="active">
+            <NavList>
               <a href="">
+                <Link to="/home">
                 <img src="/images/nav-home.svg" alt="" />
                 <span>Home</span>
+                </Link>
               </a>
             </NavList>
 
             <NavList>
               <a href="">
+                <Link to="/my-network">
                 <img src="/images/nav-network.svg" alt="" />
                 <span>My Network</span>
+                </Link>
+                
               </a>
             </NavList>
 
@@ -78,22 +83,19 @@ const Header = (props) => {
 
             <User>
               <a>
-                {props.user && props.user.photoURL ? (
-                  <Link to="/profile">
-                    <img src={props.userDetails.photoUrl} alt=""/>
-                  </Link>
+              <Link to="/profile">
+                {props.user && props.userDetails.photoUrl ? 
+                   (<img src={props.userDetails.photoUrl} alt=""/>
                 ) : (
-                  <Link to="/profile">
                     <img src="/images/user.svg" alt=""/>
-                  </Link>
                 ) 
-              }
+                }
                 <span>
                   Me
                 <img src="/images/down-icon.svg" alt="" />
                 </span>
+              </Link> 
               </a>
-
               <SignOut onClick={()=>props.signOut()}>
                 <a href="">Sign Out</a>
               </SignOut>

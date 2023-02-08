@@ -5,7 +5,6 @@ import {getArticlesAPI, uploadImageAPI} from '../actions';
 import { getUserDetailsAPI } from '../actions';
 import IconButton from '@material-ui/core/IconButton';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import CameraAltIcon from '@material-ui/icons/CameraAlt';
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -19,6 +18,7 @@ const BackgroundImage = styled.div`
   background-size: cover;
   background-position: center;
   position:relative;
+  margin-top: 45px;
 `;
 const CameraIcon = styled.i`
   position: absolute;
@@ -268,97 +268,7 @@ const Profile = (props) => {
         Skill
       </Skills>
       <Posts>
-      { 
-        props.articles.length === 0 
-        ? 
-        <p>There are no articles</p>
-        :
-            <Content>
-                { 
-                    props.articles.length > 0 &&
-                    props.articles.map((article,key) => (
-                        <Article key={key}>
-                            <SharedActor>
-                                <a>
-                                    <img src={props.userDetails.photoUrl} alt="" style={{
-                                        width: "48px",
-                                        height: "48px",
-                                        borderRadius: "50%",
-                                        marginRight: "8px",
-                                        objectFit: "cover",
-                                    }}/>
-                                    <div>
-                                        <span>{props.userDetails.name}</span>
-                                        <span>{article.actor.description}</span>
-                                        <span>{article.actor.date.toDate().toLocaleDateString()}</span>
-                                    </div>
-                                </a>
-                                <button>
-                                    <img src="/images/ell.png"  alt="" />
-                                </button>
-                            </SharedActor>
-                            <Description>
-                                {article.description}
-                            </Description>
-                            <SharedImg>
-                                <a>
-                                    {
-                                        !article.sharedImg && article.video ? (
-                                           <iframe 
-                                             src={article.video}    
-                                                width="100%"
-                                                height="100%"
-                                                style={{border: "none"}}
-                                                allow="autoplay"
-                                                allowFullScreen
-                                                title={article.description}
-                                                accelometer="true"
-                                                autoplay="true"
-                                                loop="true"
-                                                muted="true"
-                                                playsInline="true"
-                                             />
-                                        ) : (
-                                            article.sharedImg && <img src={article.sharedImg} alt="" />
-                                        )
-                                    }
-                                </a>
-                            </SharedImg>
-                            <SocialCounts>
-                                <li>
-                                    <button>
-                                        <img src="/images/like-icon.svg" alt="" class="svg-icon count-like"/>
-                                        <img src="/images/like-icon-filled.svg" alt="" class="svg-icon count-like-filled"/>
-                                        <span class="count">75</span>
-                                    </button>
-                                </li>
-                                <li>
-                                    <a>{article.comments} comments</a>
-                                </li>
-                            </SocialCounts>
-                            <SocialActions>
-                                <button>
-                                    <img src="/images/like-icon.svg" alt="" class="svg-icon"/>
-                                    <span>Like</span>
-                                </button>
-                                <button>
-                                    <img src="/images/comment-icon.svg" alt="" class="svg-icon"/>
-                                    <span>Comments</span>
-                                </button>
-                                <button>
-                                    <img src="/images/share-icon.svg" alt="" class="svg-icon"/>
-                                    <span>Share</span>
-                                </button>
-                                <button>
-                                    <img src="/images/send-icon.svg" alt="" class="svg-icon"/>
-                                    <span>Send</span>
-                                </button>
-                            </SocialActions>
-                        </Article>
-                    ))
-                }
-            </Content>
-            }
+        
       </Posts>
     </Container>
   );
