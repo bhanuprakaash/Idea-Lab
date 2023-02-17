@@ -8,6 +8,7 @@ import './App.css';
 import { useEffect } from "react";
 import { getUserAuth } from "./actions";
 import { connect } from "react-redux";
+import ExplorePeople from "./components/ExplorePeople";
 
 function App(props) {
 
@@ -22,7 +23,7 @@ function App(props) {
           <Route path="/" element={<Login />} />
           <Route path="/home" element={[<Header/>,<Home/>]} />
           <Route path="/profile" element={[<Header/>,<Profile/>]}/>
-          <Route path="/my-network" element={[<Header/>,<MyNetwork/>]}/>
+          <Route path="/my-network" element={[<MyNetwork/>,<ExplorePeople/>]}/>
         </Routes>
       </Router>
     </div>

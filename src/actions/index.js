@@ -1,4 +1,4 @@
-import {auth, provider,storage} from '../firebase.js';
+import {auth, provider,provider2,storage} from '../firebase.js';
 import {SET_USER,
     SET_LOADING_STATUS,
     GET_ARTICLES,
@@ -58,9 +58,15 @@ export const getComments = (payload) => ({
 
 
 
-export function signInAPI(){
+export function signInAPI(providerName){
+    let providerx;
+    if (providerName === 'google') {
+        providerx = provider;
+    } else if (providerName === 'github') {
+        providerx = provider2;
+    }
     return (dispatch)=>{
-        auth.signInWithPopup(provider)
+        auth.signInWithPopup(providerx)
         .then((payload)=>{
             dispatch(setUser(payload.user));
             try {
@@ -279,13 +285,6 @@ export function handleCommentAPI(postId,userId,comment){
 };
 
 
-export function getLikesAPI(postId){
-    return (dispatch)=>{
-        db.collection("likes").doc(postId).get().then((snapshot)=>{
-            dispatch(getLikes(snapshot.data().userId));
-        })
-    }
-}
 
 export function getCommentsAPI(postId){
     return (dispatch)=>{
@@ -295,3 +294,13 @@ export function getCommentsAPI(postId){
     }
 }
 
+
+export function getLikesAPI(postId){
+    return(dispatch)=>{
+        let payload;
+        db.collection("likes").doc(postId).onSnapshot((snapshot)=>{
+            payload=snapshot.data();
+            dispatch(getLikes(payload));
+        })
+    }
+}

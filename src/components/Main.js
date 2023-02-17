@@ -7,28 +7,25 @@ import {connect} from "react-redux"
 import {getArticlesAPI} from "../actions";
 import { getUserDetailsAPI } from "../actions";
 import { handleLikeAPI,handleCommentAPI,getLikesAPI } from "../actions";
-import { useDispatch, useSelector } from 'react-redux';
+import Likes from "./Likes";
 
 const Main = (props) => {
     const [showModel, setShowModel] = useState("close");
     const [showCommentInput, setShowCommentInput] = useState(false);
-    const [likes, setLikes] = useState([]);
     const [comment, setComment] = useState("");
     const commentRef = React.useRef({});
-    const likeRef = React.useRef({});
 
-    useEffect(() => {
-        likeRef.current = {};
-        props.articles.forEach(article => {
-            likeRef.current[article.pid] = false;
-        });
-        }, [props.articles]);
 
-    useEffect(() => {
-        commentRef.current = {};
-        props.articles.forEach(article => {
-          commentRef.current[article.pid] = false;
-        });
+      useEffect(() => {
+        const newCommentRef = {};
+        if (props.articles && props.articles.length > 0) {
+          props.articles.forEach((article) => {
+            if(article){
+              newCommentRef[article.pid] = false;
+            }
+          });
+          commentRef.current = newCommentRef;
+        }
       }, [props.articles]);
 
     useEffect(() => {
@@ -42,7 +39,7 @@ const Main = (props) => {
           props.getUserDetails(props.user.uid);
         }
       }, []);
-
+      
       const handleShowCommentInput = () => {
         setShowCommentInput(!showCommentInput);
       };
@@ -51,11 +48,7 @@ const Main = (props) => {
         commentRef.current[pid] = !commentRef.current[pid];
       };
 
-      const handleShowLike = (pid) => {
-        likeRef.current[pid] = !likeRef.current[pid];
-        };
-    
-    
+      
     const handleClick = (e) => {
         e.preventDefault();
         if(e.target !== e.currentTarget){
@@ -91,7 +84,11 @@ const Main = (props) => {
             <ShareBox>
             <div>
                 { props.user && props.user.photoURL ?
-                <img src={props.userDetails.photoUrl} alt="" referrerPolicy="no-referrer"/>
+                <img
+                 src={props.userDetails?.photoUrl || "/images/user.svg"}
+                 alt=""
+                 referrerPolicy="no-referrer"
+        />
                 :
                 <img src="/images/user.svg" alt="" />
                 }
@@ -119,169 +116,145 @@ const Main = (props) => {
                 </div>
             </ShareBox>
             { 
-        props.articles.length === 0 
-        ? 
-        <p>There are no articles</p>
-        :
-            <Content>
-                {
-                    props.loading && <img src="/images/spinner.svg" alt="" />
-                }
-                { 
-                    props.articles.length > 0 &&
-                    props.articles.map((article,key) => (
-                        <Article key={key}>
-                            <SharedActor>
-                                <a>
-                                    <img src={props.userDetails.photoUrl} alt="" style={{
-                                        width: "48px",
-                                        height: "48px",
-                                        borderRadius: "50%",
-                                        marginRight: "8px",
-                                        objectFit: "cover",
-                                    }}/>
-                                    <div>
-                                        <span>{props.userDetails.name}</span>
-                                        <span>{article.actor.description}</span>
-                                        <span>{article.actor.date.toDate().toLocaleDateString()}</span>
-                                    </div>
-                                </a>
-                                <button>
-                                    <img src="/images/ell.png"  alt="" />
-                                </button>
-                            </SharedActor>
-                            <Description>
-                                {article.description}
-                            </Description>
-                            <SharedImg>
-                                <a>
-                                    {
-                                        !article.sharedImg && article.video ? (
-                                           <iframe 
-                                             src={article.video}    
-                                                width="100%"
-                                                height="100%"
-                                                style={{border: "none"}}
-                                                allow="autoplay"
-                                                allowFullScreen
-                                                title={article.description}
-                                                accelometer="true"
-                                                autoplay="true"
-                                                loop="true"
-                                                muted="true"
-                                                playsInline="true"
-                                             />
-                                        ) : (
-                                            article.sharedImg && <img src={article.sharedImg} alt="" />
-                                        )
-                                    }
-                                </a>
-                            </SharedImg>
-                            <SocialCounts>
-                                <li>
-                                    <button onClick={()=>handleShowLike(article.pid)} style={{border:"none", backgroundColor:"white"}}>
-                                        <img src="/images/like-icon.svg" alt="" class="svg-icon count-like"/>
-                                        <span class="count">{article.likes}</span>
-                                    </button>
-                                </li>
-                                <li>
-                                    <button onClick={()=>handleShowComment(article.pid)} style={{border:"none", backgroundColor:"white"}}>
-                                        <img src="/images/comment-icon.svg" alt="" class="svg-icon count-comment"/>
-                                        <span class="count">
-                                             {
-                                                article.comments.length === 0 ? "0" : article.comments.length
-                                            }
-                                        </span>
-                                    </button>
-                                </li>
-                            </SocialCounts>
-                            <SocialActions>
-                                <button onClick={()=>{LikeHandler(article.pid,props.user.uid)}}>
-                                    <img src="/images/like-icon.svg" alt="" class="svg-icon"/>
-                                    <span>Like</span>
-                                </button>
-                                <button onClick={handleShowCommentInput} >
-                                    <img src="/images/comment-icon.svg" alt="" class="svg-icon"/>
-                                    <span>Comments</span>
-                                </button>
-                                <button>
-                                    <img src="/images/share-icon.svg" alt="" class="svg-icon"/>
-                                    <span>Share</span>
-                                </button>
-                                <button>
-                                    <img src="/images/send-icon.svg" alt="" class="svg-icon"/>
-                                    <span>Send</span>
-                                </button>
-                            </SocialActions>
-                            {showCommentInput && (
-                                <CommentInput>
-                                    <textarea value={comment} onChange={e=>setComment(e.target.value)}/>
-                                    <button onClick={()=>{commentHandler(article.pid,props.user.uid,comment)}}>Post</button>
-                                </CommentInput>
-                                )}
-                            {   
-                                article.comments.length > 0 &&
-                                !commentRef.current[article.pid] && (
-                                article.comments.slice(-1).map((comment,key)=>(
-                                    <CommentContainer key={key}>
-                                        <CommentHeader>
-                                            <CommentAvatar src={props.userDetails.photoUrl} alt="" />
-                                            <div>
-                                            <CommentUserName>{props.userDetails.name}</CommentUserName>
-                                            <span style={{fontSize:"10px"}}>{new Date().toLocaleDateString()}</span>
-                                            </div>
-                                        </CommentHeader>
-                                        <CommentText>{comment.comment}</CommentText> 
-                                    </CommentContainer>
-                                ))
-                                )
-                            }
-                            
-                                 
-                            {
-                                likes.map((like, index) => (
-                                    console.log(like)
-                                  ))
-                            }
-                            {
-                                likeRef.current[article.pid] &&
-                                (
-                                   props.getLikes(article.pid).each((like,key)=>(
-                                        <CommentContainer key={key}>
-                                            <CommentHeader>
-                                                <CommentAvatar src={like.photoUrl} alt="" />
-                                                <div>
-                                                <CommentUserName>{like.name}</CommentUserName>
-                                                <span style={{fontSize:"10px"}}>{new Date().toLocaleDateString()}</span>
-                                                </div>
-                                            </CommentHeader>
-                                        </CommentContainer>
-                                    ))
+  props.articles.length === 0 
+  ? 
+  <p>There are no articles</p>
+  :
+  <Content>
+    {
+      props.loading && <img src="/images/spinner.svg" alt="" />
+    }
+    { 
+      props.articles.length > 0 &&
+      props.articles.map((article,key) => {
+        if (!article) {
+          return null; 
+        }
 
-                                )
-                            }
-                            {   commentRef.current[article.pid] &&
-                                (
-                                    article.comments.map((comment,key)=>(
-                                        <CommentContainer key={key}>
-                                            <CommentHeader>
-                                                <CommentAvatar src={props.userDetails.photoUrl} alt="" />
-                                                <div>
-                                                <CommentUserName>{props.userDetails.name}</CommentUserName>
-                                                <span style={{fontSize:"10px"}}>{new Date().toLocaleDateString()}</span>
-                                                </div>
-                                            </CommentHeader>
-                                            <CommentText>{comment.comment}</CommentText>
-                                        </CommentContainer>
-                                    ))
-                                )
-                            }
-                            
-                        </Article>
-                    ))
+        return (
+          <Article key={key}>
+            <SharedActor>
+              <a>
+                <img src={props.userDetails.photoUrl} alt="" style={{
+                  width: "48px",
+                  height: "48px",
+                  borderRadius: "50%",
+                  marginRight: "8px",
+                  objectFit: "cover",
+                }}/>
+                <div>
+                  <span>{props.userDetails.name}</span>
+                  {article.actor && <span>{article.actor.description}</span>}
+                  {article.actor && <span>{article.actor.date.toDate().toLocaleDateString()}</span>}
+                </div>
+              </a>
+              <button>
+                <img src="/images/ell.png"  alt="" />
+              </button>
+            </SharedActor>
+            <Description>
+              {article.description}
+            </Description>
+            <SharedImg>
+              <a>
+                {  
+                  !article.sharedImg && article.video ? (
+                    <iframe 
+                      src={article.video}    
+                      width="100%"
+                      height="100%"
+                      style={{border: "none"}}
+                      allow="autoplay"
+                      allowFullScreen
+                      title={article.description}
+                      accelometer="true"
+                      autoplay="true"
+                      loop="true"
+                      muted="true"
+                      playsInline="true"
+                    />
+                  ) : (
+                    article.sharedImg && <img src={article.sharedImg} alt="" />
+                  )
                 }
-            </Content>
+              </a>
+            </SharedImg>
+            <SocialCounts>
+              <li>
+                <button style={{border:"none", backgroundColor:"white"}}>
+                  <img src="/images/like-icon.svg" alt="" class="svg-icon count-like"/>
+                  <span class="count">{article.likes}</span>
+                </button>
+              </li>
+              <li>
+                <button onClick={()=>handleShowComment(article.pid)} style={{border:"none", backgroundColor:"white"}}>
+                  <img src="/images/comment-icon.svg" alt="" class="svg-icon count-comment"/>
+                  <span class="count">
+                    {
+                      article.comments ? article.comments.length : 0
+                    }
+                  </span>
+                </button>
+              </li>
+            </SocialCounts>
+            <SocialActions>
+                <button onClick={() => { LikeHandler(article.pid, props.user.uid) }}>
+                  <img src="/images/like-icon.svg" alt="" class="svg-icon" />
+                  <span>Like</span>
+                </button>
+                <button onClick={handleShowCommentInput}>
+                  <img src="/images/comment-icon.svg" alt="" class="svg-icon" />
+                  <span>Comments</span>
+                </button>
+        </SocialActions>
+
+            {showCommentInput && (
+              <CommentInput>
+                <textarea value={comment} onChange={e=>setComment(e.target.value)} />
+                <button onClick={()=>{commentHandler(article.pid,props.user.uid,comment)}}>Post</button>
+              </CommentInput>
+            )}
+            {article.comments.length > 0 &&
+              (!commentRef.current[article.pid] ? (
+                article.comments.slice(-1).map((comment,key)=>(
+                  <CommentContainer key={key}>
+                    <CommentHeader>
+                      <CommentAvatar src={props.userDetails.photoUrl} alt="" />
+                      <div>
+                        <CommentUserName>{props.userDetails.name}</CommentUserName>
+                        <span style={{fontSize:"10px"}}>{
+                            new Date().toLocaleDateString()
+                        }</span>
+                      </div>
+                    </CommentHeader>
+                    <CommentText>{comment.comment}</CommentText> 
+                  </CommentContainer>
+                ))
+              ) : (
+                article.comments.map((comment,key)=>(
+                  <CommentContainer key={key}>
+                    <CommentHeader>
+                      <CommentAvatar src={props.userDetails.photoUrl} alt="" />
+                      <div>
+                        <CommentUserName>{props.userDetails.name}</CommentUserName>
+                        <span style={{fontSize:"10px"}}>{
+                            new Date().toLocaleDateString()
+                        }</span>
+                      </div>
+                    </CommentHeader>
+                    <CommentText>{comment.comment}</CommentText>
+                  </CommentContainer>
+                ))
+              ))
             }
+          </Article>
+        )
+        })
+
+      }
+
+    </Content>
+}
             <PostModel showModel={showModel} handleClick={handleClick}/>
         </Container>
         

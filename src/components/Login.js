@@ -2,34 +2,79 @@ import styled from "styled-components";
 import {connect} from "react-redux";
 import { signInAPI } from "../actions";
 import {Navigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import "../App.css";
+import React from "react";
+import CommunityGuidelines from "./CommunityGuidelines";
+import { useState } from "react";
 const Login = (props) => {
-    return(
-        <Container>
-          {props.user && <Navigate to="/home" />}
-            <Nav>
-                <a href="/">
-                    <img src="/images/login-logo.svg" alt="login-logo"/>
-                </a>
-                <div>
-                    <Join>Join now</Join>
-                    <SignIn>Sign in</SignIn>
-                </div>
-            </Nav>
-            <Section>
-                <Hero>
-                <h1>Welcome to your professional community</h1>
-                <img src="/images/login-hero.svg" alt="" />
-                </Hero>
-                <Form>
-                <Google onClick={()=>props.signIn()}>
-                    <img src="/images/google.svg" alt="" />
-                    Sign in with Google
-                </Google>
-                </Form>
-            </Section>
-        </Container>
-    )
+  const navigate = useNavigate();
+  const [showModel, setShowModel] = useState("close");
+
+  React.useEffect(() => {
+    if (props.user) {
+      navigate("/home");
+    }
+  }, [props.user,navigate]);
+
+  const handleSignIn = async (provider) => {
+    await props.signIn(provider);
+    navigate("/home");
+  };
+  const handleClick = (e) => {
+    e.preventDefault();
+    if(e.target !== e.currentTarget){
+        return;
+    }
+    switch(showModel){
+        case "open":
+            setShowModel("close");
+            break;
+        case "close":
+            setShowModel("open");
+            break;
+        default:
+            setShowModel("close");
+            break;
+    }
 }
+
+  return (
+    <Container>
+      {props.user && navigate("/home")}
+      <Nav>
+        <a href="/" style={{textDecoration:"none"}}>
+        <h1><span class="firstName">Idea</span><span class="lastName">Lab</span></h1>
+        </a>
+        <div>
+          <SignIn onClick={handleClick}>Community Guidelines</SignIn>
+        </div>
+      </Nav>
+      <Se>
+      <Section>
+        <Hero>
+          <h1>Welcome to the world of <br></br> <span style={{fontSize:"130px"}}>Ideas</span> and <span style={{fontSize:"130px"}}>Inspiration</span></h1>
+          <Form>
+          <Google onClick={()=>handleSignIn("google")}>
+            <img src="/images/google.svg" alt="" style={{marginRight:"5px"}} />
+             Sign in with Google
+          </Google>
+          <Google onClick={()=>handleSignIn("github")}>
+            <img src="/images/github-icon.png" alt="" width="20px" style={{marginRight:"5px"}}/>
+             Sign in with Github
+          </Google>
+          <Google onClick={()=>handleSignIn("twitter")}>
+            <img src="/images/twitter-icon.png" alt="" width="20px" style={{marginRight:"5px"}}/>
+             Sign in with Twitter
+          </Google>
+        </Form>
+        </Hero>
+      </Section>
+      </Se>
+      <CommunityGuidelines showModel={showModel} handleClick={handleClick} />
+    </Container>
+  );
+};
 const Container = styled.div`
   padding: 0px;
 `;
@@ -68,19 +113,17 @@ const Join = styled.a`
 
 
 const SignIn = styled.a`
-  box-shadow: inset 0 0 0 1px #0a66c2;
-  color: #0a66c2;
-  border-radius: 24px;
+  color: #6667AB;
   transition-duration: 167ms;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 200;
   line-height: 40px;
   padding: 10px 24px;
   text-align: center;
   background-color: rgba(0, 0, 0, 0);
   &:hover {
     background-color: rgba(112, 181, 249, 0.15);
-    color: #0a66c2;
+    color: #6667AB;
     text-decoration: none;
   }
 `;
@@ -104,15 +147,26 @@ const Section = styled.section`
   }
 `;
 
+const Se = styled.div`
+  background-image: url("/images/collaborative.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 100%;
+  position: absolute;
+  z-index: -1;
+  backdrop-filter: blur(2px);
+`;
+
 const Hero = styled.div`
   width: 100%;
   h1 {
     padding-bottom: 0;
-    width: 55%;
+    width: 60%;
     font-size: 56px;
-    color: #2977c9;
-    font-weight: 200;
-    line-height: 70px;
+    color: #6667AB;
+    font-weight: 700;
+    line-height: 100px;
     @media (max-width: 768px) {
       text-align: center;
       font-size: 20px;
@@ -120,25 +174,18 @@ const Hero = styled.div`
       line-height: 2;
     }
   }
-  img {
-    /* z-index: -1; */
-    width: 700px;
-    height: 670px;
-    position: absolute;
-    bottom: -2px;
-    right: -150px;
-    @media (max-width: 768px) {
-      top: 230px;
-      width: initial;
-      position: initial;
-      height: initial;
-    }
-  }
+
 `;
 
 const Form = styled.div`
-  margin-top: 100px;
-  width: 408px;
+  margin-top:-200px;
+  width: 100%;
+  margin-left: 700px;
+  font-size: 16px;
+  padding: 10px 12px;
+  text-decoration: none;
+  border-radius: 4px;
+  color: rgba(0, 0, 0, 0.6);
   @media (max-width: 768px) {
     margin-top: 20px;
   }
@@ -148,9 +195,10 @@ const Google = styled.button`
   display: flex;
   justify-content: center;
   background-color: #fff;
+  margin-bottom: 7px;
   align-items: center;
   height: 56px;
-  width: 100%;
+  width:50%;
   border-radius: 28px;
   box-shadow: inset 0 0 0 1px rgb(0 0 0 / 60%),
     inset 0 0 0 2px rgb(0 0 0 / 0%) inset 0 0 0 1px rgb(0 0 0 / 0);
@@ -170,7 +218,7 @@ const mapStateToProps = (state) => {
     };
 };
 const mapDispatchToProps = (dispatch) => ({
-    signIn: () => dispatch(signInAPI()),
+    signIn: (provider) => dispatch(signInAPI(provider)),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
  

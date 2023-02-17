@@ -4,13 +4,13 @@ import {userReducer} from './userReducer';
 import articleReducer from "./articleReducer";
 import userDetailsReducer from "./userDetailsReducer";
 import uploadImageReducer from "./uploadImageReducer";
-import likesReducer from "./likesReducer";
+import getLikesReducer from "./getLikesReducer";
 
 const rootReducer = combineReducers({
     userState: userReducer,
     articleState: articleReducer,
     userDetailsState: userDetailsReducer,
     uploadImageState: uploadImageReducer,
-    likesState: likesReducer,
+    likesState: getLikesReducer,
 });
 export {rootReducer};
