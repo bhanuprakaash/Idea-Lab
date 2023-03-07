@@ -161,6 +161,7 @@ export function postArticleAPI(payload){
         }else if(payload.video && payload.image===""){
                 console.log(payload.video);
                     postRef.set({
+                        pid:postId,
                         actor:{
                             description:payload.user.email,
                             title:payload.user.displayName,
@@ -180,6 +181,7 @@ export function postArticleAPI(payload){
         }
         else if(payload.video==="" && payload.image===""){
             postRef.set({
+                pid:postId,
                 actor:{
                     description:payload.user.email,
                     title:payload.user.displayName,
@@ -248,48 +250,48 @@ export function getUserDetailsAPI(userId){
 }
 
 
-export function handleLikeAPI(postId, userId) {
-    return (dispatch) => {
-      db.collection("likes")
-        .where("postId", "==", postId)
-        .where("userId", "==", userId)
-        .get()
-        .then((snapshot) => {
-          if (snapshot.empty) {
-            db.collection("likes").doc(postId).set({
-              postId: postId,
-              userId: userId,
-            });
-            db.collection("articles")
-              .doc(postId)
-              .get()
-              .then((snapshot) => {
+    export function handleLikeAPI(postId, userId) {
+        return (dispatch) => {
+        db.collection("likes")
+            .where("postId", "==", postId)
+            .where("userId", "==", userId)
+            .get()
+            .then((snapshot) => {
+            if (snapshot.empty) {
+                db.collection("likes").doc(postId).set({
+                postId: postId,
+                userId: userId,
+                });
                 db.collection("articles")
-                  .doc(postId)
-                  .update({
-                    likes: snapshot.data().likes + 1,
-                  });
-              });
-            dispatch(handleLike(postId, userId));
-          } else {
-            snapshot.forEach((doc) => {
-              doc.ref.delete();
-            });
-            db.collection("articles")
-              .doc(postId)
-              .get()
-              .then((snapshot) => {
+                .doc(postId)
+                .get()
+                .then((snapshot) => {
+                    db.collection("articles")
+                    .doc(postId)
+                    .update({
+                        likes: snapshot.data().likes + 1,
+                    });
+                });
+                dispatch(handleLike(postId, userId));
+            } else {
+                snapshot.forEach((doc) => {
+                doc.ref.delete();
+                });
                 db.collection("articles")
-                  .doc(postId)
-                  .update({
-                    likes: snapshot.data().likes - 1,
-                  });
-              });
-            dispatch(handleLike(postId, userId));
-          }
-        });
-    };
-  }
+                .doc(postId)
+                .get()
+                .then((snapshot) => {
+                    db.collection("articles")
+                    .doc(postId)
+                    .update({
+                        likes: snapshot.data().likes - 1,
+                    });
+                });
+                dispatch(handleLike(postId, userId));
+            }
+            });
+        };
+    }
   
   
 

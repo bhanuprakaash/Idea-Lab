@@ -185,7 +185,7 @@ const Main = (props) => {
               </li>
             </SocialCounts>
             <SocialActions>
-                <button onClick={() => { LikeHandler(article.pid, props.user.uid) ; console.log(article.pid,props.user.uid)}}>
+                <button onClick={() => { LikeHandler(article.pid, props.user.uid)}}>
                   <img src="/images/like-icon.svg" alt="" class="svg-icon" />
                   <span>Like</span>
                 </button>
