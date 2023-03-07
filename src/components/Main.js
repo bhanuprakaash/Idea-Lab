@@ -7,7 +7,7 @@ import {connect} from "react-redux"
 import {getArticlesAPI} from "../actions";
 import { getUserDetailsAPI } from "../actions";
 import { handleLikeAPI,handleCommentAPI,getLikesAPI } from "../actions";
-import Likes from "./Likes";
+import ReactPlayer from "react-player";
 
 const Main = (props) => {
     const [showModel, setShowModel] = useState("close");
@@ -159,20 +159,7 @@ const Main = (props) => {
               <a>
                 {  
                   !article.sharedImg && article.video ? (
-                    <iframe 
-                      src={article.video}    
-                      width="100%"
-                      height="100%"
-                      style={{border: "none"}}
-                      allow="autoplay"
-                      allowFullScreen
-                      title={article.description}
-                      accelometer="true"
-                      autoplay="true"
-                      loop="true"
-                      muted="true"
-                      playsInline="true"
-                    />
+                    <ReactPlayer width={"100%"} url={article.video} />
                   ) : (
                     article.sharedImg && <img src={article.sharedImg} alt="" />
                   )
@@ -198,7 +185,7 @@ const Main = (props) => {
               </li>
             </SocialCounts>
             <SocialActions>
-                <button onClick={() => { LikeHandler(article.pid, props.user.uid) }}>
+                <button onClick={() => { LikeHandler(article.pid, props.user.uid) ; console.log(article.pid,props.user.uid)}}>
                   <img src="/images/like-icon.svg" alt="" class="svg-icon" />
                   <span>Like</span>
                 </button>

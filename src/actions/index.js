@@ -135,7 +135,7 @@ export function postArticleAPI(payload){
         dispatch(setLoadingStatus(true));
         const postRef = db.collection("articles").doc();
         const postId = postRef.id;
-        if(payload.image!=null){
+        if(payload.image && payload.video===""){
             const upload=storage.ref(`images/${payload.image.name}`).put(payload.image);
             upload.on("state_changed",snapshot=>{},error=>{console.log(error)},()=>{
                 storage.ref("images").child(payload.image.name).getDownloadURL().then(url=>{
@@ -152,12 +152,13 @@ export function postArticleAPI(payload){
                         sharedImg: url,
                         likes:0,
                         comments:0,
+                        test:"image",
                         description:payload.description,
                     });
                     dispatch(setLoadingStatus(false));
                 })
             })
-        }else if(payload.video){
+        }else if(payload.video && payload.image===""){
                 console.log(payload.video);
                     postRef.set({
                         actor:{
@@ -171,14 +172,33 @@ export function postArticleAPI(payload){
                         sharedImg: "",
                         likes:0,
                         comments:0,
+                        test:"video",
                         description:payload.description,
                     });
                 
             dispatch(setLoadingStatus(false));
+        }
+        else if(payload.video==="" && payload.image===""){
+            postRef.set({
+                actor:{
+                    description:payload.user.email,
+                    title:payload.user.displayName,
+                    date:payload.timestamp,
+                    image:payload.user.photoURL,
+                },
+                userId:payload.user.uid,
+                video:payload.video,
+                sharedImg: "",
+                likes:0,
+                comments:0,
+                test:"text",
+                description:payload.description,
+            });
+        
+    dispatch(setLoadingStatus(false));
         }
-    }
+    }
 }
-
 
 
 export function getArticlesAPI(userId){
@@ -227,6 +247,7 @@ export function getUserDetailsAPI(userId){
     }
 }
 
+
 export function handleLikeAPI(postId, userId) {
     return (dispatch) => {
       db.collection("likes")
@@ -269,6 +290,7 @@ export function handleLikeAPI(postId, userId) {
         });
     };
   }
+  
   
 
 export function handleCommentAPI(postId,userId,comment){
