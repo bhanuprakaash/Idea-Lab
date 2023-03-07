@@ -5,6 +5,7 @@ import {Link} from "react-router-dom";
 import {getUserDetailsAPI} from "../actions";
 import { useEffect } from "react";
 import CardHeader from '@mui/material/CardHeader';
+import { maxHeight } from "@mui/system";
 
 const Header = (props) => {
 
@@ -22,26 +23,13 @@ const Header = (props) => {
     return(
         <Container>
       <Content>
-        <Logo>
-          <a href="/home">
-            <img src="/images/home-logo.svg" alt="" />
-          </a>
-        </Logo>
-        <Search>
-          <SearchForm onSubmit={handleSearch}>
-            <div >
-              <input type="text" placeholder="Search" />
-            </div>
-            <SearchIcon type="submit">
-              <img src="/images/search-icon.svg" alt="" />
-            </SearchIcon>
-          </SearchForm>
-          <searchResultsContainer>
-            {}
-          </searchResultsContainer>
-        </Search>
+        <a href="/" style={{textDecoration:"none"}}>
+        <h1><span class="firstName">Idea</span><span class="lastName">Lab</span></h1>
+        </a>
+        
         <Nav>
           <NavListWrap>
+            <NavList style={{position:"relative",right:"70px"}}>
             <NavList>
               <a href="">
                 <Link to="/home">
@@ -81,8 +69,22 @@ const Header = (props) => {
                 <span>Notifications</span>
               </a>
             </NavList>
+            </NavList>
+            <Search style={{position:"relative",left:"50px"}}>
+          <SearchForm onSubmit={handleSearch}>
+            <div >
+              <input type="text" placeholder="Search" />
+            </div>
+            <SearchIcon type="submit">
+              <img src="/images/search-icon.svg" alt="" />
+            </SearchIcon>
+          </SearchForm>
+          <searchResultsContainer>
+            {}
+          </searchResultsContainer>
+        </Search>
 
-            <User>
+            <User style={{position:"relative", left:"50px"}}>
               <a>
               <Link to="/profile">
                 {props.user && props.userDetails.photoUrl ? 
@@ -102,15 +104,7 @@ const Header = (props) => {
               </SignOut>
             </User>
 
-            <Work>
-              <a>
-                <img src="/images/nav-work.svg" alt="" />
-                <span>
-                  Work
-                  <img src="/images/down-icon.svg" alt="" />
-                </span>
-              </a>
-            </Work>
+            
           </NavListWrap>
         </Nav>
       </Content>
@@ -118,6 +112,7 @@ const Header = (props) => {
   );
     
 }
+
 const Container = styled.div`
 background-color: white;
 border-bottom: 1px solid rgba(0, 0, 0, 0.08);
@@ -137,15 +132,13 @@ min-height: 100%;
 max-width: 1128px;
 `;
 
-const Logo = styled.span`
-margin-right: 8px;
-font-size: 0px;
-`;
+
 
 const Search = styled.div`
 opacity: 1;
 flex-grow: 1;
 position: relative;
+top:8px;
 & > div {
   max-width: 280px;
   input {
@@ -207,7 +200,7 @@ align-items: center;
 const Nav = styled.nav`
 margin-left: auto;
 display: block;
-@media (max-width: 768px) {
+@media (max-width: 500px) {
   position: fixed;
   left: 0;
   bottom: 0;
@@ -238,6 +231,7 @@ list-style-type: none;
 const NavList = styled.li`
 display: flex;
 align-items: center;
+margin-left:10px;
 a {
   align-items: center;
   background: transparent;
