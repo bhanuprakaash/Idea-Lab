@@ -10,16 +10,9 @@ import { useState } from "react";
 const Login = (props) => {
   const navigate = useNavigate();
   const [showModel, setShowModel] = useState("close");
-
-  React.useEffect(() => {
-    if (props.user) {
-      navigate("/home");
-    }
-  }, [props.user,navigate]);
-
+  
   const handleSignIn = async (provider) => {
     await props.signIn(provider);
-    navigate("/home");
   };
   const handleClick = (e) => {
     e.preventDefault();
@@ -41,7 +34,7 @@ const Login = (props) => {
 
   return (
     <Container>
-      {props.user && navigate("/home")}
+      {props.user && <Navigate to="/home" />}
       <Nav>
         <a href="/" style={{textDecoration:"none"}}>
         <h1><span class="firstName">Idea</span><span class="lastName">Lab</span></h1>

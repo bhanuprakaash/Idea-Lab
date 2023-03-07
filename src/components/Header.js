@@ -6,15 +6,25 @@ import {getUserDetailsAPI} from "../actions";
 import { useEffect } from "react";
 import CardHeader from '@mui/material/CardHeader';
 import { maxHeight } from "@mui/system";
+import React from "react";
+import { Navigate } from "react-router-dom";
+
 
 const Header = (props) => {
+  const [delayComplete, setDelayComplete] = React.useState(false);
+  React.useEffect(() => {
+    setTimeout(() => {
+      setDelayComplete(true);
+    }, 1000);
+  }, []);
+
 
   useEffect(() => {
     if (props.user) {
       props.getUserDetails(props.user.uid);
     }
   }, []);
-  
+
   const handleSearch = (e) => {
     e.preventDefault();
     
@@ -22,6 +32,7 @@ const Header = (props) => {
 
     return(
         <Container>
+          {delayComplete && (!props.user && <Navigate to="/" />)}
       <Content>
         <a href="/" style={{textDecoration:"none"}}>
         <h1><span class="firstName">Idea</span><span class="lastName">Lab</span></h1>
@@ -87,7 +98,7 @@ const Header = (props) => {
             <User style={{position:"relative", left:"50px"}}>
               <a>
               <Link to="/profile">
-                {props.user && props.userDetails.photoUrl ? 
+                {props.userDetails && props.userDetails.photoUrl ? 
                    (<img src={props.userDetails.photoUrl} alt=""/>
                 ) : (
                     <img src="/images/user.svg" alt=""/>

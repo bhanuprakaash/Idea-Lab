@@ -4,10 +4,41 @@ import Main from "./Main";
 import RightSide from "./RightSide";
 import { Navigate } from "react-router-dom";
 import { connect } from "react-redux";
+import React from "react";
 const Home = (props) => {
+  const [delayComplete, setDelayComplete] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    setTimeout(() => {
+      setDelayComplete(true);
+      setIsLoading(false);
+    }, 2000);
+  }, []);
+  if (isLoading) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          backgroundColor:"white",
+          width:"100%",
+        }}
+      >
+        <img
+          src="./images/circle-loading-lines.gif"
+          alt="loading"
+          width={100}
+        />
+      </div>
+    );
+  }
+
     return (
         <Container>
-          {!props.user && <Navigate to="/" />}
+          {delayComplete && (!props.user && <Navigate to="/" />)}
             <Layout>
                 <LeftSide/>
                 <Main/>

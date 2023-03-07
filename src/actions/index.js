@@ -93,6 +93,7 @@ export function signInAPI(providerName){
                             })
                             .then(function() {
                                 console.log("User details added to the database!");
+                                
                             })
                             .catch(function(error) {
                                 console.error("Error adding user details to the database: ", error);
