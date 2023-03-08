@@ -10,6 +10,7 @@ import { getUserAuth } from "./actions";
 import { connect } from "react-redux";
 import ExplorePeople from "./components/ExplorePeople";
 import News from "./components/News";
+import UserProfile from "./components/UserProfile";
 
 function App(props) {
 
@@ -23,7 +24,7 @@ function App(props) {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/home" element={[<Header/>,<Home/>]} />
-          <Route path="/profile" element={[<Header/>,<Profile/>]}/>
+          <Route path="/profile" element={[<Header/>,<UserProfile/>]}/>
           <Route path="/my-network" element={[<MyNetwork/>,<ExplorePeople/>]}/>
           <Route path="/tech-today" element={[<Header/>,<News/>]}/>
         </Routes>
