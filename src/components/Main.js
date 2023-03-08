@@ -163,14 +163,14 @@ const Main = (props) => {
             </SharedImg>
             <SocialCounts>
               <li>
-                <button style={{border:"none", backgroundColor:"white"}} onClick={() => { LikeHandler(article.pid, props.user.uid)}}>
+                <button style={{border:"none", backgroundColor:"white",cursor:"pointer"}} onClick={() => { LikeHandler(article.pid, props.user.uid)}} > 
                   <img src="/images/icons8-good-quality(2).svg" alt="" class="svg-icon count-like"/>
                   <span class="count">{article.likes}</span>
                 </button>
               </li>
               <li>
-              <button onClick={() => { handleShowComment(article.pid); handleShowCommentInput(); }} style={{ border: "none", backgroundColor: "white" }}>
-                  <img src="/images/comment-icon.svg" alt="" class="svg-icon count-comment"/>
+              <button onClick={() => { handleShowComment(article.pid); handleShowCommentInput(); }} style={{ border: "none", backgroundColor: "white",cursor:"pointer" }}>
+                  <img src="/images/icons8-speech-bubble.svg" alt="" class="svg-icon count-comment" style={{marginRight:"5px"}}/>
                   <span class="count">
                     {
                       article.comments ? article.comments.length : 0
@@ -183,7 +183,9 @@ const Main = (props) => {
             {showCommentInput && (
               <CommentInput>
                 <textarea value={comment} onChange={e=>setComment(e.target.value)} />
-                <button onClick={()=>{commentHandler(article.pid,props.user.uid,comment)}}>Post</button>
+                <button onClick={()=>{commentHandler(article.pid,props.user.uid,comment)}} style={{ border: "none", backgroundColor: "white",cursor:"pointer" }}>
+                  <img src="/images/icons8-send-comment.svg" alt="" class="svg-icon" />
+                </button>
               </CommentInput>
             )}
             {article.comments.length > 0 &&

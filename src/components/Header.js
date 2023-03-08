@@ -62,8 +62,10 @@ const Header = (props) => {
 
             <NavList>
               <a href="">
+                <Link to="/tech-today">
                 <img src="/images/icons8-newspaper.svg" alt="" />
                 <span>Tech Today</span>
+                </Link>
               </a>
             </NavList>
 
