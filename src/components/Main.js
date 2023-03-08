@@ -105,14 +105,9 @@ const Main = (props) => {
                         <span>Video</span>
                     </button> 
                     <button>
-                        <img src="/images/event-icon.svg" alt="" />
-                        <span>Event</span>
+                        <img src="/images/icons8-idea(1).svg" alt=""/>
+                        <span>Idea</span>
                     </button>
-                    <button>
-                        <img src="/images/article-icon.svg" alt="" />
-                        <span>Write article</span>
-                    </button>
-                    
                 </div>
             </ShareBox>
             { 
@@ -168,13 +163,13 @@ const Main = (props) => {
             </SharedImg>
             <SocialCounts>
               <li>
-                <button style={{border:"none", backgroundColor:"white"}}>
-                  <img src="/images/like-icon.svg" alt="" class="svg-icon count-like"/>
+                <button style={{border:"none", backgroundColor:"white"}} onClick={() => { LikeHandler(article.pid, props.user.uid)}}>
+                  <img src="/images/icons8-good-quality(2).svg" alt="" class="svg-icon count-like"/>
                   <span class="count">{article.likes}</span>
                 </button>
               </li>
               <li>
-                <button onClick={()=>handleShowComment(article.pid)} style={{border:"none", backgroundColor:"white"}}>
+              <button onClick={() => { handleShowComment(article.pid); handleShowCommentInput(); }} style={{ border: "none", backgroundColor: "white" }}>
                   <img src="/images/comment-icon.svg" alt="" class="svg-icon count-comment"/>
                   <span class="count">
                     {
@@ -184,16 +179,6 @@ const Main = (props) => {
                 </button>
               </li>
             </SocialCounts>
-            <SocialActions>
-                <button onClick={() => { LikeHandler(article.pid, props.user.uid)}}>
-                  <img src="/images/like-icon.svg" alt="" class="svg-icon" />
-                  <span>Like</span>
-                </button>
-                <button onClick={handleShowCommentInput}>
-                  <img src="/images/comment-icon.svg" alt="" class="svg-icon" />
-                  <span>Comments</span>
-                </button>
-        </SocialActions>
 
             {showCommentInput && (
               <CommentInput>
@@ -355,7 +340,7 @@ const ShareBox = styled(CommonCard)`
                 margin: 0 4px 0 -2px;
             }
             span {
-                color: #70b5f9;
+                color: rgb(102, 103, 171);
             }
         }
     }

@@ -34,7 +34,7 @@ const Header = (props) => {
         <Container>
           {delayComplete && (!props.user && <Navigate to="/" />)}
       <Content>
-        <a href="/" style={{textDecoration:"none"}}>
+        <a href="/" style={{textDecoration:"none",marginBottom:"7px"}}>
         <h1><span class="firstName">Idea</span><span class="lastName">Lab</span></h1>
         </a>
         
@@ -44,8 +44,8 @@ const Header = (props) => {
             <NavList>
               <a href="">
                 <Link to="/home">
-                <img src="/images/nav-home.svg" alt="" />
-                <span>Home</span>
+                <img src="/images/icons8-home-page.svg" alt="" />
+                <span>My Hub</span>
                 </Link>
               </a>
             </NavList>
@@ -53,8 +53,8 @@ const Header = (props) => {
             <NavList>
               <a href="">
                 <Link to="/my-network">
-                <img src="/images/nav-network.svg" alt="" />
-                <span>My Network</span>
+                <img src="/images/icons8-business-network.svg" alt=""/>
+                <span>Lab Community</span>
                 </Link>
                 
               </a>
@@ -62,21 +62,20 @@ const Header = (props) => {
 
             <NavList>
               <a href="">
-                <img src="/images/nav-jobs.svg" alt="" />
-                <span>Jobs</span>
+                <img src="/images/icons8-newspaper.svg" alt="" />
+                <span>Tech Today</span>
               </a>
             </NavList>
 
             <NavList>
               <a href="">
-                <img src="/images/nav-messaging.svg" alt="" />
-                <span>Messaging</span>
+                <img src="/images/icons8-message-exchange.svg" alt="" />
+                <span>Mind Share</span>
               </a>
             </NavList>
-
             <NavList>
               <a href="">
-                <img src="/images/nav-notifications.svg" alt="" />
+                <img src="/images/icons8-notification.svg" alt="" />
                 <span>Notifications</span>
               </a>
             </NavList>
@@ -257,7 +256,7 @@ a {
   position: relative;
   text-decoration: none;
   span {
-    color: rgba(0, 0, 0, 0.6);
+    color: rgba(0, 0, 0, 0.9);
     display: flex;
     align-items: center;
   }
@@ -265,14 +264,14 @@ a {
     min-width: 70px;
   }
 }
-&:hover,
-&:active {
+&:hover:nth-child(1), &:hover:nth-child(2), &:hover:nth-child(3), &:hover:nth-child(4), &:hover:nth-child(5), &:hover:nth-child(6) {
   a {
     span {
-      color: rgba(0, 0, 0, 0.9);
+      color: rgb(102, 103, 171);
     }
   }
 }
+ 
 `;
 
 const SignOut = styled.div`
