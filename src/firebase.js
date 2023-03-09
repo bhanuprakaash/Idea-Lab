@@ -3,9 +3,11 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 import 'firebase/compat/storage';
+import 'firebase/compat/database';
 const firebaseConfig = {
     apiKey: "AIzaSyC-yKbQFAOJpMDUD4TmZvRbtht4S1PHUkc",
     authDomain: "let-s-tech.firebaseapp.com",
+    databaseURL: "https://let-s-tech-default-rtdb.asia-southeast1.firebasedatabase.app",
     projectId: "let-s-tech",
     storageBucket: "let-s-tech.appspot.com",
     messagingSenderId: "433217818947",
@@ -16,10 +18,12 @@ const firebaseConfig = {
   
 const firebaseApp = firebase.initializeApp(firebaseConfig);
 const db=firebaseApp.firestore();
+const realTimeDb = firebase.database();
 const auth = firebase.auth();
 const provider = new firebase.auth.GoogleAuthProvider();
 const provider2 = new firebase.auth.GithubAuthProvider();
 const storage = firebase.storage();
 
-export {auth,provider,provider2,storage,db};
+
+export {auth,provider,provider2,storage,db,realTimeDb};
 export default db;

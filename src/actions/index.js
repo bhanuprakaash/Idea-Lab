@@ -1,4 +1,4 @@
-import {auth, provider,provider2,storage} from '../firebase.js';
+import {auth, provider,provider2,storage,realTimeDb} from '../firebase.js';
 import {SET_USER,
     SET_LOADING_STATUS,
     GET_ARTICLES,
@@ -131,7 +131,83 @@ export function signOutAPI(){
         }).catch((error)=>alert(error.message));
     }
 }
-export function postArticleAPI(payload){
+export function postArticleAPI(payload) {
+    return (dispatch) => {
+        dispatch(setLoadingStatus(true));
+        const userId = payload.user.uid;
+        const postId = realTimeDb.ref(`articles/${userId}`).push().key; // generate unique ID
+        const postRef = realTimeDb.ref(`articles/${userId}/${postId}`);
+        const timestamp = payload.timestamp;
+        console.log(timestamp);
+        const newDate = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000).toLocaleDateString('en-US');
+        if (payload.image && payload.video === "") {
+            const upload = storage.ref(`images/${payload.image.name}`).put(payload.image);
+            upload.on("state_changed", snapshot => {}, error => {
+                console.log(error)
+            }, () => {
+                storage.ref("images").child(payload.image.name).getDownloadURL().then(url => {
+                    postRef.set({
+                        actor: {
+                            description: payload.user.email,
+                            title: payload.user.displayName,
+                            date: newDate,
+                            image: payload.user.photoURL,
+                        },
+                        userId: userId,
+                        video: payload.video,
+                        sharedImg: url,
+                        likes: 0,
+                        comments: 0,
+                        test: "image",
+                        description: payload.description,
+                    });
+                    dispatch(setLoadingStatus(false));
+                })
+            })
+        } else if (payload.video && payload.image === "") {
+            console.log(payload.video);
+            postRef.set({
+                actor: {
+                    description: payload.user.email,
+                    title: payload.user.displayName,
+                    date:newDate,
+                    image: payload.user.photoURL,
+                },
+                userId: userId,
+                video: payload.video,
+                sharedImg: "",
+                likes: 0,
+                comments: 0,
+                test: "video",
+                description: payload.description,
+            });
+
+            dispatch(setLoadingStatus(false));
+        } else if (payload.video === "" && payload.image === "") {
+            postRef.set({
+                actor: {
+                    description: payload.user.email,
+                    title: payload.user.displayName,
+                    date: newDate,
+                    image: payload.user.photoURL,
+                },
+                userId: userId,
+                video: payload.video,
+                sharedImg: "",
+                likes: 0,
+                comments: 0,
+                test: "text",
+                description: payload.description,
+            });
+
+            dispatch(setLoadingStatus(false));
+        }
+    }
+}
+
+        
+
+/* export function postArticleAPI(payload){
     return (dispatch)=>{
         dispatch(setLoadingStatus(true));
         const postRef = db.collection("articles").doc();
@@ -201,9 +277,10 @@ export function postArticleAPI(payload){
     dispatch(setLoadingStatus(false));
         }
     }
-}
+} 
+*/
 
-
+/*
 export function getArticlesAPI(userId){
     return (dispatch)=>{
         let payload;
@@ -214,6 +291,25 @@ export function getArticlesAPI(userId){
                 }
             });
             dispatch(getArticles(payload));
+        })
+    }
+}
+*/
+
+export function getArticlesAPI(userId){
+    let payload;
+    return (dispatch)=>{
+        const articlesRef= realTimeDb.ref(`articles`);
+        console.log(articlesRef[0]);
+        realTimeDb.ref(`articles/${userId}`).on("value",(snapshot)=>{
+            payload=snapshot.val();
+            const keys= Object.keys(payload);
+            const payloadList=[];
+            for(let i=0;i<keys.length;i++){
+                payloadList.push(payload[keys[i]]);
+            }
+            payloadList.reverse();
+            dispatch(getArticles(payloadList));
         })
     }
 }
@@ -249,6 +345,39 @@ export function getUserDetailsAPI(userId){
         })
     }
 }
+/*
+export function handleLikeAPI(postId,userId){
+    return (dispatch)=>{
+        realTimeDb.ref(`likes/${postId}`).on("value",(snapshot)=>{
+            let payload=snapshot.val();
+            if(payload){
+                if(payload[userId]){
+                    realTimeDb.ref(`likes/${postId}/${userId}`).remove();
+                    realTimeDb.ref(`articles/${postId}/likes`).transaction((likes)=>{
+                        return likes-1;
+                    })
+                }
+                else{
+                    realTimeDb.ref(`likes/${postId}/${userId}`).set({
+                        userId:userId,
+                    });
+                    realTimeDb.ref(`articles/${postId}/likes`).transaction((likes)=>{
+                        return likes+1;
+                    })
+                }
+            }
+            else{
+                realTimeDb.ref(`likes/${postId}`).set({
+                    userId:userId,
+                });
+                realTimeDb.ref(`articles/${articles[1]}`).transaction((likes)=>{
+                    return likes+1;
+                })
+            }
+        })
+}
+}
+*/
 
 
     export function handleLikeAPI(postId, userId) {
@@ -293,6 +422,7 @@ export function getUserDetailsAPI(userId){
             });
         };
     }
+    
   
   
 

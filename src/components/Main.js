@@ -119,6 +119,7 @@ const Main = (props) => {
     {
       props.loading && <img src="/images/spinner.svg" alt="" />
     }
+    {console.log(props.articles)}
     { 
       props.articles.length > 0 &&
       props.articles.map((article,key) => {
@@ -140,7 +141,7 @@ const Main = (props) => {
                 <div>
                   <span>{props.userDetails.name}</span>
                   {article.actor && <span>{article.actor.description}</span>}
-                  {article.actor && <span>{article.actor.date.toDate().toLocaleDateString()}</span>}
+                  {article.actor && <span>{article.actor.date}</span>}
                 </div>
               </a>
               <button>
