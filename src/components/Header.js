@@ -82,7 +82,7 @@ const Header = (props) => {
               </a>
             </NavList>
             </NavList>
-            <Search style={{position:"relative",left:"50px"}}>
+          <Search style={{position:"relative",left:"50px"}}>
           <SearchForm onSubmit={handleSearch}>
             <div >
               <input type="text" placeholder="Search" />

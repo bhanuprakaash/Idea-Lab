@@ -25,7 +25,7 @@ const Main = (props) => {
           });
           commentRef.current = newCommentRef;
         }
-      }, [props.articles]);
+      }, []);
 
     useEffect(() => {
         if (props.user) {
@@ -184,8 +184,9 @@ const Main = (props) => {
                 </button>
               </CommentInput>
             )}
-            {
-              (!commentRef.current[article.pid] &&(
+            {/*
+              ( article.comments.length>0 &&
+                !commentRef.current[article.pid] &&(
                 article.comments.map((comment,key)=>(
                   <CommentContainer key={key}>
                     <CommentHeader>
@@ -201,6 +202,7 @@ const Main = (props) => {
                   </CommentContainer>
                 ))
               ))
+              */
             }
           </Article>
         )

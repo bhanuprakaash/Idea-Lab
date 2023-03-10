@@ -7,7 +7,7 @@ const Leftside = (props) => {
     if(props.user){
       props.getUserDetails(props.user.uid);
     }
-  }
+  },[]
   )
   return (
     <Container>

@@ -124,7 +124,7 @@ export function signInAPI(providerName){
                             });
                         }
                     });
-                    
+
                   } else {
                     // No user is signed in.
                     console.log("No user is signed in");
@@ -325,8 +325,6 @@ export function getArticlesAPI(userId){
 export function getArticlesAPI(userId){
     let payload;
     return (dispatch)=>{
-        const articlesRef= realTimeDb.ref(`articles`);
-        console.log(articlesRef[0]);
         realTimeDb.ref(`articles/${userId}`).on("value",(snapshot)=>{
             payload=snapshot.val();
             const keys= Object.keys(payload);
@@ -362,15 +360,28 @@ export function uploadImageAPI(image,userId,imageType){
 };
 
 
+// export function getUserDetailsAPI(userId){
+//     return (dispatch)=>{
+//         let payload;
+//         db.collection("users").doc(userId).onSnapshot((snapshot)=>{
+//             payload=snapshot.data();
+//             dispatch(getUserDetails(payload));
+//         })
+//     }
+// }
+
+//getUserDetailsAPI for realTimeDb
 export function getUserDetailsAPI(userId){
     return (dispatch)=>{
         let payload;
-        db.collection("users").doc(userId).onSnapshot((snapshot)=>{
-            payload=snapshot.data();
+        realTimeDb.ref(`users/${userId}`).on("value",(snapshot)=>{
+            payload=snapshot.val();
             dispatch(getUserDetails(payload));
-        })
+        });
     }
 }
+
+
 
 
  
