@@ -102,6 +102,29 @@ export function signInAPI(providerName){
                     }).catch(function(error) {
                         console.error("Error getting user details from the database: ", error);
                     });
+                    realTimeDb.ref(`users/${userId}`).once('value', (snapshot) => {
+                        if (snapshot.exists()) {
+                            console.log("User details already exist in the database");
+                        }
+                        else {
+                            realTimeDb.ref(`users/${userId}`).set({
+                                userid: userId,
+                                name: name,
+                                email: email,
+                                photoUrl: photoUrl,
+                                backGroundImageURL:"",
+                                bio:"",
+                            })
+                            .then(function() {
+                                console.log("User details added to the database!");
+                                
+                            })
+                            .catch(function(error) {
+                                console.error("Error adding user details to the database: ", error);
+                            });
+                        }
+                    });
+                    
                   } else {
                     // No user is signed in.
                     console.log("No user is signed in");
@@ -147,6 +170,7 @@ export function postArticleAPI(payload) {
             }, () => {
                 storage.ref("images").child(payload.image.name).getDownloadURL().then(url => {
                     postRef.set({
+                        pid: postId,
                         actor: {
                             description: payload.user.email,
                             title: payload.user.displayName,
@@ -167,6 +191,7 @@ export function postArticleAPI(payload) {
         } else if (payload.video && payload.image === "") {
             console.log(payload.video);
             postRef.set({
+                pid: postId,
                 actor: {
                     description: payload.user.email,
                     title: payload.user.displayName,
@@ -185,6 +210,7 @@ export function postArticleAPI(payload) {
             dispatch(setLoadingStatus(false));
         } else if (payload.video === "" && payload.image === "") {
             postRef.set({
+                pid: postId,
                 actor: {
                     description: payload.user.email,
                     title: payload.user.displayName,
@@ -345,42 +371,12 @@ export function getUserDetailsAPI(userId){
         })
     }
 }
+
+
+ 
+
 /*
-export function handleLikeAPI(postId,userId){
-    return (dispatch)=>{
-        realTimeDb.ref(`likes/${postId}`).on("value",(snapshot)=>{
-            let payload=snapshot.val();
-            if(payload){
-                if(payload[userId]){
-                    realTimeDb.ref(`likes/${postId}/${userId}`).remove();
-                    realTimeDb.ref(`articles/${postId}/likes`).transaction((likes)=>{
-                        return likes-1;
-                    })
-                }
-                else{
-                    realTimeDb.ref(`likes/${postId}/${userId}`).set({
-                        userId:userId,
-                    });
-                    realTimeDb.ref(`articles/${postId}/likes`).transaction((likes)=>{
-                        return likes+1;
-                    })
-                }
-            }
-            else{
-                realTimeDb.ref(`likes/${postId}`).set({
-                    userId:userId,
-                });
-                realTimeDb.ref(`articles/${articles[1]}`).transaction((likes)=>{
-                    return likes+1;
-                })
-            }
-        })
-}
-}
-*/
-
-
-    export function handleLikeAPI(postId, userId) {
+    export function handleLikeAPI(postId, userId,ownerId) {
         return (dispatch) => {
         db.collection("likes")
             .where("postId", "==", postId)
@@ -423,9 +419,73 @@ export function handleLikeAPI(postId,userId){
         };
     }
     
+*/
+export function handleLikeAPI(postId, userId, ownerId) {
+    return (dispatch) => {
+      const likesRef = realTimeDb.ref(`likes/${postId}`);
+      likesRef.once("value", (snapshot) => {
+        let payload = snapshot.val();
+        if (payload) {
+          console.log("payload:", payload);
+          if (payload.userId === userId) {
+            likesRef.remove();
+            realTimeDb
+              .ref(`articles/${ownerId}/${postId}/likes`)
+              .transaction((likes) => {
+                return likes - 1;
+              });
+          } else {
+            likesRef.set({
+              userId: userId,
+            });
+            realTimeDb
+              .ref(`articles/${ownerId}/${postId}/likes`)
+              .transaction((likes) => {
+                return likes + 1;
+              });
+          }
+        } else {
+          likesRef.set({
+            userId: userId,
+          });
+          realTimeDb
+            .ref(`articles/${ownerId}/${postId}/likes`)
+            .transaction((likes) => {
+              return likes + 1;
+            });
+        }
+        dispatch(handleLike(postId, userId, ownerId));
+      });
+    };
+  }
   
+  
+//create handleCommentAPI function to add comment to firebase realtime database which in articles/userid/postid/comments array 
+export function handleCommentAPI(postId, userId, ownerId, comment) {
+    return (dispatch) => {
+      const commentsRef = realTimeDb.ref(`articles/${ownerId}/${postId}/comments`);
+      commentsRef.transaction((comments) => {
+        if (!comments) {
+          // If there are no comments yet, initialize an empty array
+          comments = [];
+        }
+        // Add the new comment to the array
+        comments.push({
+          userId: userId,
+          comment: comment,
+        });
+        return comments;
+      }).then(() => {
+        // Dispatch the action after the transaction completes successfully
+        dispatch(handleComment(postId, userId, comment));
+      }).catch((error) => {
+        console.error("Error adding comment:", error);
+      });
+    };
+  };
   
 
+/*
 export function handleCommentAPI(postId,userId,comment){
     return (dispatch)=>{
         db.collection("articles").doc(postId).update({
@@ -438,16 +498,21 @@ export function handleCommentAPI(postId,userId,comment){
         })
     }
 };
+*/
 
 
 
-export function getCommentsAPI(postId){
+//create getCommentsAPI function to get comments from firebase realtime database which is in articles/userid/postid/comments array
+export function getCommentsAPI(postId,ownerId){
     return (dispatch)=>{
-        db.collection("articles").doc(postId).get().then((snapshot)=>{
-            dispatch(getComments(snapshot.data().comments));
-        })
+        const commentsRef=realTimeDb.ref(`articles/${ownerId}/${postId}/comments`);
+        commentsRef.on("value",(snapshot)=>{
+            dispatch(getComments(snapshot.val()));
+        }
+        )
     }
 }
+
 
 
 export function getLikesAPI(postId){

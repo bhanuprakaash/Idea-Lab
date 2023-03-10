@@ -11,7 +11,6 @@ import ReactPlayer from "react-player";
 
 const Main = (props) => {
     const [showModel, setShowModel] = useState("close");
-    const [showCommentInput, setShowCommentInput] = useState(false);
     const [comment, setComment] = useState("");
     const commentRef = React.useRef({});
 
@@ -40,9 +39,7 @@ const Main = (props) => {
         }
       }, []);
       
-      const handleShowCommentInput = () => {
-        setShowCommentInput(!showCommentInput);
-      };
+
 
       const handleShowComment = (pid) => {
         commentRef.current[pid] = !commentRef.current[pid];
@@ -66,13 +63,12 @@ const Main = (props) => {
                 break;
         }
     }
-    const LikeHandler =(postId,userId)=>{
-        props.handleLike(postId,userId);
+    const LikeHandler =(postId,userId,ownerId)=>{
+        props.handleLike(postId,userId,ownerId);
     }
 
-    const commentHandler =(postId,userId,comment)=>{
-        props.handleComment(postId,userId,comment);
-        setShowCommentInput(false);
+    const commentHandler =(postId,userId,ownerId,comment)=>{
+        props.handleComment(postId,userId,ownerId,comment);
         setComment("");
     }
 
@@ -119,7 +115,6 @@ const Main = (props) => {
     {
       props.loading && <img src="/images/spinner.svg" alt="" />
     }
-    {console.log(props.articles)}
     { 
       props.articles.length > 0 &&
       props.articles.map((article,key) => {
@@ -164,13 +159,13 @@ const Main = (props) => {
             </SharedImg>
             <SocialCounts>
               <li>
-                <button style={{border:"none", backgroundColor:"white",cursor:"pointer"}} onClick={() => { LikeHandler(article.pid, props.user.uid)}} > 
-                  <img src="/images/icons8-good-quality(2).svg" alt="" class="svg-icon count-like"/>
+                <button style={{border:"none", backgroundColor:"white",cursor:"pointer"}} onClick={() => { LikeHandler(article.pid,props.user.uid,article.userId)}} > 
+                <img src="/images/icons8-good-quality(2).svg" alt="" class="svg-icon count-like"/>
                   <span class="count">{article.likes}</span>
                 </button>
               </li>
               <li>
-              <button onClick={() => { handleShowComment(article.pid); handleShowCommentInput(); }} style={{ border: "none", backgroundColor: "white",cursor:"pointer" }}>
+              <button onClick={() => { handleShowComment(article.pid); }} style={{ border: "none", backgroundColor: "white",cursor:"pointer" }}>
                   <img src="/images/icons8-speech-bubble.svg" alt="" class="svg-icon count-comment" style={{marginRight:"5px"}}/>
                   <span class="count">
                     {
@@ -181,31 +176,16 @@ const Main = (props) => {
               </li>
             </SocialCounts>
 
-            {showCommentInput && (
+            {!commentRef.current[article.pid] && (
               <CommentInput>
                 <textarea value={comment} onChange={e=>setComment(e.target.value)} />
-                <button onClick={()=>{commentHandler(article.pid,props.user.uid,comment)}} style={{ border: "none", backgroundColor: "white",cursor:"pointer" }}>
+                <button onClick={()=>{commentHandler(article.pid,props.user.uid,article.userId,comment)}} style={{ border: "none", backgroundColor: "white",cursor:"pointer" }}>
                   <img src="/images/icons8-send-comment.svg" alt="" class="svg-icon" />
                 </button>
               </CommentInput>
             )}
-            {article.comments.length > 0 &&
-              (!commentRef.current[article.pid] ? (
-                article.comments.slice(-1).map((comment,key)=>(
-                  <CommentContainer key={key}>
-                    <CommentHeader>
-                      <CommentAvatar src={props.userDetails.photoUrl} alt="" />
-                      <div>
-                        <CommentUserName>{props.userDetails.name}</CommentUserName>
-                        <span style={{fontSize:"10px"}}>{
-                            new Date().toLocaleDateString()
-                        }</span>
-                      </div>
-                    </CommentHeader>
-                    <CommentText>{comment.comment}</CommentText> 
-                  </CommentContainer>
-                ))
-              ) : (
+            {
+              (!commentRef.current[article.pid] &&(
                 article.comments.map((comment,key)=>(
                   <CommentContainer key={key}>
                     <CommentHeader>
@@ -269,6 +249,7 @@ font-family: Arial, Helvetica, sans-serif;
 const CommentText = styled.p`
 margin: 0;
 font-size: 14px;
+text-align: left;
 `
 
             
@@ -501,8 +482,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => ({
     getArticles: (userId) => dispatch(getArticlesAPI(userId)),
     getUserDetails:(userId)=>dispatch(getUserDetailsAPI(userId)),
-    handleLike:(userId,articleId)=>dispatch(handleLikeAPI(userId,articleId)),
-    handleComment:(userId,articleId,comment)=>dispatch(handleCommentAPI(userId,articleId,comment)),
+    handleLike:(articleId,userId,ownerId)=>dispatch(handleLikeAPI(articleId,userId,ownerId)),
+    handleComment:(postId,userId,ownerId,comment)=>dispatch(handleCommentAPI(postId,userId,ownerId,comment)),
     getLikes:(userId)=>dispatch(getLikesAPI(userId)),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(Main);
