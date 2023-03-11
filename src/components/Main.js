@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled,{keyframes} from "styled-components";
 import React from "react";
 import PostModel from './PostModel'
 import "../App.css";
@@ -8,11 +8,28 @@ import {getArticlesAPI} from "../actions";
 import { getUserDetailsAPI } from "../actions";
 import { handleLikeAPI,handleCommentAPI,getLikesAPI } from "../actions";
 import ReactPlayer from "react-player";
+import Greeting from "./Greeting";
 
 const Main = (props) => {
     const [showModel, setShowModel] = useState("close");
     const [comment, setComment] = useState("");
     const commentRef = React.useRef({});
+    const [displayedWord, setDisplayedWord] = useState("");
+
+    useEffect(() => {
+      let currentIndex=0;
+      const interval = setInterval(() => {
+        if(!props.userDetails) return;
+        let word = props.userDetails.name;
+        if (currentIndex === word.length) {
+          clearInterval(interval);
+          return;
+        }
+        setDisplayedWord(word.substring(0, currentIndex + 1));
+        currentIndex++;
+      }, 200); 
+      return () => clearInterval(interval);
+    }, [props.userDetails.name]);
 
 
       useEffect(() => {
@@ -73,10 +90,15 @@ const Main = (props) => {
     }
 
 
+
     return (
         <>
         
     <Container>
+            <GreetingBox>
+                <Greeting displayWord={displayedWord}/>
+            </GreetingBox>
+            { /*
             <ShareBox>
             <div>
                 { props.user && props.user.photoURL ?
@@ -106,6 +128,7 @@ const Main = (props) => {
                     </button>
                 </div>
             </ShareBox>
+              */}
             { 
   props.articles.length === 0 
   ? 
@@ -227,6 +250,7 @@ background-color: #f2f2f2;
 border-radius: 8px;
 `
 
+
 const CommentHeader = styled.div`
 display: flex;
 align-items: center;
@@ -254,8 +278,7 @@ font-size: 14px;
 text-align: left;
 `
 
-            
-                
+           
 
 const Container = styled.div`
   grid-area: main;
@@ -334,6 +357,33 @@ const ShareBox = styled(CommonCard)`
 
 
   `;
+  const GreetingBox = styled.div`
+    margin: 0 0 8px;
+    background: linear-gradient(135deg, #f8cfd1, rgb(102, 103, 177));
+    text-align: left;
+    padding: 0 0 8px;
+    height:150px;
+    border-radius: 15px;
+    h1{ 
+        font-family: Helvetica, Arial, sans-serif;
+        color: rgb(85, 85, 85);
+        font-size: 35px;
+        font-weight: 400;
+        padding: 40px 24px 24px 40px;
+        margin-bottom: 4px;
+        text-align: left;
+    }
+    h2{
+      color: rgb(102, 103, 171);
+      font-family:'Andale Mono', monospace;
+      font-size: 27px;
+      font-weight: 400;
+      padding: 12px 12px 12px 16px;
+      margin-bottom: 4px;
+      text-align: left;
+      margin-left: 25px;
+    }
+`;
   const Article = styled(CommonCard)`
     padding: 0;
     margin: 0 0 8px;

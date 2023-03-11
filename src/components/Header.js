@@ -138,6 +138,7 @@ const Header = (props) => {
 
 const Container = styled.div`
 background-color: white;
+background: linear-gradient(135deg, white 58%, rgb(102, 103, 177) 42%);
 border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 left: 0;
 padding: 0 24px;

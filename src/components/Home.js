@@ -40,7 +40,7 @@ const Home = (props) => {
         <Container>
           {delayComplete && (!props.user && <Navigate to="/" />)}
             <Layout>
-                <LeftSide/>
+                
                 <Main/>
             </Layout>
         </Container>
