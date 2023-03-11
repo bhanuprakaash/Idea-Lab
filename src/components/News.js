@@ -20,40 +20,56 @@ const News = () => {
 
   return (
     <Container>
-      {articles.map((article) => (
-        <div key={article.url}>
+    {articles.map((article) => (
+      <ArticleContainer key={article.url}>
+        <img src={article.urlToImage} alt={article.title} />
+        <div>
           <h2>{article.title}</h2>
-          <img src={article.urlToImage} alt={article.title} />
           <p>{article.description}</p>
-          <a href={article.url}>Clicke Here</a>
+          <a href={article.url}>Click Here</a>
         </div>
-      ))}
-    </Container>
+      </ArticleContainer>
+    ))}
+  </Container>
   );
 
 };
 const Container = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
-    max-width: 1128px;
-    min-height: 100vh;
-    img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-    }
-    h2 {
-        text-align: center;
-        margin: 20px 0;
-    }
-    p {
-        text-align: center;
-        margin: 20px 0;
-    }
+  padding-top:75px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 `;
 
+const ArticleContainer = styled.div`
+  width: 55%;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+
+  img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    margin-bottom: 10px;
+  }
+
+  h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  p {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+
+  a {
+    font-size: 16px;
+    color: #0000ff;
+    text-decoration: none;
+  }
+`;
 
 export default News;

@@ -42,14 +42,13 @@ const Home = (props) => {
             <Layout>
                 <LeftSide/>
                 <Main/>
-                <RightSide/>
             </Layout>
         </Container>
     );
 };
 
 const Container = styled.div`
-  padding-top: 52px;
+  padding-top: 75px;
   max-width: 100%;
 `;
 

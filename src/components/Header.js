@@ -44,7 +44,7 @@ const Header = (props) => {
             <NavList>
               <a href="">
                 <Link to="/home">
-                <img src="/images/icons8-home-page.svg" alt="" />
+                <img src="/images/icons8-home-page.svg" alt="" style={{width:"30px"}}/>
                 <span>My Hub</span>
                 </Link>
               </a>
@@ -53,7 +53,7 @@ const Header = (props) => {
             <NavList>
               <a href="">
                 <Link to="/my-network">
-                <img src="/images/icons8-business-network.svg" alt=""/>
+                <img src="/images/icons8-business-network(1).svg" alt="" style={{width:"30px"}}/>
                 <span>Lab Community</span>
                 </Link>
                 
@@ -63,7 +63,7 @@ const Header = (props) => {
             <NavList>
               <a href="">
                 <Link to="/tech-today">
-                <img src="/images/icons8-newspaper.svg" alt="" />
+                <img src="/images/icons8-newspaper(1).svg" alt="" style={{width:"30px"}} />
                 <span>Tech Today</span>
                 </Link>
               </a>
@@ -71,18 +71,18 @@ const Header = (props) => {
 
             <NavList>
               <a href="">
-                <img src="/images/icons8-message-exchange.svg" alt="" />
+                <img src="/images/icons8-message-exchange.svg" alt="" style={{width:"30px"}} />
                 <span>Mind Share</span>
               </a>
             </NavList>
             <NavList>
               <a href="">
-                <img src="/images/icons8-notification.svg" alt="" />
+                <img src="/images/icons8-notification.svg" alt="" style={{width:"30px"}}/>
                 <span>Notifications</span>
               </a>
             </NavList>
             </NavList>
-          <Search style={{position:"relative",left:"50px"}}>
+         {/*<Search style={{position:"relative",left:"50px"}}>
           <SearchForm onSubmit={handleSearch}>
             <div >
               <input type="text" placeholder="Search" />
@@ -95,7 +95,18 @@ const Header = (props) => {
             {}
           </searchResultsContainer>
         </Search>
-
+    */
+    }
+            <SearchForm>
+              <Search>
+                <SearchIcon>
+                  <img src="/images/search-icon.svg" alt="" />
+                </SearchIcon>
+                <div>
+                  <input type="text" placeholder="Search..." />
+                </div>
+              </Search>
+           </SearchForm>
             <User style={{position:"relative", left:"50px"}}>
               <a>
               <Link to="/profile">
@@ -134,6 +145,7 @@ position: fixed;
 top: 0;
 width: 100vw;
 z-index: 100;
+height: 100px;
 `;
 
 const Content = styled.div`
@@ -145,7 +157,7 @@ max-width: 1128px;
 `;
 
 
-
+/*
 const Search = styled.div`
 opacity: 1;
 flex-grow: 1;
@@ -208,7 +220,58 @@ display: flex;
 justify-content: center;
 align-items: center;
 `;
+*/
+const Search = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  border-radius: 30px;
+  box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
+  height: 40px;
+  width: 280px;
+  margin: 0 16px;
+  flex-direction:row-reverse;
 
+  & > div {
+    flex-grow: 1;
+    input {
+      outline: none;
+      border: none;
+      box-shadow: none;
+      background-color: transparent;
+      color: rgba(0, 0, 0, 0.9);
+      width: 100%;
+      padding: 8px;
+      border-radius: 30px;
+      line-height: 1.75;
+      font-weight: 400;
+      font-size: 14px;
+      height: 24px;
+      border-color: transparent;
+      vertical-align: text-top;
+      padding-left: 20px;
+    }
+  }
+`;
+
+const SearchForm = styled.form`
+  display: flex;
+  align-items: center;
+`;
+
+
+const SearchIcon = styled.div`
+  width: 20px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color:rgb(102, 103, 171);
+  color: #fff;
+  border-radius: 30px;
+  cursor: pointer;
+`;
 const Nav = styled.nav`
 margin-left: auto;
 display: block;
@@ -258,7 +321,8 @@ a {
   position: relative;
   text-decoration: none;
   span {
-    color: rgba(0, 0, 0, 0.9);
+    font-family:  Helvetica, sans-serif;
+    color: rgba(0, 0, 0, 0.6);
     display: flex;
     align-items: center;
   }
@@ -295,8 +359,8 @@ a > svg {
   border-radius: 50%;
 }
 a > img {
-  width: 24px;
-  height: 24px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
 }
 span {
@@ -316,27 +380,7 @@ const Work = styled(User)`
 border-left: 1px solid rgba(0, 0, 0, 0.08);
 `;
 
-const SearchResultsContainer = styled.div`
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-`;
 
-const SearchResult = styled.div`
-  width: 30%;
-  margin: 10px;
-  text-align: center;
-`;
-
-const SearchResultImage = styled.img`
-  width: 100%;
-  border-radius: 50%;
-`;
-
-const SearchResultName = styled.p`
-  font-weight: bold;
-`;
 
 
 const mapStateToProps = (state) => {
