@@ -98,8 +98,8 @@ const Main = (props) => {
             <GreetingBox>
                 <Greeting displayWord={displayedWord}/>
             </GreetingBox>
-            { /*
-            <ShareBox>
+            
+            {/* <ShareBox>
             <div>
                 { props.user && props.user.photoURL ?
                 <img
@@ -127,8 +127,8 @@ const Main = (props) => {
                         <span>Idea</span>
                     </button>
                 </div>
-            </ShareBox>
-              */}
+            </ShareBox> */}
+            
             { 
   props.articles.length === 0 
   ? 
@@ -366,6 +366,7 @@ const ShareBox = styled(CommonCard)`
     border-radius: 15px;
     h1{ 
         font-family: Helvetica, Arial, sans-serif;
+        font-style: italic;
         color: rgb(85, 85, 85);
         font-size: 35px;
         font-weight: 400;

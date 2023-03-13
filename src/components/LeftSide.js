@@ -2,35 +2,64 @@ import styled from "styled-components";
 import {connect} from 'react-redux';
 import { getUserDetailsAPI } from "../actions";
 import { useEffect } from "react";
+import PostModel from './PostModel';
+import { useState } from "react";
 const Leftside = (props) => {
+  const [showModel,setShowModel] = useState("close");
   useEffect(()=>{
     if(props.user){
       props.getUserDetails(props.user.uid);
     }
   },[]
   )
+  const handleClick = (e) => {
+    e.preventDefault();
+    if(e.target !== e.currentTarget){
+        return;
+    }
+    switch(showModel){
+        case "open":
+            setShowModel("close");
+            break;
+        case "close":
+            setShowModel("open");
+            break;
+        default:
+            setShowModel("close");
+            break;
+    }
+}
   return (
     <Container>
       <ArtCard>
         <div>
-          <img src="/images/icons8-add(1).svg" alt="add" width="100px" />
+          <img src="/images/idea-got-it.svg" alt="add" width="200px" />
         </div>
-        <Info>
-          <h2>Hey,<br></br>Found anything new?</h2>
+        <HeadLine>
+          <h2><span style={{color:"rgb(102,103,171)"}}>Hey!</span><br></br>Found anything new?</h2>
           <h3>Let's share it with your tech community! </h3>
-          <p>
-          <img src="/images/camera.svg" alt="" />
-          <span>Photo</span>
-          </p>
-          <p><img src="/images/video-icon.svg" alt="" />
-          <span>Video</span></p>
-          <p>
-          <img src="/images/icons8-idea(1).svg" alt=""/>
-          <span>Idea</span>
-          </p>
+        </HeadLine>
+        <Info>
+          <div>
+            <p>
+            <img src="/images/icons8-add(1).svg" alt="add" width="50px" onClick={handleClick} />
+            </p>
+            <article>
+              <p>
+              <img src="/images/camera.svg" alt="" />
+              <span>Photo</span>
+              </p>
+              <p><img src="/images/video-icon.svg" alt="" />
+              <span>Video</span></p>
+              <p>
+              <img src="/images/icons8-macbook-idea.svg" alt=""/>
+              <span>Idea</span>
+              </p>
+            </article>
+          </div>
         </Info>
       </ArtCard>
-      
+      <PostModel showModel={showModel} handleClick={handleClick}/>
     </Container>
   );
 };
@@ -42,38 +71,37 @@ const Container = styled.div`
 `;
 
 const ArtCard = styled.div`
-  height: 400px;
-  text-align: center;
+  height: 500px;
   overflow: hidden;
   margin-bottom: 8px;
-  background-image: white;
-  border:2px solid rgb(102,103,171);
-  border-radius: 5px;
+  background-color: #fff;
+  background-image: url("images/space-paper-airplane-with-blue-line.png");
+  background-repeat: no-repeat;
+  background-size: 40px;
+  background-position: bottom right;
+  border-radius: 10px;
   transition: box-shadow 83ms;
   position: sticky;
   top:110px;
   box-shadow: 0 0 0 1px rgb(0 0 0 / 15%), 0 0 0 rgb(0 0 0 / 20%);
   div{
-    height: 15%;
+    height: 45%;
     img{
       object-fit: contain;
       height: 100%;
       cursor: pointer;
     }
     text-align: center;
-    border:2px solid black;
-    border-radius: 5px;
-    padding: 15px;
-    margin: 20px;
+    margin-bottom: 0px;
   }
 `;
 
-const Info = styled.section`
+const HeadLine = styled.section`
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   padding: 0 16px;
   border:none;
+  text-align: left;
   h2{
-    font-family:Raleway;
     font-size: 24px;
     font-weight: 500;
     color: black;
@@ -87,25 +115,87 @@ const Info = styled.section`
     line-height: 1.5;
     margin-bottom: 10px;
   }
-  p {
-        outline: none;
+`;
+const Info = styled.section`
+
+  border:none;
+  div{
+    display: flex;
+    height:120px;
+    margin:  0 20px;
+    padding:10px;
+    padding-top: 0px;
+    border-radius: 10px;
+    border: 2px solid black;
+    justify-content: space-between;
+    p{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      padding-left:35px;
+    }
+    article{
+      display: flex;
+      flex-direction: column;
+      margin:0 5px;
+      padding: 15px;
+      p{
+        padding:0;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        font-weight: 600;
+        margin-bottom: 5px;
+        img{
+          width: 30px;
+          height: 30px;
+          margin-right: 5px;
+        }
+      }
+      span{
+        font-size: 18px;
+        color:rgba(102,103,171);
+        margin-top: 2px;
+      }
+      
+    }
+   
+  }
+  /* section{  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 10px;
+    cursor: pointer;
+    img{
+      width: 30px;
+      height: 30px;
+      margin-bottom: 5px;
+    } */
+    /* p{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-weight: 600;
+      margin-bottom: 5px
+    }
+    span{
+      font-size: 14px;
+    }
+  }
+  p{
         color: rgba(0, 0, 0, 0.6);
         font-size: 14px;
         line-height: 1.5;
         background: transparent;
         border: none;
         display: flex;
+        flex-direction: column;
         align-items: center;
         font-weight: 600;
         margin-bottom: 5px;
-    }
-    span {
-        margin-left: 5px;
-        font-size: 18px;
-    }
-  text-align: left;
-  padding: 20px;
-  padding-top: 10px;
+    } */
 `;
 
 const mapStateToProps = (state) => {
