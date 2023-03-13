@@ -8,15 +8,21 @@ import CardHeader from '@mui/material/CardHeader';
 import { maxHeight } from "@mui/system";
 import React from "react";
 import { Navigate } from "react-router-dom";
+import {searchUserAPI} from "../actions";
 
 
 const Header = (props) => {
   const [delayComplete, setDelayComplete] = React.useState(false);
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [searchResults, setSearchResults] = React.useState([]);
+  
   React.useEffect(() => {
     setTimeout(() => {
       setDelayComplete(true);
     }, 1000);
   }, []);
+
+
 
 
   useEffect(() => {
@@ -25,10 +31,29 @@ const Header = (props) => {
     }
   }, []);
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    
+
+  const handleSearchQueryChange =(event)=>{
+    const query = event.target.value;
+  setSearchQuery(query);
+
+  if (query.trim() === '') {
+    setSearchResults([]);
   }
+  }
+  const handleSearch =()=>{
+    if(searchQuery){
+      props.searchUsers(searchQuery);
+    }
+  }
+  useEffect(() => {
+    setSearchResults(props.search);
+  }, [props.search]);
+
+  useEffect(() => {
+    if (!searchQuery) {
+      setSearchResults([]);
+    }
+  }, [searchQuery]);
 
     return(
         <Container>
@@ -87,7 +112,7 @@ const Header = (props) => {
             <div >
               <input type="text" placeholder="Search" />
             </div>
-            <SearchIcon type="submit">
+            // <SearchIcon type="submit">
               <img src="/images/search-icon.svg" alt="" />
             </SearchIcon>
           </SearchForm>
@@ -100,12 +125,45 @@ const Header = (props) => {
             <SearchForm>
               <Search>
                 <SearchIcon>
-                  <img src="/images/search-icon.svg" alt="" />
+                  <img src="/images/search-icon.svg" alt="" onClick={handleSearch} />
                 </SearchIcon>
                 <div>
-                  <input type="text" placeholder="Search..." />
+                  <input
+                   type="text" 
+                   placeholder="Search..." 
+                   value={searchQuery}
+                   onChange={(e) => {
+                    handleSearchQueryChange(e);
+                    handleSearch();
+                }}  />
                 </div>
               </Search>
+              { props.search && searchQuery &&
+              (
+                <SearchResultsContainer>
+                  <SearchResults>
+                    {searchResults.map((result) => (
+                      <SearchResult key={result.userid}>
+                        <h2>{result.name}</h2>
+                        <h3>{result.email}</h3>
+                      </SearchResult> 
+                    ))}
+                  </SearchResults>
+                </SearchResultsContainer>
+              )  
+           }
+           {
+            searchResults.length === 0 &&
+            searchQuery && (
+              <SearchResultsContainer>
+                <SearchResults>
+                  <SearchResult>
+                    <h2>No results found</h2>
+                  </SearchResult>
+                </SearchResults>
+              </SearchResultsContainer>
+            )
+           }
            </SearchForm>
             <User style={{position:"relative", left:"50px"}}>
               <a>
@@ -151,11 +209,36 @@ height: 100px;
 
 const Content = styled.div`
 display: flex;
+flex-wrap: wrap;
 align-items: center;
 margin: 0 auto;
 min-height: 100%;
 max-width: 1128px;
 `;
+// const SearchResult = styled.div`
+//   display: flex;
+//   flex-direction: column;
+//   max-width: 280px;
+//   a {
+//     align-items: center;
+//     background-color: white;
+//     border-radius: 0 0 10px 10px;
+//     box-shadow: 0 0 0 1px rgb(0 0 0 / 15%), 0 0 0 rgb(0 0 0 / 20%);
+//     display: flex;
+//     flex-direction: column;
+//     padding: 12px 24px;
+//     position: absolute;
+//     top: 38px;
+//     width: 100%;
+//     z-index: 100;
+//     img {
+//       width: 80px;
+//     }
+//     &:first-child {
+//       border-radius: 10px 10px 0 0;
+//     } 
+//   }
+// `;
 
 
 /*
@@ -223,6 +306,8 @@ align-items: center;
 `;
 */
 const Search = styled.div`
+  opacity: 1;
+  flex-grow: 1;
   position: relative;
   display: flex;
   align-items: center;
@@ -237,6 +322,7 @@ const Search = styled.div`
   & > div {
     flex-grow: 1;
     input {
+      max-width: 280px;
       outline: none;
       border: none;
       box-shadow: none;
@@ -259,6 +345,7 @@ const Search = styled.div`
 const SearchForm = styled.form`
   display: flex;
   align-items: center;
+  position:relative;
 `;
 
 
@@ -303,6 +390,32 @@ list-style-type: none;
   }
 }
 `;
+
+const SearchResultsContainer = styled.div`
+  position: fixed;
+  top: 100px; /* adjust this value to position the container below the header */
+  right: 24px;
+  width: 280px;
+  background-color: white;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+`;
+const SearchResults = styled.div`
+  max-height: 300px;
+  overflow-y: auto;
+`;
+const SearchResult = styled.div`
+  display: block;
+  padding: 10px 20px;
+  color: rgba(0, 0, 0, 0.9);
+  font-size: 14px;
+  line-height: 1.5;
+  &:hover {
+    background-color: #f8f8f8;
+    cursor: pointer;
+  }
+`;
+
 
 const NavList = styled.li`
 display: flex;
@@ -388,12 +501,14 @@ const mapStateToProps = (state) => {
   return {
     user: state.userState.user,
     userDetails:state.userDetailsState.userDetails,
+    search:state.searchState.users,
   };
 };
 
 const mapDispatchToProps = (dispatch) => ({
   signOut: () => dispatch(signOutAPI()),
   getUserDetails:(userId)=>dispatch(getUserDetailsAPI(userId)),
+  searchUsers:(search)=>dispatch(searchUserAPI(search)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);

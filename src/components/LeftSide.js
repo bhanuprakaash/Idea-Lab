@@ -11,7 +11,7 @@ const Leftside = (props) => {
       props.getUserDetails(props.user.uid);
     }
   },[]
-  )
+  );
   const handleClick = (e) => {
     e.preventDefault();
     if(e.target !== e.currentTarget){
@@ -71,7 +71,11 @@ const Container = styled.div`
 `;
 
 const ArtCard = styled.div`
-  height: 500px;
+  min-height: 450px;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
   overflow: hidden;
   margin-bottom: 8px;
   background-color: #fff;
@@ -116,86 +120,141 @@ const HeadLine = styled.section`
     margin-bottom: 10px;
   }
 `;
-const Info = styled.section`
+// const Info = styled.section`
+//   border:none;
+//   div{
+//     display: flex;
+//     flex-wrap: wrap;
+//     height:120px;
+//     margin:  0 20px;
+//     padding:10px;
+//     padding-top: 0px;
+//     border-radius: 10px;
+//     border: 2px solid black;
+//     justify-content: space-between;
+//     p{
+//       display: flex;
+//       flex-direction: column;
+//       align-items: center;
+//       padding: 20px;
+//     }
+//     article{
+//       display: flex;
+//       flex-direction: column;
+//       padding: 15px;
+//       p{
+//         padding:0;
+//         display: flex;
+//         flex-direction: row;
+//         align-items: center;
+//         font-weight: 600;
+//         margin-bottom: 5px;
+//         img{
+//           width: 30px;
+//           height: 30px;
+//           margin-right: 5px;
+//         }
+//       }
+//       span{
+//         font-size: 18px;
+//         color:rgba(102,103,171);
+//         margin-top: 2px;
+//       }
+      
+//     }
+   
+//   }
+//   /* section{  
+//     display: flex;
+//     align-items: center;
+//     justify-content: center;
+//     margin: 0 10px;
+//     cursor: pointer;
+//     img{
+//       width: 30px;
+//       height: 30px;
+//       margin-bottom: 5px;
+//     } */
+//     /* p{
+//       display: flex;
+//       flex-direction: column;
+//       align-items: center;
+//       font-weight: 600;
+//       margin-bottom: 5px
+//     }
+//     span{
+//       font-size: 14px;
+//     }
+//   }
+//   p{
+//         color: rgba(0, 0, 0, 0.6);
+//         font-size: 14px;
+//         line-height: 1.5;
+//         background: transparent;
+//         border: none;
+//         display: flex;
+//         flex-direction: column;
+//         align-items: center;
+//         font-weight: 600;
+//         margin-bottom: 5px;
+//     } */
+// `;
 
-  border:none;
-  div{
+const Info = styled.section`
+  border: none;
+  margin-bottom: 10px;
+  div {
     display: flex;
-    height:120px;
-    margin:  0 20px;
-    padding:10px;
+    justify-content: space-between;
+    margin: 0 10px;
+    height: auto;
+    padding: 10px;
     padding-top: 0px;
     border-radius: 10px;
     border: 2px solid black;
-    justify-content: space-between;
-    p{
+    p {
       display: flex;
       flex-direction: column;
       align-items: center;
       padding: 20px;
-      padding-left:35px;
     }
-    article{
+    article {
       display: flex;
       flex-direction: column;
-      margin:0 5px;
       padding: 15px;
-      p{
-        padding:0;
+      p {
+        padding: 0;
         display: flex;
         flex-direction: row;
         align-items: center;
         font-weight: 600;
         margin-bottom: 5px;
-        img{
+        img {
           width: 30px;
           height: 30px;
           margin-right: 5px;
         }
       }
-      span{
+      span {
         font-size: 18px;
-        color:rgba(102,103,171);
+        color: rgba(102, 103, 171);
         margin-top: 2px;
       }
-      
     }
-   
   }
-  /* section{  
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 10px;
-    cursor: pointer;
-    img{
-      width: 30px;
-      height: 30px;
-      margin-bottom: 5px;
-    } */
-    /* p{
-      display: flex;
-      flex-direction: column;
+  @media only screen and (max-width: 750px) {
+    div {
+      padding: 0;
+      margin: 0;
+      padding:5px;
+      article {
+        margin-top: 20px;
+      }
+    }
+    p{
       align-items: center;
-      font-weight: 600;
-      margin-bottom: 5px
-    }
-    span{
-      font-size: 14px;
     }
   }
-  p{
-        color: rgba(0, 0, 0, 0.6);
-        font-size: 14px;
-        line-height: 1.5;
-        background: transparent;
-        border: none;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        font-weight: 600;
-        margin-bottom: 5px;
-    } */
 `;
 
 const mapStateToProps = (state) => {

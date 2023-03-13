@@ -8,6 +8,7 @@ import {SET_USER,
     HANDLE_LIKES,
     GET_LIKES,
     GET_COMMENTS,
+    SEARCH_USERS,
 } from './actionType';
 import {db} from '../firebase.js';
 import firebase from 'firebase/compat/app';
@@ -53,7 +54,10 @@ export const getComments = (payload) => ({
     type: GET_COMMENTS,
     payload: payload,
 });
-
+export const searchUsers = (payload) => ({
+    type: SEARCH_USERS,
+    payload: payload,
+});
 
 
 
@@ -532,6 +536,23 @@ export function getLikesAPI(postId){
         db.collection("likes").doc(postId).onSnapshot((snapshot)=>{
             payload=snapshot.data();
             dispatch(getLikes(payload));
+        })
+    }
+}
+
+export function searchUserAPI(searchTerm){
+    return(dispatch)=>{
+        let payload;
+        realTimeDb.ref(`users`).once("value",(snapshot)=>{
+            const results=[]
+            snapshot.forEach((doc)=>{
+                let userData = doc.val();
+                if(userData.name.toLowerCase().includes(searchTerm.toLowerCase())){
+                    results.push(userData);
+                }
+            })
+            payload=results;
+            dispatch(searchUsers(payload));
         })
     }
 }

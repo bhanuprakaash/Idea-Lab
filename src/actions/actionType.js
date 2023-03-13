@@ -9,3 +9,4 @@ export const GET_LIKES = "GET_LIKES";
 export const GET_COMMENTS = "GET_COMMENTS";
 export const GET_LIKES_COUNT = "GET_LIKES_COUNT";
 export const GET_COMMENTS_COUNT = "GET_COMMENTS_COUNT";
+export const SEARCH_USERS = "SEARCH_USERS";
