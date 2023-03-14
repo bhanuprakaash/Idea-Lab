@@ -137,15 +137,25 @@ const Header = (props) => {
                     handleSearch();
                 }}  />
                 </div>
-              </Search>
-              { props.search && searchQuery &&
+                { props.search && searchQuery &&
               (
                 <SearchResultsContainer>
                   <SearchResults>
                     {searchResults.map((result) => (
                       <SearchResult key={result.userid}>
-                        <h2>{result.name}</h2>
-                        <h3>{result.email}</h3>
+                        <Link to={
+                          {
+                            pathname: `/profile/${result.userid}`
+                          }
+                        } style={{textDecoration:"none"}}>
+                          <section>
+                            <img src={result.photoUrl} alt="" />
+                            <div >
+                              <p href="">{result.name}</p>
+                              <p href="" style={{fontSize:"12px"}}>{result.email}</p>
+                            </div>
+                          </section>
+                        </Link>
                       </SearchResult> 
                     ))}
                   </SearchResults>
@@ -158,13 +168,16 @@ const Header = (props) => {
               <SearchResultsContainer>
                 <SearchResults>
                   <SearchResult>
-                    <h2>No results found</h2>
+                    <h2>No Users There</h2>
                   </SearchResult>
                 </SearchResults>
               </SearchResultsContainer>
             )
            }
-           </SearchForm>
+              </Search>
+
+           
+          </SearchForm>
             <User style={{position:"relative", left:"50px"}}>
               <a>
               <Link to="/profile">
@@ -392,9 +405,9 @@ list-style-type: none;
 `;
 
 const SearchResultsContainer = styled.div`
-  position: fixed;
-  top: 100px; /* adjust this value to position the container below the header */
-  right: 24px;
+  position: absolute;
+  top: 120%; 
+  left:0;
   width: 280px;
   background-color: white;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
@@ -405,14 +418,35 @@ const SearchResults = styled.div`
   overflow-y: auto;
 `;
 const SearchResult = styled.div`
-  display: block;
-  padding: 10px 20px;
-  color: rgba(0, 0, 0, 0.9);
-  font-size: 14px;
-  line-height: 1.5;
+  display: flex;
+  padding: 10px;
+  cursor: pointer;
+  width: 100%;
   &:hover {
-    background-color: #f8f8f8;
-    cursor: pointer;
+    background-color: #f5f5f5;
+  }
+
+  section {
+    text-decoration: none;
+    color: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    p{
+      font-family:  Helvetica, sans-serif;
+      margin-left: 10px;
+      font-size: 14px;
+    }
+  }
+  img{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  h2{
+    font-size: 14px;
+    font-weight: 400;
+    margin: 0 auto;
   }
 `;
 
