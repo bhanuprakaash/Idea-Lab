@@ -10,6 +10,7 @@ import {
   GET_LIKES,
   GET_COMMENTS,
   SEARCH_USERS,
+  SAVE_PROFILE_CHANGES
 } from './actionType';
 import { db } from '../firebase.js';
 import firebase from 'firebase/compat/app';
@@ -59,6 +60,11 @@ export const searchUsers = (payload) => ({
   type: SEARCH_USERS,
   payload: payload,
 });
+export const saveProfileChanges = (payload) =>({
+  type: SAVE_PROFILE_CHANGES,
+payload: payload,
+}
+)
 
 export function signInAPI(providerName) {
   let providerx;
@@ -126,7 +132,11 @@ export function signInAPI(providerName) {
                       email: email,
                       photoUrl: photoUrl,
                       backGroundImageURL: '',
-                      bio: '',
+                      bio: "Your Bio",
+                      currentRole: "Your Current Role",
+                      location:"Location",
+                      skills: "Your Skills",
+                      education: "Your Education",
                     })
                     .then(function () {
                       console.log('User details added to the database!');
@@ -570,4 +580,26 @@ export function searchUserAPI(searchTerm) {
       dispatch(searchUsers(payload));
     });
   };
+}
+//saveProfileChangesAPI for realTimeDb
+export function saveProfileChangesAPI(userId, name, bio, email, education, skills, location, currentRole) {
+  return (dispatch) => {
+    const updates = {};
+    if (name) updates.name = name;
+    if (bio) updates.bio = bio;
+    if (email) updates.email = email;
+    if (education) updates.education = education;
+    if (skills) updates.skills = skills;
+    if (location) updates.location = location;
+    if (currentRole) updates.currentRole = currentRole;
+
+    console.log("userId:", userId);
+    realTimeDb.ref(`users/${userId}`).update(updates)
+      .then(() => {
+        dispatch(saveProfileChanges(name, bio, email, education, skills, location, currentRole));
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }
 }

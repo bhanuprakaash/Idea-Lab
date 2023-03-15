@@ -1,21 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { getUserDetailsAPI, getArticlesAPI } from '../actions';
+import { getUserDetailsAPI, getArticlesAPI,saveProfileChangesAPI } from '../actions';
 import styled from 'styled-components';
 import ReactPlayer from 'react-player';
 
 function UserProfile(props) {
   const [comment, setComment] = useState('');
   const commentRef = React.useRef({});
-  const [name, setName] = useState('');
-  const [bio, setBio] = useState('');
-  const [email, setEmail] = useState('');
-  const [education, setEducation] = useState('');
-  const [skills, setSkills] = useState('');
-  const [location, setLocation] = useState('');
-  const [currentRole, setCurrentRole] = useState('');
-  const [backGroundImageURL, setBackGroundImageURL] = useState('');
-  const [photoUrl, setPhotoUrl] = useState('');
+  const [name, setName] = useState(props.userDetails.name);
+  const [bio, setBio] = useState(props.userDetails.bio);
+  const [email, setEmail] = useState(props.userDetails.email);
+  const [education, setEducation] = useState(props.userDetails.education);
+  const [skills, setSkills] = useState(props.userDetails.skills);
+  const [location, setLocation] = useState(props.userDetails.location);
+  const [currentRole, setCurrentRole] = useState(props.userDetails.currentRole);
   const [showEdit, setShowEdit] = useState(false);
 
   useEffect(() => {
@@ -31,10 +29,21 @@ function UserProfile(props) {
   }, []);
 
   useEffect(() => {
+    setName(props.userDetails.name);
+    setBio(props.userDetails.bio);
+    setEmail(props.userDetails.email);
+    setEducation(props.userDetails.education);
+    setSkills(props.userDetails.skills);
+    setLocation(props.userDetails.location);
+    setCurrentRole(props.userDetails.currentRole);
+  }, [props.userDetails]);
+  
+
+  useEffect(() => {
     if (props.user) {
       props.getArticles(props.user.uid);
     }
-  }, []);
+  }, [props.user]);
 
   const handleShowComment = (pid) => {
     commentRef.current[pid] = !commentRef.current[pid];
@@ -44,7 +53,7 @@ function UserProfile(props) {
     if (props.user) {
       props.getUserDetails(props.user.uid);
     }
-  }, []);
+  }, [props.user]);
   const LikeHandler = (postId, userId, ownerId) => {
     props.handleLike(postId, userId, ownerId);
   };
@@ -75,11 +84,9 @@ function UserProfile(props) {
   const handleCurrentRoleChange = (e) => {
     setCurrentRole(e.target.value);
   };
-  const handleBackGroundImageURLChange = (e) => {
-    setBackGroundImageURL(e.target.value);
-  };
-  const handlePhotoUrlChange = (e) => {
-    setPhotoUrl(e.target.value);
+  const handleSaveChanges = () => {
+    props.saveProfileChanges(props.userDetails.userid, name, bio, email, education, skills, location, currentRole);
+    setShowEdit(false);
   };
 
   const EditView = (
@@ -130,7 +137,7 @@ function UserProfile(props) {
           />
         </div>
         <button onClick={() => setShowEdit(false)}>Cancel</button>
-        <button onClick={() => setShowEdit(false)}>Save</button>
+        <button onClick={handleSaveChanges}>Save</button>
       </Edit>
     </EditContainer>
   );
@@ -164,8 +171,7 @@ function UserProfile(props) {
                   : props.userDetails.bio}
               </p>
               <p>
-                <span>Location | </span>
-                <span>Current Role</span>
+                <span>{props.userDetails.location} | {props.userDetails.currentRole}</span>
               </p>
               <Details>
                 <div>
@@ -175,8 +181,8 @@ function UserProfile(props) {
                 </div>
                 <div style={{ marginLeft: '20px' }}>
                   <h3>{props.userDetails.email}</h3>
-                  <h3>SSE</h3>
-                  <h3>ReactJS</h3>
+                  <h3>{props.userDetails.education}</h3>
+                  <h3>{props.userDetails.skills}</h3>
                 </div>
               </Details>
               <Follow>
@@ -666,5 +672,6 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => ({
   getArticles: (userId) => dispatch(getArticlesAPI(userId)),
   getUserDetails: (userId) => dispatch(getUserDetailsAPI(userId)),
+  saveProfileChanges: (userId,name,bio,email,education,skills,location,currentRole) => dispatch(saveProfileChangesAPI(userId,name,bio,email,education,skills,location,currentRole)),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(UserProfile);

@@ -69,12 +69,9 @@ function OtherUsersProfile(props) {
                 : props.userDetails.bio}
             </p>
             <p>
-              <span>Location | </span>
-              <span>Current Role</span>
+              <span> {props.userDetails.location} | </span>
+              <span>{props.userDetails.currentRole}</span>
             </p>
-            {/* <h3><span><pre>Email:     </pre></span>{props.userDetails.email}</h3>
-                    <h3><pre>Education: </pre>Sanskrithi School of Engineering</h3>
-                    <h3><pre>Skills:    </pre>React, Spring</h3> */}
             <Details>
               <div>
                 <h3>Email:</h3>
@@ -83,8 +80,8 @@ function OtherUsersProfile(props) {
               </div>
               <div style={{ marginLeft: '20px' }}>
                 <h3>{props.userDetails.email}</h3>
-                <h3>SSE</h3>
-                <h3>ReactJS</h3>
+                <h3>{props.userDetails.education}</h3>
+                <h3>{props.userDetails.skills}</h3>
               </div>
             </Details>
             <Follow>
