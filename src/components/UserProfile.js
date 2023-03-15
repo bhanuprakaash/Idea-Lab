@@ -1,230 +1,496 @@
 import React, { useState,useEffect } from "react";
 import {connect} from "react-redux";
-import { getArticlesAPI,uploadImageAPI } from "../actions";
-import { getUserDetailsAPI } from "../actions";
+import { getUserDetailsAPI,getArticlesAPI } from "../actions";
+import styled from "styled-components";
+import ReactPlayer from "react-player";
 
 
 function UserProfile(props) {
-  const [isFollowing, setIsFollowing] = useState(false);
-  const [connections, setConnections] = useState(0);
-  const [image, setImage] = useState(null);
-
+  const [comment, setComment] = useState("");
+  const commentRef = React.useRef({});
   useEffect(() => {
+    const newCommentRef = {};
+    if (props.articles && props.articles.length > 0) {
+      props.articles.forEach((article) => {
+        if(article){
+          newCommentRef[article.pid] = false;
+        }
+      });
+      commentRef.current = newCommentRef;
+    }
+  }, []);
+
+useEffect(() => {
     if (props.user) {
         props.getArticles(props.user.uid);
       }
 },[]);
 
+
+  const handleShowComment = (pid) => {
+    commentRef.current[pid] = !commentRef.current[pid];
+  };
+
+
   useEffect(() => {
-    if (props.user) {
+    if(props.user){
       props.getUserDetails(props.user.uid);
-    }
-  }, []);
-
-
-  if (!props.user) {
-    return <div>Loading...</div>;
+    }},[]);
+    const LikeHandler =(postId,userId,ownerId)=>{
+      props.handleLike(postId,userId,ownerId);
   }
 
-
-  const handleChange = (e) => {
-    if (e.target.files[0]) {
-      setImage(e.target.files[0]);
-    }
-  };
-
- 
-
-  const handleUpload = (imageType) => {
-    if(imageType === 'background'){
-      props.uploadImage(image,props.user.uid,'background');
-    }
-    else if(imageType === 'profile'){
-      props.uploadImage(image,props.user.uid,'profile');
-    }
-  };
-
-  const toggleFollow = () => {
-    setIsFollowing(!isFollowing);
-    setConnections(connections + (isFollowing ? -1 : 1)); 
-  };
+  const commentHandler =(postId,userId,ownerId,comment)=>{
+      props.handleComment(postId,userId,ownerId,comment);
+      setComment("");
+  }
 
   return (
-    <div>
-      <div style={styles.imageContainer}>
-        <img
-          src={props.userDetails.backGroundImageURL}
-          alt="image"
-          style={styles.image}
-          onClick={() => document.querySelector("input[type='file']").click()}
-        />
-        <button
-          style={isFollowing ? styles.followButtonActive : styles.followButton}
-          onClick={toggleFollow}
-        >
-          {isFollowing ? "Following" : "Follow"}
-        </button>
-      </div>
-      <div style={styles.infoContainer}>
-        <img
-          src={props.userDetails.photoUrl}
-          alt="secondimage"
-          style={styles.secondImage}
-        />
-        {console.log(props.userDetails.photoUrl)}
-          <h2 style={styles.name}>{props.userDetails.name}</h2>
-          <p style={styles.profession}>User profession</p>
-          <p style={styles.location}>Profession/ Location</p>
-          <p style={styles.current}>Current: Present Role </p>
-          <p style={styles.previous}>Previous: Previousily Worked</p>
-          <p style={styles.education}>Education: Studies Completed </p>
-          <p style={styles.connections}>{connections} <a href="#"> Connections</a></p>
-        </div>
-      </div>
-    
+      <Container>
+          <CoverImg>
+              {
+                  props.userDetails.backGroundImageURL === "" ? <img src="/images/cover.png" alt="cover" /> : <img src={props.userDetails.backGroundImageURL} alt="cover" />
+              }
+          </CoverImg>
+          <Profile>
+              <ProfileImg>
+                  {
+                      props.userDetails.photoUrl !== "" ? <img src="/images/default-profile-icon.jpg" alt="user" /> : <img src={props.userDetails.photoUrl} alt="user" />
+                  }
+              </ProfileImg>
+              <Info>
+                  <h2>{props.userDetails.name}</h2>
+                  <p>{
+                      props.userDetails.bio === "" ? "No Bio.Must be 25 Characters" : props.userDetails.bio
+                      }</p>
+                  <p><span>Location | </span><span>Current Role</span></p>
+                  {/* <h3><span><pre>Email:     </pre></span>{props.userDetails.email}</h3>
+                  <h3><pre>Education: </pre>Sanskrithi School of Engineering</h3>
+                  <h3><pre>Skills:    </pre>React, Spring</h3> */}
+                  <Details>
+                      <div>
+                          <h3>Email:</h3>
+                          <h3>Education:</h3>
+                          <h3>Skills:</h3>
+                      </div>
+                      <div style={{marginLeft:"20px"}}>
+                          <h3>{props.userDetails.email}</h3>
+                          <h3>SSE</h3>
+                          <h3>ReactJS</h3>
+                      </div>
+                  </Details>
+                  <Follow>
+                    <div>
+                      <p>12</p>
+                      <p style={{fontSize:"13px"}}>Following</p>
+                    </div>
+                    <div>
+                        <p>12</p>
+                        <p style={{fontSize:"13px"}}>Followers</p>
+                    </div>
+                    <div>
+                        <button style={{marginLeft:"20px"}}>
+                            Edit Profile
+                        </button>
+                    </div>
+                  </Follow>
+              </Info>
+          </Profile>
+          {
+            props.articles.length < 0 
+            ? 
+            
+              <h2
+                style={{margin:"10px",fontWeight:"normal",fontSize:"20px",display:"flex",justifyContent:"space-between",alignItems:"center"}}
+              >Let's share something</h2>
+            :
+          <Content>
+            <h2 style={{margin:"10px",fontWeight:"normal",fontSize:"20px"}}>Recent Articles</h2>
+                  { 
+                    props.articles.length > 0 &&
+                    props.articles.map((article,key) => {
+                      if (!article) {
+                        return null; 
+                      }
 
+                      return (
+                        <Article key={key}>
+                          <SharedActor>
+                            <a>
+                              <img src={props.userDetails.photoUrl} alt="" style={{
+                                width: "48px",
+                                height: "48px",
+                                borderRadius: "50%",
+                                marginRight: "8px",
+                                objectFit: "cover",
+                              }}/>
+                              <div>
+                                <span>{props.userDetails.name}</span>
+                                {article.actor && <span>{article.actor.description}</span>}
+                                {article.actor && <span>{article.actor.date}</span>}
+                              </div>
+                            </a>
+                            <button>
+                              <img src="/images/ell.png"  alt="" />
+                            </button>
+                          </SharedActor>
+                          <Description>
+                            {article.description}
+                          </Description>
+                          <SharedImg>
+                            <a>
+                              {  
+                                !article.sharedImg && article.video ? (
+                                  <ReactPlayer width={"100%"} url={article.video} />
+                                ) : (
+                                  article.sharedImg && <img src={article.sharedImg} alt="" />
+                                )
+                              }
+                            </a>
+                          </SharedImg>
+                          <SocialCounts>
+                            <li>
+                              <button style={{border:"none", backgroundColor:"white",cursor:"pointer"}} onClick={() => { LikeHandler(article.pid,props.user.uid,article.userId)}} > 
+                              <img src="/images/icons8-good-quality(2).svg" alt="" class="svg-icon count-like"/>
+                                <span class="count">{article.likes}</span>
+                              </button>
+                            </li>
+                            <li>
+                            <button onClick={() => { handleShowComment(article.pid); }} style={{ border: "none", backgroundColor: "white",cursor:"pointer" }}>
+                                <img src="/images/icons8-speech-bubble.svg" alt="" class="svg-icon count-comment" style={{marginRight:"5px"}}/>
+                                <span class="count">
+                                  {
+                                    article.comments ? article.comments.length : 0
+                                  }
+                                </span>
+                              </button>
+                            </li>
+                          </SocialCounts>
+
+                          {!commentRef.current[article.pid] && (
+                            <CommentInput>
+                              <textarea value={comment} onChange={e=>setComment(e.target.value)} />
+                              <button onClick={()=>{commentHandler(article.pid,props.user.uid,article.userId,comment)}} style={{ border: "none", backgroundColor: "white",cursor:"pointer" }}>
+                                <img src="/images/icons8-send-comment.svg" alt="" class="svg-icon" />
+                              </button>
+                            </CommentInput>
+                          )}
+                          {/*
+                            ( article.comments.length>0 &&
+                              !commentRef.current[article.pid] &&(
+                              article.comments.map((comment,key)=>(
+                                <CommentContainer key={key}>
+                                  <CommentHeader>
+                                    <CommentAvatar src={props.userDetails.photoUrl} alt="" />
+                                    <div>
+                                      <CommentUserName>{props.userDetails.name}</CommentUserName>
+                                      <span style={{fontSize:"10px"}}>{
+                                          new Date().toLocaleDateString()
+                                      }</span>
+                                    </div>
+                                  </CommentHeader>
+                                  <CommentText>{comment.comment}</CommentText>
+                                </CommentContainer>
+                              ))
+                            ))
+                            */
+                          }
+                        </Article>
+                      )
+                      })
+
+                    }
+
+        </Content>
+        }          
+      </Container>
+      
   );
 }
+const Container = styled.div`
+    margin-top:100px;
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+`;
 
-const styles = {
-  imageContainer: {
-    position: "relative",
-  },
-  image: {
-    marginTop:"20px",
-    width: "95%",
-    height: "320px",
-    background: "black",
-    marginLeft:"30px",
-    marginTop:"20px",
-    filter: "blur(0.5px)"
-  },
-  modal: {
-    position: "fixed",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    zIndex: "2",
-    backgroundColor: "rgba(0, 0, 0, 0.9)",
-  },
-  modalImage: {
-    maxWidth: "800vw",
-    maxHeight: "80vh",
-    objectFit: "contain",
-    background: "black",
-  },
-  
-  followButton: {
-    position: "absolute",
-    top:"90%",
-    bottom: "5%",
-    left: "277%",
-    width: "130px",
-    height: "50px",
-    backgroundColor: "skyblue",
-    color: "white",
-    zIndex: "1",
-    borderRadius: "15px",
-  },
-  followButtonActive: {
-    position: "absolute",
-    top:"50%",
-    bottom: "5%",
-    left: "275%",
-    width: "150px",
-    height: "50px",
-    backgroundColor: "white",
-    color: "blue",
-    zIndex: "1",
-    borderRadius: "15px",
-    border: "2px solid blue",
-  },
-  secondImage:{
-    position:"absolute",
-    top:"0%",
-    left:"0%",
-    width:"25%",
-    height:"100%",
+const CoverImg = styled.div`
+    width:80%;
+    margin: 0 auto;
+    height:350px;
+    position: relative;
+    img{
+        width:100%;
+        height:100%;
+        object-fit:cover;
+    }
+`;
+
+const Profile = styled.div`
+    background-color: #ffffff;
+    width:50%;
+    height:250px;
+    display:flex;
+    flex-direction:row;
+    align-items:center;
+    position:absolute;
+    top:200px;
+    left:15%;
+`;
+
+const ProfileImg = styled.div`
+    width:200px;
+    height:100%;
+    img{
+        width:200px;
+        height:250px;
+        object-fit:cover;
+    }
+`;
+
+const Info = styled.div`
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:left;
+    margin-left:20px;
+    padding-top: 15px;
+    h2{
+        font-size:24px;
+        font-weight:500;
+        color:black;
+        line-height:1.5;
+        margin-bottom:5px;
+    }
+    h3{
+        font-size:15px;
+        font-weight:350;
+        color:black;
+        line-height:1.5;
+        margin-bottom:5px;
+    }
+    p{
+        width: 100%;
+        font-size:15px;
+        height: 100%;
+        margin-bottom: 5px;
+    }
+`;
+const Details = styled.div`
+    display:flex;
+    flex-direction:row;
+    align-items:center;
+    width:100%;
+    height:100%;
+    div{
+        display:flex;
+        flex-direction:column;
+        align-items:left;
+        height:100%;
+    }
+`;
+
+const Follow = styled.div`
+    width:100%;
+    height:100%;
+    display:flex;
+    margin-bottom: 10px;
+    flex-direction:row;
+    align-items:center;
+    button{
+        width:100%;
+        height:100%;
+        background-color: #0a66c2;
+        color:white;
+        border-radius: 20px;
+        border: none;
+        font-size: 13px;
+        font-weight: 500;
+        padding: 10px 20px;
+        cursor: pointer;
+        &:hover{
+            background-color: #004182;
+        }
+    }
+    div{
+        font-size:15px;
+        font-weight:350;
+        color:black;
+        margin-right: 10px;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        p{
+            font-size:20px;
+            font-weight:500;
+            color:black;
+        }
+    }
+`;
+const CommonCard = styled.div`
+    text-align: center;
+    overflow: hidden;
+    margin-bottom: 8px;
+    background-color: #fff;
+    border-radius: 5px;
+    position: relative;
+    border: none;
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 15%), 0 0 0 rgb(0 0 0 / 20%);
+`;
+
+
+const Article = styled(CommonCard)`
+     padding: 0;
+    margin: 0 0 8px;
+    overflow: visible;
+    width: 50%;
     
+`;
+  const SharedActor = styled.div`
+    padding-right: 40px;
+    flex-wrap: nowrap;
+    padding: 12px 16px 0;
+    margin-bottom: 8px;
+    align-items: center;
+    display: flex;
+    a {
+        margin-right: 12px;
+        flex-grow: 1;
+        overflow: hidden;
+        display: flex;
+        text-decoration: none;
+        img {
+            width: 48px;
+            height: 48px;
+        }
+        & > div {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            flex-basis: 0;
+            margin-left: 8px;
+            overflow: hidden;
+            span {
+                text-align: left;
+                &:first-child {
+                    font-size: 14px;
+                    font-weight: 700;
+                    color: rgba(0, 0, 0, 1);
+                }
+                &:nth-child(n + 1) {
+                    font-size: 12px;
+                    color: rgba(0, 0, 0, 0.6);
+                }
+            }
+        }
+    }
+    button {
+        position: absolute;
+        right: 12px;
+        top: 0;
+        background: transparent;
+        border: none;
+        outline: none;
+    }
+    `;
+    const Description = styled.div`
+        padding: 0 16px;
+        overflow: hidden;
+        color: rgba(0, 0, 0, 0.9);
+        font-size: 14px;
+        text-align: left;
+    `;
+    const SharedImg = styled.div`
+        margin-top: 8px;
+        width: 100%;
+        display: block;
+        position: relative;
+        background-color: #f9fafb;
+        img {
+            object-fit: contain;
+            width: 100%;
+            height: 100%;
+        }
+    `;
+    const SocialCounts = styled.ul`
+        line-height: 1.3;
+        display: flex;
+        align-items: flex-start;
+        overflow: auto;
+        margin: 0 16px;
+        padding: 8px 0;
+        border-bottom: 1px solid #e9e5df;
+        list-style: none;
+        li {
+            margin-right: 5px;
+            font-size: 12px;
+            button {
+                display: flex;
+            }
+        }
+    `;
+    const SocialActions = styled.div`
+        align-items: center;
+        display: flex;
+        justify-content: flex-start;
+        margin: 0;
+        min-height: 40px;
+        padding: 4px 8px;
+        button {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px;
+            color: #0a66c2;
+            background: transparent;
+            border: none;
+            @media (min-width: 768px) {
+                span {
+                    margin-left: 8px;
+                }
+            }
+        }
+    `;
+
+const Content = styled.div`
+    position:relative;
+    left: 10%;
+    & > img {
+        width: 30px;
+    }
+`;
+
+const CommentInput = styled.div`
+    border-radius: 20px;
+    padding: 0 16px;
+    margin: 8px 0;
+    display: flex;
+    align-items: center;
+    border: 1px solid #e6ecf0;
+    background-color: #f9fafb;
+    textarea {
+        resize: none;
+        width: 100%;
+        outline: none;
+        border: none;
+        background-color: transparent;
+        font-size: 16px;
+        margin-left: 5px;
+    }
+`;
 
 
-  },
-  infoContainer: {
-    position:"absolute",
-    top:"30%",
-    width:"50%",
-    height:"200px",
-    padding: "1rem",
-    textAlign: "center",
-    border: "2px solid black",
-    marginLeft:"140px",
-    background:"white",
-    
-  },
-  name: {
-    position:"absolute",
-    top:"0",
-    left:"28%",
-    fontSize: "2rem",
-    fontWeight: "bold",
-    marginBottom: "0.5rem",
-  },
-  profession: {
-    position:"absolute",
-    top:"25%",
-    left:"28%",
-    fontSize: "1rem",
-    fontWeight: "normal",
-    marginBottom: "0.5rem"
-  },
-  location: {
-    position:"absolute",
-    top:"33%",
-    left:"28%",
-    fontSize: "1rem",
-    fontWeight: "normal",
-    marginBottom: "0.5rem"
-  },
-  current: {
-    position:"absolute",
-    top:"60%",
-    left:"28%",
-    fontSize: "1rem",
-    fontWeight: "normal",
-    marginBottom: "0.5rem"
-  },
-  previous: {
-    position:"absolute",
-    top:"70%",
-    left:"28%",
-    fontSize: "1rem",
-    fontWeight: "normal",
-    marginBottom: "0.5rem"
-  },
-  education: {
-    position:"absolute",
-    top:"80%",
-    left:"28%",
-    fontSize: "1rem",
-    fontWeight: "normal",
-    marginBottom: "0.5rem"
-  },
-  connections:{
-    position:"absolute",
-    top:"80%",
-    left:"85%"
-  }
-  }
 const mapStateToProps = (state) => {
     return {
       user: state.userState.user,
-      articles: state.articleState.articles,
       userDetails: state.userDetailsState.userDetails,
+      articles: state.articleState.articles,
     };
   };
   const mapDispatchToProps = (dispatch) => ({
     getArticles: (userId) => dispatch(getArticlesAPI(userId)),
-    uploadImage: (image,userId,imageType) => dispatch(uploadImageAPI(image,userId,imageType)),
     getUserDetails: (userId) => dispatch(getUserDetailsAPI(userId)),
   });
   export default connect(mapStateToProps,mapDispatchToProps)(UserProfile);
