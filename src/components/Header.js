@@ -143,7 +143,9 @@ const Header = (props) => {
                   <SearchResults>
                     {searchResults.map((result) => (
                       <SearchResult key={result.userid}>
-                        <Link to={
+                        <Link  
+                        key={result.userid}
+                        to={
                           {
                             pathname: `/profile/${result.userid}`
                           }

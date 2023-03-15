@@ -11,8 +11,8 @@ function OtherUsersProfile(props) {
     const location = useLocation();
     const userId = location.pathname.split("/").pop();
     useEffect(()=>{
-            props.getUserDetails(userId);
-    },[]);
+      props.getUserDetails(userId);
+    },[userId]);
     
   useEffect(() => {
     const newCommentRef = {};
@@ -28,7 +28,7 @@ function OtherUsersProfile(props) {
 
     useEffect(() => {
         props.getArticles(userId);
-    },[]);
+    },[userId]);
 
 
   const handleShowComment = (pid) => {
@@ -44,8 +44,9 @@ function OtherUsersProfile(props) {
       setComment("");
   }
     return (
+      
         <>
-        {props.header}
+        {props.header}  
         <Container>
             <CoverImg>
                 {
@@ -80,7 +81,7 @@ function OtherUsersProfile(props) {
                         </div>
                     </Details>
                     <Follow>
-                    <button>Follow</button>
+                    <button disabled={props.user.uid === props.userDetails.userid}>Follow</button>
                     <div>
                         <p>12</p>
                         <p style={{fontSize:"13px"}}>Followers</p>
@@ -303,7 +304,12 @@ const Follow = styled.div`
         color:white;
         font-weight:500;
         font-size:15px;
+        cursor:pointer;
     }
+    button:disabled{
+        visibility: hidden;
+    }
+    
     div{
         font-size:15px;
         font-weight:350;
@@ -329,15 +335,20 @@ const CommonCard = styled.div`
     border: none;
     box-shadow: 0 0 0 1px rgb(0 0 0 / 15%), 0 0 0 rgb(0 0 0 / 20%);
 `;
-
+const Content = styled.div`
+    text-align: center;
+    width:750px;
+    & > img {
+        width: 30px;
+    }
+`;
 
 const Article = styled(CommonCard)`
      padding: 0;
-    margin: 0 0 8px;
-    overflow: visible;
     margin: 0 auto;
-    width:700px;
-`;
+    min-width: 700px;
+    overflow: visible;
+    `;
   const SharedActor = styled.div`
     padding-right: 40px;
     flex-wrap: nowrap;
@@ -443,12 +454,7 @@ const Article = styled(CommonCard)`
         }
     `;
 
-const Content = styled.div`
-    text-align: center;
-    & > img {
-        width: 30px;
-    }
-`;
+
 
 const CommentInput = styled.div`
     border-radius: 20px;
@@ -477,6 +483,7 @@ const CommentInput = styled.div`
 
 const mapStateToProps = (state) => {
 return {
+    user: state.userState.user,
     userDetails:state.userDetailsState.userDetails,
     articles:state.articleState.articles,
 };

@@ -8,6 +8,18 @@ import ReactPlayer from "react-player";
 function UserProfile(props) {
   const [comment, setComment] = useState("");
   const commentRef = React.useRef({});
+  const [name, setName] = useState("");
+  const [bio, setBio] = useState("");
+  const [email, setEmail] = useState("");
+  const [education, setEducation] = useState("");
+  const [skills, setSkills] = useState("");
+  const [location, setLocation] = useState("");
+  const [currentRole, setCurrentRole] = useState("");
+  const [backGroundImageURL, setBackGroundImageURL] = useState("");
+  const [photoUrl, setPhotoUrl] = useState("");
+  const [showEdit, setShowEdit] = useState(false);
+
+  
   useEffect(() => {
     const newCommentRef = {};
     if (props.articles && props.articles.length > 0) {
@@ -45,7 +57,112 @@ useEffect(() => {
       setComment("");
   }
 
+  const handleNameChange = (e) => {
+    setName(e.target.value);
+  };
+  const handleBioChange = (e) => {
+    setBio(e.target.value);
+  };
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+  };
+  const handleEducationChange = (e) => {
+    setEducation(e.target.value);
+  };
+  const handleSkillsChange = (e) => {
+    setSkills(e.target.value);
+  };
+  const handleLocationChange = (e) => {
+    setLocation(e.target.value);
+  };
+  const handleCurrentRoleChange = (e) => {
+    setCurrentRole(e.target.value);
+  };
+  const handleBackGroundImageURLChange = (e) => {
+    setBackGroundImageURL(e.target.value);
+  };
+  const handlePhotoUrlChange = (e) => {
+    setPhotoUrl(e.target.value);
+  };
+  
+ const EditView = (
+    <EditContainer>
+      
+      <Edit>
+      <h2 style={{display:"block",margin:"0 auto",marginBottom:"20px"}}>Edit Profile</h2>
+        <div>
+          <label>Name</label>
+          <input
+            type="text"
+            value={name}
+            onChange={handleNameChange}
+            placeholder="Name"
+          />
+        </div>
+        <div>
+          <label>Bio</label>
+          <input
+            type="text"
+            value={bio}
+            onChange={handleBioChange}
+            placeholder="Bio"
+          />
+        </div>
+        <div>
+          <label>Email</label>
+          <input
+            type="text"
+            value={email}
+            onChange={handleEmailChange}
+            placeholder="Email"
+          />
+        </div>
+        <div>
+          <label>Education</label>
+          <input
+            type="text"
+            value={education}
+            onChange={handleEducationChange}
+            placeholder="Education"
+          />
+        </div>
+        <div>
+          <label>Skills</label>
+          <input
+            type="text"
+            value={skills}
+            onChange={handleSkillsChange}
+            placeholder="Skills"
+          />
+        </div>
+        <div>
+          <label>Location</label>
+          <input
+            type="text"
+            value={location}
+            onChange={handleLocationChange}
+            placeholder="Location"
+          />
+        </div>
+        <div>
+          <label>Current Role</label>
+          <input
+            type="text"
+            value={currentRole}
+            onChange={handleCurrentRoleChange}
+            placeholder="Current Role"
+          />
+        </div>
+        <button onClick={() => setShowEdit(false)}>Cancel</button>
+        <button onClick={() => setShowEdit(false)}>Save</button>
+      </Edit>
+    </EditContainer>
+);
+
   return (
+      <>
+      {
+      showEdit ? EditView : (
       <Container>
           <CoverImg>
               {
@@ -64,9 +181,6 @@ useEffect(() => {
                       props.userDetails.bio === "" ? "No Bio.Must be 25 Characters" : props.userDetails.bio
                       }</p>
                   <p><span>Location | </span><span>Current Role</span></p>
-                  {/* <h3><span><pre>Email:     </pre></span>{props.userDetails.email}</h3>
-                  <h3><pre>Education: </pre>Sanskrithi School of Engineering</h3>
-                  <h3><pre>Skills:    </pre>React, Spring</h3> */}
                   <Details>
                       <div>
                           <h3>Email:</h3>
@@ -89,7 +203,10 @@ useEffect(() => {
                         <p style={{fontSize:"13px"}}>Followers</p>
                     </div>
                     <div>
-                        <button style={{marginLeft:"20px"}}>
+                        <button
+                         style={{marginLeft:"20px"}} 
+                          onClick={() => setShowEdit(true)}
+                        >
                             Edit Profile
                         </button>
                     </div>
@@ -102,7 +219,7 @@ useEffect(() => {
             
               <h2
                 style={{margin:"10px",fontWeight:"normal",fontSize:"20px",display:"flex",justifyContent:"space-between",alignItems:"center"}}
-              >Let's share something</h2>
+              >Lets share something </h2>
             :
           <Content>
             <h2 style={{margin:"10px",fontWeight:"normal",fontSize:"20px"}}>Recent Articles</h2>
@@ -204,9 +321,61 @@ useEffect(() => {
         </Content>
         }          
       </Container>
-      
+      )
+}
+    </>
   );
 }
+
+const EditContainer = styled.div`
+    margin-top: 110px;
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+`;
+const Edit=styled.form`
+    width:50%;
+    height:50%;
+    display:flex;
+    flex-direction:column;
+    background-color:#ffffff;
+    border-radius:10px;
+    box-shadow: 0 0 10px 0 rgba(0,0,0,0.2);
+    margin:40px;
+    padding:50px;
+    div{
+      width:100%;
+      display:flex;
+      justify-content: space-between;
+      label{
+        margin-right:10px;
+        margin-top:10px;
+      }
+      input{
+        width:75%;
+        height:40px;
+        border:1px solid #cccccc;
+        border-radius:5px;
+        padding:0 10px;
+        margin-bottom:20px;
+        margin-left:20px;
+      }
+    }
+    button{
+        width:100%;
+        height:40px;
+        border:1px solid #cccccc;
+        border-radius:5px;
+        padding:0 10px;
+        margin-bottom:20px;
+        background-color:#ffffff;
+        cursor:pointer;
+    }
+`;
+
 const Container = styled.div`
     margin-top:100px;
     width:100%;
@@ -341,14 +510,21 @@ const CommonCard = styled.div`
     box-shadow: 0 0 0 1px rgb(0 0 0 / 15%), 0 0 0 rgb(0 0 0 / 20%);
 `;
 
+const Content = styled.div`
+    text-align: center;
+    width:750px;
+    & > img {
+        width: 30px;
+    }
+`;
 
 const Article = styled(CommonCard)`
      padding: 0;
-    margin: 0 0 8px;
+    margin: 0 auto;
+    min-width: 700px;
     overflow: visible;
-    width: 50%;
-    
-`;
+    `;
+
   const SharedActor = styled.div`
     padding-right: 40px;
     flex-wrap: nowrap;
@@ -454,13 +630,7 @@ const Article = styled(CommonCard)`
         }
     `;
 
-const Content = styled.div`
-    position:relative;
-    left: 10%;
-    & > img {
-        width: 30px;
-    }
-`;
+
 
 const CommentInput = styled.div`
     border-radius: 20px;
