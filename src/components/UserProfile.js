@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { getUserDetailsAPI, getArticlesAPI,saveProfileChangesAPI } from '../actions';
+import {
+  getUserDetailsAPI,
+  getArticlesAPI,
+  saveProfileChangesAPI,
+  uploadImageAPI,
+} from '../actions';
 import styled from 'styled-components';
 import ReactPlayer from 'react-player';
 
@@ -14,6 +19,8 @@ function UserProfile(props) {
   const [skills, setSkills] = useState(props.userDetails.skills);
   const [location, setLocation] = useState(props.userDetails.location);
   const [currentRole, setCurrentRole] = useState(props.userDetails.currentRole);
+  const [coverPic, setCoverPic] = useState(null);
+  const [profilePic, setProfilePic] = useState(null);
   const [showEdit, setShowEdit] = useState(false);
 
   useEffect(() => {
@@ -37,7 +44,6 @@ function UserProfile(props) {
     setLocation(props.userDetails.location);
     setCurrentRole(props.userDetails.currentRole);
   }, [props.userDetails]);
-  
 
   useEffect(() => {
     if (props.user) {
@@ -48,7 +54,18 @@ function UserProfile(props) {
   const handleShowComment = (pid) => {
     commentRef.current[pid] = !commentRef.current[pid];
   };
-
+  useEffect(() => {
+    if (coverPic) {
+      props.uploadImage(props.user.uid, coverPic, 'background');
+      setCoverPic(null);
+    }
+  }, [coverPic]);
+  useEffect(() => {
+    if (profilePic) {
+      props.uploadImage(props.user.uid, profilePic, 'profile');
+      setProfilePic(null);
+    }
+  }, [profilePic]);
   useEffect(() => {
     if (props.user) {
       props.getUserDetails(props.user.uid);
@@ -85,10 +102,27 @@ function UserProfile(props) {
     setCurrentRole(e.target.value);
   };
   const handleSaveChanges = () => {
-    props.saveProfileChanges(props.userDetails.userid, name, bio, email, education, skills, location, currentRole);
+    props.saveProfileChanges(
+      props.userDetails.userid,
+      name,
+      bio,
+      email,
+      education,
+      skills,
+      location,
+      currentRole,
+    );
     setShowEdit(false);
   };
+  const handleCoverPicUpload = (e) => {
+    const file = e.target.files[0];
+    setCoverPic(file);
+  };
 
+  const handleProfilePicUpload = (e) => {
+    const file = e.target.files[0];
+    setProfilePic(file);
+  };
   const EditView = (
     <EditContainer>
       <Edit>
@@ -154,24 +188,54 @@ function UserProfile(props) {
             ) : (
               <img src={props.userDetails.backGroundImageURL} alt="cover" />
             )}
+            <Upload>
+              <label htmlFor="cover-pic-input">
+                <img src="/images/icons8-add(2).svg" alt="upload" style={{ pointer: 'cursor' }} />
+              </label>
+              <input
+                type="file"
+                id="cover-pic-input"
+                accept=".jpg,.jpeg,.png"
+                onChange={handleCoverPicUpload}
+                style={{ display: 'none' }}
+              />
+            </Upload>
           </CoverImg>
           <Profile>
             <ProfileImg>
-              {props.userDetails.photoUrl !== '' ? (
+              {props.userDetails.photoUrl === '' ? (
                 <img src="/images/default-profile-icon.jpg" alt="user" />
               ) : (
                 <img src={props.userDetails.photoUrl} alt="user" />
               )}
+              <ProfileUpload>
+                <label htmlFor="profile-pic-input">
+                  <img
+                    src="/images/icons8-add(2).svg"
+                    alt="upload"
+                    style={{ pointer: 'cursor', width: '30px', height: '30px' }}
+                  />
+                </label>
+                <input
+                  type="file"
+                  id="profile-pic-input"
+                  accept=".jpg,.jpeg,.png"
+                  onChange={handleProfilePicUpload}
+                  style={{ display: 'none' }}
+                />
+              </ProfileUpload>
             </ProfileImg>
             <Info>
-              <h2>{props.userDetails.name}</h2>
+              <h2 style={{ color: 'rgb(102,103,171)' }}>{props.userDetails.name}</h2>
               <p>
                 {props.userDetails.bio === ''
                   ? 'No Bio.Must be 25 Characters'
                   : props.userDetails.bio}
               </p>
               <p>
-                <span>{props.userDetails.location} | {props.userDetails.currentRole}</span>
+                <span>
+                  {props.userDetails.location} | {props.userDetails.currentRole}
+                </span>
               </p>
               <Details>
                 <div>
@@ -242,7 +306,9 @@ function UserProfile(props) {
                             }}
                           />
                           <div>
-                            <span>{props.userDetails.name}</span>
+                            <span style={{ color: 'rgb(102,103,171)', fontWeight: 'bold' }}>
+                              {props.userDetails.name}
+                            </span>
                             {article.actor && <span>{article.actor.description}</span>}
                             {article.actor && <span>{article.actor.date}</span>}
                           </div>
@@ -390,6 +456,8 @@ const Edit = styled.form`
 `;
 
 const Container = styled.div`
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
+    'Open Sans', 'Helvetica Neue', sans-serif;
   margin-top: 100px;
   width: 100%;
   height: 100%;
@@ -425,10 +493,34 @@ const Profile = styled.div`
 const ProfileImg = styled.div`
   width: 200px;
   height: 100%;
+  position: relative;
   img {
     width: 200px;
     height: 250px;
     object-fit: cover;
+  }
+`;
+const ProfileUpload = styled.div`
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  bottom: -5px;
+  right: -10px;
+  cursor: pointer;
+  img {
+    cursor: pointer;
+  }
+`;
+
+const Upload = styled.div`
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  bottom: -5px;
+  right: -10px;
+  cursor: pointer;
+  img {
+    cursor: pointer;
   }
 `;
 
@@ -517,10 +609,8 @@ const CommonCard = styled.div`
   overflow: hidden;
   margin-bottom: 8px;
   background-color: #fff;
-  border-radius: 5px;
   position: relative;
   border: none;
-  box-shadow: 0 0 0 1px rgb(0 0 0 / 15%), 0 0 0 rgb(0 0 0 / 20%);
 `;
 
 const Content = styled.div`
@@ -591,6 +681,9 @@ const Description = styled.div`
   color: rgba(0, 0, 0, 0.9);
   font-size: 14px;
   text-align: left;
+  margin: 10px;
+  margin-top: 20px;
+  margin-bottom: 20px;
 `;
 const SharedImg = styled.div`
   margin-top: 8px;
@@ -672,6 +765,10 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => ({
   getArticles: (userId) => dispatch(getArticlesAPI(userId)),
   getUserDetails: (userId) => dispatch(getUserDetailsAPI(userId)),
-  saveProfileChanges: (userId,name,bio,email,education,skills,location,currentRole) => dispatch(saveProfileChangesAPI(userId,name,bio,email,education,skills,location,currentRole)),
+  saveProfileChanges: (userId, name, bio, email, education, skills, location, currentRole) =>
+    dispatch(
+      saveProfileChangesAPI(userId, name, bio, email, education, skills, location, currentRole),
+    ),
+  uploadImage: (userId, image, type) => dispatch(uploadImageAPI(userId, image, type)),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(UserProfile);

@@ -10,7 +10,7 @@ import {
   GET_LIKES,
   GET_COMMENTS,
   SEARCH_USERS,
-  SAVE_PROFILE_CHANGES
+  SAVE_PROFILE_CHANGES,
 } from './actionType';
 import { db } from '../firebase.js';
 import firebase from 'firebase/compat/app';
@@ -60,11 +60,10 @@ export const searchUsers = (payload) => ({
   type: SEARCH_USERS,
   payload: payload,
 });
-export const saveProfileChanges = (payload) =>({
+export const saveProfileChanges = (payload) => ({
   type: SAVE_PROFILE_CHANGES,
-payload: payload,
-}
-)
+  payload: payload,
+});
 
 export function signInAPI(providerName) {
   let providerx;
@@ -132,11 +131,11 @@ export function signInAPI(providerName) {
                       email: email,
                       photoUrl: photoUrl,
                       backGroundImageURL: '',
-                      bio: "Your Bio",
-                      currentRole: "Your Current Role",
-                      location:"Location",
-                      skills: "Your Skills",
-                      education: "Your Education",
+                      bio: 'Your Bio',
+                      currentRole: 'Your Current Role',
+                      location: 'Location',
+                      skills: 'Your Skills',
+                      education: 'Your Education',
                     })
                     .then(function () {
                       console.log('User details added to the database!');
@@ -371,36 +370,36 @@ export function getArticlesAPI(userId) {
   };
 }
 
-export function uploadImageAPI(image, userId, imageType) {
-  return (dispatch) => {
-    const upload = storage.ref(`images/${image.name}`).put(image);
-    upload.on(
-      'state_changed',
-      (snapshot) => {},
-      (error) => {
-        console.log(error);
-      },
-      () => {
-        storage
-          .ref('images')
-          .child(image.name)
-          .getDownloadURL()
-          .then((url) => {
-            if (imageType === 'profile') {
-              db.collection('users').doc(userId).update({
-                photoUrl: url,
-              });
-            } else {
-              db.collection('users').doc(userId).update({
-                backGroundImageURL: url,
-              });
-            }
-            dispatch(uploadImage(url));
-          });
-      },
-    );
-  };
-}
+// export function uploadImageAPI(image, userId, imageType) {
+//   return (dispatch) => {
+//     const upload = storage.ref(`images/${image.name}`).put(image);
+//     upload.on(
+//       'state_changed',
+//       (snapshot) => {},
+//       (error) => {
+//         console.log(error);
+//       },
+//       () => {
+//         storage
+//           .ref('images')
+//           .child(image.name)
+//           .getDownloadURL()
+//           .then((url) => {
+//             if (imageType === 'profile') {
+//               db.collection('users').doc(userId).update({
+//                 photoUrl: url,
+//               });
+//             } else {
+//               db.collection('users').doc(userId).update({
+//                 backGroundImageURL: url,
+//               });
+//             }
+//             dispatch(uploadImage(url));
+//           });
+//       },
+//     );
+//   };
+// }
 
 // export function getUserDetailsAPI(userId){
 //     return (dispatch)=>{
@@ -582,7 +581,16 @@ export function searchUserAPI(searchTerm) {
   };
 }
 //saveProfileChangesAPI for realTimeDb
-export function saveProfileChangesAPI(userId, name, bio, email, education, skills, location, currentRole) {
+export function saveProfileChangesAPI(
+  userId,
+  name,
+  bio,
+  email,
+  education,
+  skills,
+  location,
+  currentRole,
+) {
   return (dispatch) => {
     const updates = {};
     if (name) updates.name = name;
@@ -593,13 +601,35 @@ export function saveProfileChangesAPI(userId, name, bio, email, education, skill
     if (location) updates.location = location;
     if (currentRole) updates.currentRole = currentRole;
 
-    console.log("userId:", userId);
-    realTimeDb.ref(`users/${userId}`).update(updates)
+    console.log('userId:', userId);
+    realTimeDb
+      .ref(`users/${userId}`)
+      .update(updates)
       .then(() => {
         dispatch(saveProfileChanges(name, bio, email, education, skills, location, currentRole));
       })
       .catch((error) => {
         console.log(error);
-      })
-  }
+      });
+  };
+}
+// uploadImageAPI for realTimeDb which first store in firestore db and then get the url and store in realTimeDb, which have last param based on profile or background
+export function uploadImageAPI(userId, image, type) {
+  return (dispatch) => {
+    const storageRef = storage.ref();
+    const imageRef = storageRef.child(`images/${userId}/${image.name}`);
+    imageRef.put(image).then((snapshot) => {
+      snapshot.ref.getDownloadURL().then((url) => {
+        if (type === 'profile') {
+          realTimeDb.ref(`users/${userId}`).update({
+            photoUrl: url,
+          });
+        } else {
+          realTimeDb.ref(`users/${userId}`).update({
+            backGroundImageURL: url,
+          });
+        }
+      });
+    });
+  };
 }

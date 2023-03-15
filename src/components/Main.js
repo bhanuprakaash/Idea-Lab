@@ -149,7 +149,9 @@ const Main = (props) => {
                           }}
                         />
                         <div>
-                          <span>{props.userDetails.name}</span>
+                          <span style={{ color: 'rgb(102,103,171)', fontWeight: 'bold' }}>
+                            {props.userDetails.name}
+                          </span>
                           {article.actor && <span>{article.actor.description}</span>}
                           {article.actor && <span>{article.actor.date}</span>}
                         </div>
@@ -291,10 +293,8 @@ const CommonCard = styled.div`
   overflow: hidden;
   margin-bottom: 8px;
   background-color: #fff;
-  border-radius: 5px;
   position: relative;
   border: none;
-  box-shadow: 0 0 0 1px rgb(0 0 0 / 15%), 0 0 0 rgb(0 0 0 / 20%);
 `;
 
 const Comment = styled.p`
@@ -386,6 +386,8 @@ const GreetingBox = styled.div`
   }
 `;
 const Article = styled(CommonCard)`
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
+    'Open Sans', 'Helvetica Neue', sans-serif;
   padding: 0;
   margin: 0 0 8px;
   overflow: visible;
@@ -443,6 +445,9 @@ const Description = styled.div`
   color: rgba(0, 0, 0, 0.9);
   font-size: 14px;
   text-align: left;
+  margin: 10px;
+  margin-top: 20px;
+  margin-bottom: 20px;
 `;
 const SharedImg = styled.div`
   margin-top: 8px;
