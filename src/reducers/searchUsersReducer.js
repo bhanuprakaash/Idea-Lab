@@ -1,14 +1,13 @@
-import {SEARCH_USERS} from '../actions/actionType';
+import { SEARCH_USERS } from '../actions/actionType';
 const initState = {
-    users: [],
+  users: [],
 };
 const searchUsersReducers = (state = initState, action) => {
-    switch (action.type) {
-        case SEARCH_USERS:
-            return { ...state, users: action.payload };
-        default:
-            return state;
-    }
-}
+  switch (action.type) {
+    case SEARCH_USERS:
+      return { ...state, users: action.payload };
+    default:
+      return state;
+  }
+};
 export default searchUsersReducers;
-

@@ -1,34 +1,33 @@
-import styled from "styled-components";
-import {connect} from 'react-redux';
-import { getUserDetailsAPI } from "../actions";
-import { useEffect } from "react";
+import styled from 'styled-components';
+import { connect } from 'react-redux';
+import { getUserDetailsAPI } from '../actions';
+import { useEffect } from 'react';
 import PostModel from './PostModel';
-import { useState } from "react";
+import { useState } from 'react';
 const Leftside = (props) => {
-  const [showModel,setShowModel] = useState("close");
-  useEffect(()=>{
-    if(props.user){
+  const [showModel, setShowModel] = useState('close');
+  useEffect(() => {
+    if (props.user) {
       props.getUserDetails(props.user.uid);
     }
-  },[]
-  );
+  }, []);
   const handleClick = (e) => {
     e.preventDefault();
-    if(e.target !== e.currentTarget){
-        return;
+    if (e.target !== e.currentTarget) {
+      return;
     }
-    switch(showModel){
-        case "open":
-            setShowModel("close");
-            break;
-        case "close":
-            setShowModel("open");
-            break;
-        default:
-            setShowModel("close");
-            break;
+    switch (showModel) {
+      case 'open':
+        setShowModel('close');
+        break;
+      case 'close':
+        setShowModel('open');
+        break;
+      default:
+        setShowModel('close');
+        break;
     }
-}
+  };
   return (
     <Container>
       <ArtCard>
@@ -36,30 +35,35 @@ const Leftside = (props) => {
           <img src="/images/idea-got-it.svg" alt="add" width="200px" />
         </div>
         <HeadLine>
-          <h2><span style={{color:"rgb(102,103,171)"}}>Hey!</span><br></br>Found anything new?</h2>
+          <h2>
+            <span style={{ color: 'rgb(102,103,171)' }}>Hey!</span>
+            <br></br>Found anything new?
+          </h2>
           <h3>Let's share it with your tech community! </h3>
         </HeadLine>
         <Info>
           <div>
             <p>
-            <img src="/images/icons8-add(1).svg" alt="add" width="50px" onClick={handleClick} />
+              <img src="/images/icons8-add(1).svg" alt="add" width="50px" onClick={handleClick} />
             </p>
             <article>
               <p>
-              <img src="/images/camera.svg" alt="" />
-              <span>Photo</span>
+                <img src="/images/camera.svg" alt="" />
+                <span>Photo</span>
               </p>
-              <p><img src="/images/video-icon.svg" alt="" />
-              <span>Video</span></p>
               <p>
-              <img src="/images/icons8-macbook-idea.svg" alt=""/>
-              <span>Idea</span>
+                <img src="/images/video-icon.svg" alt="" />
+                <span>Video</span>
+              </p>
+              <p>
+                <img src="/images/icons8-macbook-idea.svg" alt="" />
+                <span>Idea</span>
               </p>
             </article>
           </div>
         </Info>
       </ArtCard>
-      <PostModel showModel={showModel} handleClick={handleClick}/>
+      <PostModel showModel={showModel} handleClick={handleClick} />
     </Container>
   );
 };
@@ -79,18 +83,18 @@ const ArtCard = styled.div`
   overflow: hidden;
   margin-bottom: 8px;
   background-color: #fff;
-  background-image: url("images/space-paper-airplane-with-blue-line.png");
+  background-image: url('images/space-paper-airplane-with-blue-line.png');
   background-repeat: no-repeat;
   background-size: 40px;
   background-position: bottom right;
   border-radius: 10px;
   transition: box-shadow 83ms;
   position: sticky;
-  top:110px;
+  top: 110px;
   box-shadow: 0 0 0 1px rgb(0 0 0 / 15%), 0 0 0 rgb(0 0 0 / 20%);
-  div{
+  div {
     height: 45%;
-    img{
+    img {
       object-fit: contain;
       height: 100%;
       cursor: pointer;
@@ -101,18 +105,19 @@ const ArtCard = styled.div`
 `;
 
 const HeadLine = styled.section`
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
+    'Open Sans', 'Helvetica Neue', sans-serif;
   padding: 0 16px;
-  border:none;
+  border: none;
   text-align: left;
-  h2{
+  h2 {
     font-size: 24px;
     font-weight: 500;
     color: black;
     line-height: 1.5;
     margin-bottom: 5px;
   }
-  h3{
+  h3 {
     font-size: 15px;
     font-weight: 350;
     color: black;
@@ -160,11 +165,11 @@ const HeadLine = styled.section`
 //         color:rgba(102,103,171);
 //         margin-top: 2px;
 //       }
-      
+
 //     }
-   
+
 //   }
-//   /* section{  
+//   /* section{
 //     display: flex;
 //     align-items: center;
 //     justify-content: center;
@@ -246,12 +251,12 @@ const Info = styled.section`
     div {
       padding: 0;
       margin: 0;
-      padding:5px;
+      padding: 5px;
       article {
         margin-top: 20px;
       }
     }
-    p{
+    p {
       align-items: center;
     }
   }
@@ -260,11 +265,11 @@ const Info = styled.section`
 const mapStateToProps = (state) => {
   return {
     user: state.userState.user,
-    userDetails:state.userDetailsState.userDetails,
+    userDetails: state.userDetailsState.userDetails,
   };
 };
 const mapDispatchToProps = (dispatch) => ({
-  getUserDetails : (userId) =>dispatch(getUserDetailsAPI(userId)),
+  getUserDetails: (userId) => dispatch(getUserDetailsAPI(userId)),
 });
 
-export default connect(mapStateToProps,mapDispatchToProps)(Leftside); 
+export default connect(mapStateToProps, mapDispatchToProps)(Leftside);

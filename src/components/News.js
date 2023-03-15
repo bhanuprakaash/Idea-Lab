@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 
-
 const News = () => {
   const [articles, setArticles] = useState([]);
 
@@ -20,22 +19,21 @@ const News = () => {
 
   return (
     <Container>
-    {articles.map((article) => (
-      <ArticleContainer key={article.url}>
-        <img src={article.urlToImage} alt={article.title} />
-        <div>
-          <h2>{article.title}</h2>
-          <p>{article.description}</p>
-          <a href={article.url}>Click Here</a>
-        </div>
-      </ArticleContainer>
-    ))}
-  </Container>
+      {articles.map((article) => (
+        <ArticleContainer key={article.url}>
+          <img src={article.urlToImage} alt={article.title} />
+          <div>
+            <h2>{article.title}</h2>
+            <p>{article.description}</p>
+            <a href={article.url}>Click Here</a>
+          </div>
+        </ArticleContainer>
+      ))}
+    </Container>
   );
-
 };
 const Container = styled.div`
-  padding-top:75px;
+  padding-top: 75px;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;

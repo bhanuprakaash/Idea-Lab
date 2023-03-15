@@ -1,16 +1,16 @@
-import { GET_LIKES } from "../actions/actionType";
+import { GET_LIKES } from '../actions/actionType';
 
 const initState = {
-    likes: [],
+  likes: [],
 };
 
 const likesRetReducer = (state = initState, action) => {
-    switch (action.type) {
-        case GET_LIKES:
-            return { ...state, likes: action.payload };
-        default:
-            return state;
-    }
-}
+  switch (action.type) {
+    case GET_LIKES:
+      return { ...state, likes: action.payload };
+    default:
+      return state;
+  }
+};
 
 export default likesRetReducer;

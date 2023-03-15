@@ -1,29 +1,25 @@
-import styled from "styled-components";
-import { connect } from "react-redux";
-import {signOutAPI} from "../actions";
-import {Link} from "react-router-dom";
-import {getUserDetailsAPI} from "../actions";
-import { useEffect } from "react";
+import styled from 'styled-components';
+import { connect } from 'react-redux';
+import { signOutAPI } from '../actions';
+import { Link } from 'react-router-dom';
+import { getUserDetailsAPI } from '../actions';
+import { useEffect } from 'react';
 import CardHeader from '@mui/material/CardHeader';
-import { maxHeight } from "@mui/system";
-import React from "react";
-import { Navigate } from "react-router-dom";
-import {searchUserAPI} from "../actions";
-
+import { maxHeight } from '@mui/system';
+import React from 'react';
+import { Navigate } from 'react-router-dom';
+import { searchUserAPI } from '../actions';
 
 const Header = (props) => {
   const [delayComplete, setDelayComplete] = React.useState(false);
-  const [searchQuery, setSearchQuery] = React.useState("");
+  const [searchQuery, setSearchQuery] = React.useState('');
   const [searchResults, setSearchResults] = React.useState([]);
-  
+
   React.useEffect(() => {
     setTimeout(() => {
       setDelayComplete(true);
     }, 1000);
   }, []);
-
-
-
 
   useEffect(() => {
     if (props.user) {
@@ -31,20 +27,19 @@ const Header = (props) => {
     }
   }, []);
 
-
-  const handleSearchQueryChange =(event)=>{
+  const handleSearchQueryChange = (event) => {
     const query = event.target.value;
-  setSearchQuery(query);
+    setSearchQuery(query);
 
-  if (query.trim() === '') {
-    setSearchResults([]);
-  }
-  }
-  const handleSearch =()=>{
-    if(searchQuery){
+    if (query.trim() === '') {
+      setSearchResults([]);
+    }
+  };
+  const handleSearch = () => {
+    if (searchQuery) {
       props.searchUsers(searchQuery);
     }
-  }
+  };
   useEffect(() => {
     setSearchResults(props.search);
   }, [props.search]);
@@ -55,59 +50,65 @@ const Header = (props) => {
     }
   }, [searchQuery]);
 
-    return(
-        <Container>
-          {delayComplete && (!props.user && <Navigate to="/" />)}
+  return (
+    <Container>
+      {delayComplete && !props.user && <Navigate to="/" />}
       <Content>
-        <a href="/" style={{textDecoration:"none",marginBottom:"7px"}}>
-        <h1><span class="firstName">Idea</span><span class="lastName">Lab</span></h1>
+        <a href="/" style={{ textDecoration: 'none', marginBottom: '7px' }}>
+          <h1>
+            <span class="firstName">Idea</span>
+            <span class="lastName">Lab</span>
+          </h1>
         </a>
-        
+
         <Nav>
           <NavListWrap>
-            <NavList style={{position:"relative",right:"70px"}}>
-            <NavList>
-              <a href="">
-                <Link to="/home">
-                <img src="/images/icons8-home-page.svg" alt="" style={{width:"30px"}}/>
-                <span>My Hub</span>
-                </Link>
-              </a>
-            </NavList>
+            <NavList style={{ position: 'relative', right: '70px' }}>
+              <NavList>
+                <a href="">
+                  <Link to="/home">
+                    <img src="/images/icons8-home-page.svg" alt="" style={{ width: '30px' }} />
+                    <span>My Hub</span>
+                  </Link>
+                </a>
+              </NavList>
 
-            <NavList>
-              <a href="">
-                <Link to="/my-network">
-                <img src="/images/icons8-business-network(1).svg" alt="" style={{width:"30px"}}/>
-                <span>Lab Community</span>
-                </Link>
-                
-              </a>
-            </NavList>
+              <NavList>
+                <a href="">
+                  <Link to="/my-network">
+                    <img
+                      src="/images/icons8-business-network(1).svg"
+                      alt=""
+                      style={{ width: '30px' }}
+                    />
+                    <span>Lab Community</span>
+                  </Link>
+                </a>
+              </NavList>
 
-            <NavList>
-              <a href="">
-                <Link to="/tech-today">
-                <img src="/images/icons8-newspaper(1).svg" alt="" style={{width:"30px"}} />
-                <span>Tech Today</span>
-                </Link>
-              </a>
-            </NavList>
+              <NavList>
+                <a href="">
+                  <Link to="/tech-today">
+                    <img src="/images/icons8-newspaper(1).svg" alt="" style={{ width: '30px' }} />
+                    <span>Tech Today</span>
+                  </Link>
+                </a>
+              </NavList>
 
-            <NavList>
-              <a href="">
-                <img src="/images/icons8-message-exchange.svg" alt="" style={{width:"30px"}} />
-                <span>Mind Share</span>
-              </a>
+              <NavList>
+                <a href="">
+                  <img src="/images/icons8-message-exchange.svg" alt="" style={{ width: '30px' }} />
+                  <span>Mind Share</span>
+                </a>
+              </NavList>
+              <NavList>
+                <a href="">
+                  <img src="/images/icons8-notification.svg" alt="" style={{ width: '30px' }} />
+                  <span>Notifications</span>
+                </a>
+              </NavList>
             </NavList>
-            <NavList>
-              <a href="">
-                <img src="/images/icons8-notification.svg" alt="" style={{width:"30px"}}/>
-                <span>Notifications</span>
-              </a>
-            </NavList>
-            </NavList>
-         {/*<Search style={{position:"relative",left:"50px"}}>
+            {/*<Search style={{position:"relative",left:"50px"}}>
           <SearchForm onSubmit={handleSearch}>
             <div >
               <input type="text" placeholder="Search" />
@@ -120,8 +121,7 @@ const Header = (props) => {
             {}
           </searchResultsContainer>
         </Search>
-    */
-    }
+    */}
             <SearchForm>
               <Search>
                 <SearchIcon>
@@ -129,106 +129,98 @@ const Header = (props) => {
                 </SearchIcon>
                 <div>
                   <input
-                   type="text" 
-                   placeholder="Search..." 
-                   value={searchQuery}
-                   onChange={(e) => {
-                    handleSearchQueryChange(e);
-                    handleSearch();
-                }}  />
+                    type="text"
+                    placeholder="Search..."
+                    value={searchQuery}
+                    onChange={(e) => {
+                      handleSearchQueryChange(e);
+                      handleSearch();
+                    }}
+                  />
                 </div>
-                { props.search && searchQuery &&
-              (
-                <SearchResultsContainer>
-                  <SearchResults>
-                    {searchResults.map((result) => (
-                      <SearchResult key={result.userid}>
-                        <Link  
-                        key={result.userid}
-                        to={
-                          {
-                            pathname: `/profile/${result.userid}`
-                          }
-                        } style={{textDecoration:"none"}}>
-                          <section>
-                            <img src={result.photoUrl} alt="" />
-                            <div >
-                              <p href="">{result.name}</p>
-                              <p href="" style={{fontSize:"12px"}}>{result.email}</p>
-                            </div>
-                          </section>
-                        </Link>
-                      </SearchResult> 
-                    ))}
-                  </SearchResults>
-                </SearchResultsContainer>
-              )  
-           }
-           {
-            searchResults.length === 0 &&
-            searchQuery && (
-              <SearchResultsContainer>
-                <SearchResults>
-                  <SearchResult>
-                    <h2>No Users There</h2>
-                  </SearchResult>
-                </SearchResults>
-              </SearchResultsContainer>
-            )
-           }
+                {props.search && searchQuery && (
+                  <SearchResultsContainer>
+                    <SearchResults>
+                      {searchResults.map((result) => (
+                        <SearchResult key={result.userid}>
+                          <Link
+                            key={result.userid}
+                            to={{
+                              pathname: `/profile/${result.userid}`,
+                            }}
+                            style={{ textDecoration: 'none' }}
+                          >
+                            <section>
+                              <img src={result.photoUrl} alt="" />
+                              <div>
+                                <p href="">{result.name}</p>
+                                <p href="" style={{ fontSize: '12px' }}>
+                                  {result.email}
+                                </p>
+                              </div>
+                            </section>
+                          </Link>
+                        </SearchResult>
+                      ))}
+                    </SearchResults>
+                  </SearchResultsContainer>
+                )}
+                {searchResults.length === 0 && searchQuery && (
+                  <SearchResultsContainer>
+                    <SearchResults>
+                      <SearchResult>
+                        <h2>No Users There</h2>
+                      </SearchResult>
+                    </SearchResults>
+                  </SearchResultsContainer>
+                )}
               </Search>
-
-           
-          </SearchForm>
-            <User style={{position:"relative", left:"50px"}}>
+            </SearchForm>
+            <User style={{ position: 'relative', left: '50px' }}>
               <a>
-              <Link to="/profile">
-                {props.userDetails && props.userDetails.photoUrl ? 
-                   (<img src={props.userDetails.photoUrl} alt=""/>
-                ) : (
-                    <img src="/images/user.svg" alt=""/>
-                ) 
-                }
-                <span>
-                  Me
-                <img src="/images/down-icon.svg" alt="" />
-                </span>
-              </Link> 
+                <Link to="/profile">
+                  {props.userDetails && props.userDetails.photoUrl ? (
+                    <img src={props.userDetails.photoUrl} alt="" />
+                  ) : (
+                    <img src="/images/user.svg" alt="" />
+                  )}
+                  <span>
+                    Me
+                    <img src="/images/down-icon.svg" alt="" />
+                  </span>
+                </Link>
               </a>
-              <SignOut onClick={()=>props.signOut()}>
+              <SignOut onClick={() => props.signOut()}>
                 <a href="">Sign Out</a>
               </SignOut>
             </User>
-
-            
           </NavListWrap>
         </Nav>
       </Content>
     </Container>
   );
-    
-}
+};
 
 const Container = styled.div`
-background-color: white;
-background: linear-gradient(135deg, white 58%, rgb(102, 103, 177) 42%);
-border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-left: 0;
-padding: 0 24px;
-position: fixed;
-top: 0;
-width: 100vw;
-z-index: 100;
-height: 100px;
+  background-color: white;
+  background: linear-gradient(135deg, white 58%, rgb(102, 103, 177) 42%);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  left: 0;
+  padding: 0 24px;
+  position: fixed;
+  top: 0;
+  width: 100vw;
+  z-index: 100;
+  height: 100px;
 `;
 
 const Content = styled.div`
-display: flex;
-flex-wrap: wrap;
-align-items: center;
-margin: 0 auto;
-min-height: 100%;
-max-width: 1128px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 0 auto;
+  min-height: 100%;
+  max-width: 1128px;
 `;
 // const SearchResult = styled.div`
 //   display: flex;
@@ -251,10 +243,9 @@ max-width: 1128px;
 //     }
 //     &:first-child {
 //       border-radius: 10px 10px 0 0;
-//     } 
+//     }
 //   }
 // `;
-
 
 /*
 const Search = styled.div`
@@ -332,7 +323,7 @@ const Search = styled.div`
   height: 40px;
   width: 280px;
   margin: 0 16px;
-  flex-direction:row-reverse;
+  flex-direction: row-reverse;
 
   & > div {
     flex-grow: 1;
@@ -360,9 +351,8 @@ const Search = styled.div`
 const SearchForm = styled.form`
   display: flex;
   align-items: center;
-  position:relative;
+  position: relative;
 `;
-
 
 const SearchIcon = styled.div`
   width: 20px;
@@ -370,46 +360,46 @@ const SearchIcon = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color:rgb(102, 103, 171);
+  background-color: rgb(102, 103, 171);
   color: #fff;
   border-radius: 30px;
   cursor: pointer;
 `;
 const Nav = styled.nav`
-margin-left: auto;
-display: block;
-@media (max-width: 500px) {
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  background: white;
-  width: 100%;
-}
+  margin-left: auto;
+  display: block;
+  @media (max-width: 500px) {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    background: white;
+    width: 100%;
+  }
 `;
 
 const NavListWrap = styled.ul`
-display: flex;
-flex-wrap: nowrap;
-list-style-type: none;
-.active {
-  span:after {
-    content: "";
-    transform: scaleX(1);
-    border-bottom: 2px solid var(--white, #fff);
-    bottom: 0;
-    left: 0;
-    position: absolute;
-    transition: transform 0.2s ease-in-out;
-    width: 100%;
-    border-color: rgba(0, 0, 0, 0.9);
+  display: flex;
+  flex-wrap: nowrap;
+  list-style-type: none;
+  .active {
+    span:after {
+      content: '';
+      transform: scaleX(1);
+      border-bottom: 2px solid var(--white, #fff);
+      bottom: 0;
+      left: 0;
+      position: absolute;
+      transition: transform 0.2s ease-in-out;
+      width: 100%;
+      border-color: rgba(0, 0, 0, 0.9);
+    }
   }
-}
 `;
 
 const SearchResultsContainer = styled.div`
   position: absolute;
-  top: 120%; 
-  left:0;
+  top: 120%;
+  left: 0;
   width: 280px;
   background-color: white;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
@@ -433,118 +423,118 @@ const SearchResult = styled.div`
     color: rgba(0, 0, 0, 0.9);
     display: flex;
     align-items: center;
-    p{
-      font-family:  Helvetica, sans-serif;
+    p {
+      font-family: Helvetica, sans-serif;
       margin-left: 10px;
       font-size: 14px;
     }
   }
-  img{
+  img {
     width: 40px;
     height: 40px;
     border-radius: 50%;
     margin-right: 10px;
   }
-  h2{
+  h2 {
     font-size: 14px;
     font-weight: 400;
     margin: 0 auto;
   }
 `;
 
-
 const NavList = styled.li`
-display: flex;
-align-items: center;
-margin-left:10px;
-a {
-  align-items: center;
-  background: transparent;
   display: flex;
-  flex-direction: column;
-  font-size: 12px;
-  font-weight: 400;
-  justify-content: center;
-  line-height: 1.5;
-  min-height: 52px;
-  min-width: 80px;
-  position: relative;
-  text-decoration: none;
-  span {
-    font-family:  Helvetica, sans-serif;
-    color: rgba(0, 0, 0, 0.6);
-    display: flex;
-    align-items: center;
-  }
-  @media (max-width: 768px) {
-    min-width: 70px;
-  }
-}
-&:hover:nth-child(1), &:hover:nth-child(2), &:hover:nth-child(3), &:hover:nth-child(4), &:hover:nth-child(5), &:hover:nth-child(6) {
+  align-items: center;
+  margin-left: 10px;
   a {
+    align-items: center;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    font-size: 12px;
+    font-weight: 400;
+    justify-content: center;
+    line-height: 1.5;
+    min-height: 52px;
+    min-width: 80px;
+    position: relative;
+    text-decoration: none;
     span {
-      color: rgb(102, 103, 171);
+      font-family: Helvetica, sans-serif;
+      color: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+    }
+    @media (max-width: 768px) {
+      min-width: 70px;
     }
   }
-}
- 
+  &:hover:nth-child(1),
+  &:hover:nth-child(2),
+  &:hover:nth-child(3),
+  &:hover:nth-child(4),
+  &:hover:nth-child(5),
+  &:hover:nth-child(6) {
+    a {
+      span {
+        color: rgb(102, 103, 171);
+      }
+    }
+  }
 `;
 
 const SignOut = styled.div`
-position: absolute;
-top: 45px;
-background: white;
-border-radius: 0 0 5px 5px;
-width: 100px;
-height: 40px;
-font-size: 16px;
-transition-duration: 167ms;
-text-align: center;
-display: none;
+  position: absolute;
+  top: 45px;
+  background: white;
+  border-radius: 0 0 5px 5px;
+  width: 100px;
+  height: 40px;
+  font-size: 16px;
+  transition-duration: 167ms;
+  text-align: center;
+  display: none;
 `;
 
 const User = styled(NavList)`
-a > svg {
-  width: 24px;
-  border-radius: 50%;
-}
-a > img {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-}
-span {
-  display: flex;
-  align-items: center;
-}
-&:hover {
-  ${SignOut} {
-    align-items: center;
-    display: flex;
-    justify-content: center;
+  a > svg {
+    width: 24px;
+    border-radius: 50%;
   }
-}
+  a > img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+  }
+  span {
+    display: flex;
+    align-items: center;
+  }
+  &:hover {
+    ${SignOut} {
+      align-items: center;
+      display: flex;
+      justify-content: center;
+    }
+  }
 `;
 
 const Work = styled(User)`
-border-left: 1px solid rgba(0, 0, 0, 0.08);
+  border-left: 1px solid rgba(0, 0, 0, 0.08);
 `;
-
-
-
 
 const mapStateToProps = (state) => {
   return {
     user: state.userState.user,
-    userDetails:state.userDetailsState.userDetails,
-    search:state.searchState.users,
+    userDetails: state.userDetailsState.userDetails,
+    search: state.searchState.users,
   };
 };
 
 const mapDispatchToProps = (dispatch) => ({
   signOut: () => dispatch(signOutAPI()),
-  getUserDetails:(userId)=>dispatch(getUserDetailsAPI(userId)),
-  searchUsers:(search)=>dispatch(searchUserAPI(search)),
+  getUserDetails: (userId) => dispatch(getUserDetailsAPI(userId)),
+  searchUsers: (search) => dispatch(searchUserAPI(search)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);

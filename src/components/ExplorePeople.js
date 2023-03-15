@@ -1,11 +1,7 @@
 import React from 'react';
 
 const ExplorePeople = () => {
-    return (
-        <div>
-            ExplorePeople
-        </div>
-    );
-}
+  return <div>ExplorePeople</div>;
+};
 
 export default ExplorePeople;
