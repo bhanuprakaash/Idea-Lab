@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 const News = () => {
   const [articles, setArticles] = useState([]);
+  const [isLoading, setIsLoading] = React.useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -16,6 +17,22 @@ const News = () => {
 
     fetchData();
   }, []);
+  if (isLoading) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+          backgroundColor: 'white',
+          width: '100%',
+        }}
+      >
+        <img src="./images/circle-loading-lines.gif" alt="loading" width={100} />
+      </div>
+    );
+  }
 
   return (
     <Container>
