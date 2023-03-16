@@ -266,7 +266,7 @@ function UserProfile(props) {
               </Follow>
             </Info>
           </Profile>
-          {props.articles.length < 0 ? (
+          {props.articles && props.articles.length < 0 ? (
             <h2
               style={{
                 margin: '10px',
@@ -284,7 +284,8 @@ function UserProfile(props) {
               <h2 style={{ margin: '10px', fontWeight: 'normal', fontSize: '20px' }}>
                 Recent Articles
               </h2>
-              {props.articles.length > 0 &&
+              {props.articles &&
+                props.articles.length > 0 &&
                 props.articles.map((article, key) => {
                   if (!article) {
                     return null;

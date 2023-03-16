@@ -354,52 +354,43 @@ export function getArticlesAPI(userId){
 }
 */
 
+// export function getArticlesAPI(userId) {
+//   let payload;
+//   return (dispatch) => {
+//     realTimeDb.ref(`articles/${userId}`).on('value', (snapshot) => {
+//       console.log(userId);
+//       payload = snapshot.val();
+//       const keys = Object.keys(payload);
+//       const payloadList = [];
+//       for (let i = 0; i < keys.length; i++) {
+//         payloadList.push(payload[keys[i]]);
+//       }
+//       payloadList.reverse();
+//       dispatch(getArticles(payloadList));
+//     });
+//   };
+// }
+
+// write a function to fetch the articles of the particular id only in realtimedb and structure is articles -> userid -> pid -> data . if the user is not found it just returns null
 export function getArticlesAPI(userId) {
   let payload;
   return (dispatch) => {
     realTimeDb.ref(`articles/${userId}`).on('value', (snapshot) => {
       payload = snapshot.val();
-      const keys = Object.keys(payload);
-      const payloadList = [];
-      for (let i = 0; i < keys.length; i++) {
-        payloadList.push(payload[keys[i]]);
+      if (payload) {
+        const keys = Object.keys(payload);
+        const payloadList = [];
+        for (let i = 0; i < keys.length; i++) {
+          payloadList.push(payload[keys[i]]);
+        }
+        payloadList.reverse();
+        dispatch(getArticles(payloadList));
+      } else {
+        dispatch(getArticles(null));
       }
-      payloadList.reverse();
-      dispatch(getArticles(payloadList));
     });
   };
 }
-
-// export function uploadImageAPI(image, userId, imageType) {
-//   return (dispatch) => {
-//     const upload = storage.ref(`images/${image.name}`).put(image);
-//     upload.on(
-//       'state_changed',
-//       (snapshot) => {},
-//       (error) => {
-//         console.log(error);
-//       },
-//       () => {
-//         storage
-//           .ref('images')
-//           .child(image.name)
-//           .getDownloadURL()
-//           .then((url) => {
-//             if (imageType === 'profile') {
-//               db.collection('users').doc(userId).update({
-//                 photoUrl: url,
-//               });
-//             } else {
-//               db.collection('users').doc(userId).update({
-//                 backGroundImageURL: url,
-//               });
-//             }
-//             dispatch(uploadImage(url));
-//           });
-//       },
-//     );
-//   };
-// }
 
 // export function getUserDetailsAPI(userId){
 //     return (dispatch)=>{

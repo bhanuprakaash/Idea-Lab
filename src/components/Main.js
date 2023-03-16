@@ -122,12 +122,13 @@ const Main = (props) => {
                 </div>
             </ShareBox> */}
 
-        {props.articles.length === 0 ? (
+        {props.articles && props.articles.length === 0 ? (
           <p>There are no articles</p>
         ) : (
           <Content>
             {props.loading && <img src="/images/spinner.svg" alt="" />}
-            {props.articles.length > 0 &&
+            {props.articles &&
+              props.articles.length > 0 &&
               props.articles.map((article, key) => {
                 if (!article) {
                   return null;

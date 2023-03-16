@@ -4,8 +4,6 @@ import { signOutAPI } from '../actions';
 import { Link } from 'react-router-dom';
 import { getUserDetailsAPI } from '../actions';
 import { useEffect } from 'react';
-import CardHeader from '@mui/material/CardHeader';
-import { maxHeight } from '@mui/system';
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { searchUserAPI } from '../actions';
@@ -179,7 +177,9 @@ const Header = (props) => {
             <User style={{ position: 'relative', left: '50px' }}>
               <a>
                 <Link to="/profile">
-                  {props.userDetails && props.userDetails.photoUrl ? (
+                  {props.userDetails &&
+                  props.userDetails.photoUrl &&
+                  props.userDetails.userid === props.user.uid ? (
                     <img src={props.userDetails.photoUrl} alt="" />
                   ) : (
                     <img src="/images/user.svg" alt="" />

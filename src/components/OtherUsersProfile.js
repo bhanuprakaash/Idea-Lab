@@ -10,6 +10,7 @@ function OtherUsersProfile(props) {
   const commentRef = React.useRef({});
   const location = useLocation();
   const userId = location.pathname.split('/').pop();
+  const disableFollowButton = props.user && props.user.uid === props.userDetails.userId;
   useEffect(() => {
     props.getUserDetails(userId);
   }, [userId]);
@@ -85,7 +86,8 @@ function OtherUsersProfile(props) {
               </div>
             </Details>
             <Follow>
-              <button disabled={props.user.uid === props.userDetails.userid}>Follow</button>
+              {console.log(props.userDetails.userid, props.ownerId)}
+              <button disabled={disableFollowButton}>Follow</button>
               <div>
                 <p>12</p>
                 <p style={{ fontSize: '13px' }}>Followers</p>
@@ -93,7 +95,7 @@ function OtherUsersProfile(props) {
             </Follow>
           </Info>
         </Profile>
-        {props.articles.length < 0 ? (
+        {props.articles && props.articles.length < 0 ? (
           <h2
             style={{
               margin: '10px',
@@ -111,7 +113,8 @@ function OtherUsersProfile(props) {
             <h2 style={{ margin: '10px', fontWeight: 'normal', fontSize: '20px' }}>
               Recent Articles
             </h2>
-            {props.articles.length > 0 &&
+            {props.articles &&
+              props.articles.length > 0 &&
               props.articles.map((article, key) => {
                 if (!article) {
                   return null;
