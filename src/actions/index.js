@@ -86,39 +86,39 @@ export function signInAPI(providerName) {
               var email = user.email;
               var photoUrl = user.photoURL;
 
-              firebase
-                .firestore()
-                .collection('users')
-                .doc(userId)
-                .get()
-                .then(function (doc) {
-                  if (doc.exists) {
-                    console.log('User details already exist in the database');
-                  } else {
-                    // Create a new document in the users collection
-                    firebase
-                      .firestore()
-                      .collection('users')
-                      .doc(userId)
-                      .set({
-                        userid: userId,
-                        name: name,
-                        email: email,
-                        photoUrl: photoUrl,
-                        backGroundImageURL: '',
-                        bio: '',
-                      })
-                      .then(function () {
-                        console.log('User details added to the database!');
-                      })
-                      .catch(function (error) {
-                        console.error('Error adding user details to the database: ', error);
-                      });
-                  }
-                })
-                .catch(function (error) {
-                  console.error('Error getting user details from the database: ', error);
-                });
+              // firebase
+              //   .firestore()
+              //   .collection('users')
+              //   .doc(userId)
+              //   .get()
+              //   .then(function (doc) {
+              //     if (doc.exists) {
+              //       console.log('User details already exist in the database');
+              //     } else {
+              // Create a new document in the users collection
+              //     firebase
+              //       .firestore()
+              //       .collection('users')
+              //       .doc(userId)
+              //       .set({
+              //         userid: userId,
+              //         name: name,
+              //         email: email,
+              //         photoUrl: photoUrl,
+              //         backGroundImageURL: '',
+              //         bio: '',
+              //       })
+              //       .then(function () {
+              //         console.log('User details added to the database!');
+              //       })
+              //       .catch(function (error) {
+              //         console.error('Error adding user details to the database: ', error);
+              //       });
+              //   }
+              // })
+              // .catch(function (error) {
+              //   console.error('Error getting user details from the database: ', error);
+              // });
               realTimeDb.ref(`users/${userId}`).once('value', (snapshot) => {
                 if (snapshot.exists()) {
                   console.log('User details already exist in the database');

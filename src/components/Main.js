@@ -12,9 +12,10 @@ import Greeting from './Greeting';
 
 const Main = (props) => {
   const [showModel, setShowModel] = useState('close');
-  const [comment, setComment] = useState('');
-  const commentRef = React.useRef({});
   const [displayedWord, setDisplayedWord] = useState('');
+  const [showComment, setShowComment] = useState('');
+  const commentInputRef = React.useRef(null);
+  const [comment, setComment] = useState('');
 
   useEffect(() => {
     let currentIndex = 0;
@@ -32,18 +33,6 @@ const Main = (props) => {
   }, [props.userDetails.name]);
 
   useEffect(() => {
-    const newCommentRef = {};
-    if (props.articles && props.articles.length > 0) {
-      props.articles.forEach((article) => {
-        if (article) {
-          newCommentRef[article.pid] = false;
-        }
-      });
-      commentRef.current = newCommentRef;
-    }
-  }, []);
-
-  useEffect(() => {
     if (props.user) {
       props.getArticles(props.user.uid);
     }
@@ -55,9 +44,16 @@ const Main = (props) => {
     }
   }, []);
 
-  const handleShowComment = (pid) => {
-    commentRef.current[pid] = !commentRef.current[pid];
-  };
+  useEffect(() => {
+    if (props.articles) {
+      props.articles.map((article) => {
+        setShowComment((prevState) => ({
+          ...prevState,
+          [article.pid]: false,
+        }));
+      });
+    }
+  }, [props.articles]);
 
   const handleClick = (e) => {
     e.preventDefault();
@@ -76,13 +72,25 @@ const Main = (props) => {
         break;
     }
   };
+
   const LikeHandler = (postId, userId, ownerId) => {
     props.handleLike(postId, userId, ownerId);
   };
 
   const commentHandler = (postId, userId, ownerId, comment) => {
+    console.log(comment);
     props.handleComment(postId, userId, ownerId, comment);
     setComment('');
+  };
+
+  const handleShowComment = (postId) => {
+    setShowComment((prevState) => ({
+      ...prevState,
+      [postId]: !prevState[postId],
+    }));
+  };
+  const handleChangeComment = (e) => {
+    setComment(e.target.value);
   };
 
   return (
@@ -206,39 +214,42 @@ const Main = (props) => {
                         </button>
                       </li>
                     </SocialCounts>
-
-                    {!commentRef.current[article.pid] && (
+                    {showComment[article.pid] && (
                       <CommentInput>
-                        <textarea value={comment} onChange={(e) => setComment(e.target.value)} />
+                        <textarea
+                          value={comment}
+                          type="text"
+                          placeholder="Add a comment"
+                          onChange={handleChangeComment}
+                        />
                         <button
                           onClick={() => {
                             commentHandler(article.pid, props.user.uid, article.userId, comment);
                           }}
                           style={{ border: 'none', backgroundColor: 'white', cursor: 'pointer' }}
+                          disabled={!comment.trim()}
                         >
                           <img src="/images/icons8-send-comment.svg" alt="" class="svg-icon" />
                         </button>
                       </CommentInput>
                     )}
-                    {/*
-              ( article.comments.length>0 &&
-                !commentRef.current[article.pid] &&(
-                article.comments.map((comment,key)=>(
-                  <CommentContainer key={key}>
-                    <CommentHeader>
-                      <CommentAvatar src={props.userDetails.photoUrl} alt="" />
-                      <div>
-                        <CommentUserName>{props.userDetails.name}</CommentUserName>
-                        <span style={{fontSize:"10px"}}>{
-                            new Date().toLocaleDateString()
-                        }</span>
-                      </div>
-                    </CommentHeader>
-                    <CommentText>{comment.comment}</CommentText>
-                  </CommentContainer>
-                ))
-              ))
-              */}
+                    {
+                      <CommentContainer>
+                        {showComment[article.pid] &&
+                          article.comments &&
+                          article.comments.map((comment, key) => {
+                            return (
+                              <Comment key={key}>
+                                <CommentHeader>
+                                  <CommentAvatar src={props.userDetails.photoUrl} alt="" />
+                                  <CommentUserName>{props.userDetails.name}</CommentUserName>
+                                </CommentHeader>
+                                <CommentText>{comment.comment}</CommentText>
+                              </Comment>
+                            );
+                          })}
+                      </CommentContainer>
+                    }
                   </Article>
                 );
               })}
@@ -253,8 +264,8 @@ const Main = (props) => {
 const CommentContainer = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 16px;
-  background-color: #f2f2f2;
+  background-color: #ffffff;
+  margin: 10px;
   border-radius: 8px;
 `;
 
@@ -265,8 +276,8 @@ const CommentHeader = styled.div`
 `;
 
 const CommentAvatar = styled.img`
-  width: 38px;
-  height: 38px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   margin-right: 8px;
   object-fit: cover;
@@ -280,8 +291,10 @@ const CommentUserName = styled.span`
 `;
 
 const CommentText = styled.p`
-  margin: 0;
-  font-size: 14px;
+  margin-left: 50px;
+  margin-bottom: 8px;
+  font-size: 15px;
+  color: black;
   text-align: left;
 `;
 
@@ -510,12 +523,15 @@ const Content = styled.div`
 
 const CommentInput = styled.div`
   border-radius: 20px;
-  padding: 0 16px;
+  padding: 5px;
+  padding-top: 10px;
   margin: 8px 0;
   display: flex;
   align-items: center;
   border: 1px solid #e6ecf0;
   background-color: #f9fafb;
+  margin-left: 20px;
+  margin-right: 20px;
   textarea {
     resize: none;
     width: 100%;

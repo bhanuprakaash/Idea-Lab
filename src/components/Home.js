@@ -5,36 +5,45 @@ import RightSide from './RightSide';
 import { Navigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import React from 'react';
+import { useEffect } from 'react';
 const Home = (props) => {
-  const [delayComplete, setDelayComplete] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(true);
+  // const [delayComplete, setDelayComplete] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
 
-  React.useEffect(() => {
-    setTimeout(() => {
-      setDelayComplete(true);
-      setIsLoading(false);
-    }, 2000);
+  // React.useEffect(() => {
+  //   setTimeout(() => {
+  //     setDelayComplete(true);
+  //     setIsLoading(false);
+  //   }, 2000);
+  // }, []);
+  //  if (isLoading) {
+  //    return (
+  //      <div
+  //        style={{
+  //          display: 'flex',
+  //          justifyContent: 'center',
+  //          alignItems: 'center',
+  //          height: '100vh',
+  //          backgroundColor: 'white',
+  //          width: '100%',
+  //        }}
+  //      >
+  //        <img src="./images/circle-loading-lines.gif" alt="loading" width={100} />
+  //      </div>
+  //    );
+  // }
+  useEffect(() => {
+    document.title = 'Home | Idea Lab';
   }, []);
-  if (isLoading) {
-    return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh',
-          backgroundColor: 'white',
-          width: '100%',
-        }}
-      >
-        <img src="./images/circle-loading-lines.gif" alt="loading" width={100} />
-      </div>
-    );
-  }
+  // useEffect(() => {
+  //   if(!props.user){
+  //     setIsLoading(true);
+  //   }
+  // }, [props.user]);
 
   return (
     <Container>
-      {delayComplete && !props.user && <Navigate to="/" />}
+      {!props.user && <Navigate to="/" />}
       <Layout>
         <LeftSide />
         <Main />
