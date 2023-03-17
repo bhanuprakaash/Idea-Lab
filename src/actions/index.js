@@ -11,6 +11,7 @@ import {
   GET_COMMENTS,
   SEARCH_USERS,
   SAVE_PROFILE_CHANGES,
+  HANDLE_FOLLOW,
 } from './actionType';
 import { db } from '../firebase.js';
 import firebase from 'firebase/compat/app';
@@ -62,6 +63,10 @@ export const searchUsers = (payload) => ({
 });
 export const saveProfileChanges = (payload) => ({
   type: SAVE_PROFILE_CHANGES,
+  payload: payload,
+});
+export const handleFollow = (payload) => ({
+  type: HANDLE_FOLLOW,
   payload: payload,
 });
 
@@ -621,6 +626,27 @@ export function uploadImageAPI(userId, image, type) {
           });
         }
       });
+    });
+  };
+}
+// handleFollowAPI for realTimeDb. OwnerId is the current login userId and userId is the user to follow. Only we have user/userid/connections array. So we have to check if the userId is already in connections array or not. If not then add it to connections array and if it is already there then remove it from connections array
+export function handleFollowAPI(ownerId, userId) {
+  console.log('ownerId:', ownerId);
+  console.log('userId:', userId);
+  return (dispatch) => {
+    const connectionsRef = realTimeDb.ref(`users/${ownerId}/connections`);
+    connectionsRef.once('value', (snapshot) => {
+      let payload = snapshot.val();
+      if (payload) {
+        if (payload.includes(userId)) {
+          connectionsRef.set(payload.filter((id) => id !== userId));
+        } else {
+          connectionsRef.set([...payload, userId]);
+        }
+      } else {
+        connectionsRef.set([userId]);
+      }
+      dispatch(handleFollow(userId));
     });
   };
 }

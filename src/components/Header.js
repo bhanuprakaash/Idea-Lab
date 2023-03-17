@@ -9,21 +9,16 @@ import { Navigate } from 'react-router-dom';
 import { searchUserAPI } from '../actions';
 
 const Header = (props) => {
-  const [delayComplete, setDelayComplete] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState('');
   const [searchResults, setSearchResults] = React.useState([]);
 
-  React.useEffect(() => {
-    setTimeout(() => {
-      setDelayComplete(true);
-    }, 1000);
-  }, []);
+
 
   useEffect(() => {
-    if (props.user) {
-      props.getUserDetails(props.user.uid);
-    }
-  }, []);
+   if(props.user){
+    props.getUserDetails(props.user.uid);
+   }
+  }, [props.user]);
 
   const handleSearchQueryChange = (event) => {
     const query = event.target.value;
@@ -50,7 +45,7 @@ const Header = (props) => {
 
   return (
     <Container>
-      {delayComplete && !props.user && <Navigate to="/" />}
+     {!props.user && <Navigate to="/" />}
       <Content>
         <a href="/" style={{ textDecoration: 'none', marginBottom: '7px' }}>
           <h1>
@@ -145,11 +140,13 @@ const Header = (props) => {
                             key={result.userid}
                             to={{
                               pathname: `/profile/${result.userid}`,
+                              state:{ownerId:props.user.uid}
                             }}
                             style={{ textDecoration: 'none' }}
                           >
+                            {console.log(props.user.userid)}
                             <section>
-                              <img src={result.photoUrl} alt="" />
+                              <img src={result.photoUrl} alt="" referrerPolicy="no-referrer" />
                               <div>
                                 <p href="">{result.name}</p>
                                 <p href="" style={{ fontSize: '12px' }}>
@@ -177,7 +174,8 @@ const Header = (props) => {
             <User style={{ position: 'relative', left: '50px' }}>
               <a>
                 <Link to="/profile">
-                  {props.userDetails &&
+                  {props.user &&
+                  props.userDetails &&
                   props.userDetails.photoUrl &&
                   props.userDetails.userid === props.user.uid ? (
                     <img src={props.userDetails.photoUrl} alt="" referrerPolicy="no-referrer" />

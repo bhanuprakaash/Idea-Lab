@@ -6,6 +6,7 @@ import uploadImageReducer from './uploadImageReducer';
 import getLikesReducer from './getLikesReducer';
 import searchUsersReducer from './searchUsersReducer';
 import saveProfileChangesReducer from './saveProfileChangesReducer';
+import followReducer from './followReducer';
 const rootReducer = combineReducers({
   userState: userReducer,
   articleState: articleReducer,
@@ -14,5 +15,6 @@ const rootReducer = combineReducers({
   likesState: getLikesReducer,
   searchState: searchUsersReducer,
   saveProfileChangesState: saveProfileChangesReducer,
+  followState: followReducer,
 });
 export { rootReducer };

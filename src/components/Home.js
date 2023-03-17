@@ -8,30 +8,8 @@ import React from 'react';
 import { useEffect } from 'react';
 const Home = (props) => {
   // const [delayComplete, setDelayComplete] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(false);
 
-  // React.useEffect(() => {
-  //   setTimeout(() => {
-  //     setDelayComplete(true);
-  //     setIsLoading(false);
-  //   }, 2000);
-  // }, []);
-  //  if (isLoading) {
-  //    return (
-  //      <div
-  //        style={{
-  //          display: 'flex',
-  //          justifyContent: 'center',
-  //          alignItems: 'center',
-  //          height: '100vh',
-  //          backgroundColor: 'white',
-  //          width: '100%',
-  //        }}
-  //      >
-  //        <img src="./images/circle-loading-lines.gif" alt="loading" width={100} />
-  //      </div>
-  //    );
-  // }
+
   useEffect(() => {
     document.title = 'Home | Idea Lab';
   }, []);
