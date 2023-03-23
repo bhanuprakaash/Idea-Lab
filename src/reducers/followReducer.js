@@ -1,16 +1,16 @@
-import {HANDLE_FOLLOW} from '../actions/actionType';
+import { HANDLE_FOLLOW } from '../actions/actionType';
 
 const initialState = {
-    followers: [],
+  followers: [],
 };
 
 const followReducer = (state = initialState, action) => {
-    switch (action.type) {
-        case HANDLE_FOLLOW:
-            return {...state, followers: action.payload};
-        default:
-            return state;
-    }
+  switch (action.type) {
+    case HANDLE_FOLLOW:
+      return { ...state, followers: action.payload };
+    default:
+      return state;
+  }
 };
 
 export default followReducer;

@@ -7,6 +7,8 @@ import getLikesReducer from './getLikesReducer';
 import searchUsersReducer from './searchUsersReducer';
 import saveProfileChangesReducer from './saveProfileChangesReducer';
 import followReducer from './followReducer';
+import getFollowersReducer from './getFollowersReducer';
+import connectionsArticlesReducer from './connectionsArticlesReducer';
 const rootReducer = combineReducers({
   userState: userReducer,
   articleState: articleReducer,
@@ -16,5 +18,7 @@ const rootReducer = combineReducers({
   searchState: searchUsersReducer,
   saveProfileChangesState: saveProfileChangesReducer,
   followState: followReducer,
+  connectionsState: getFollowersReducer,
+  articlesState: connectionsArticlesReducer,
 });
 export { rootReducer };

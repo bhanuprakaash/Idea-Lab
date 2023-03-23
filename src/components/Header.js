@@ -12,12 +12,10 @@ const Header = (props) => {
   const [searchQuery, setSearchQuery] = React.useState('');
   const [searchResults, setSearchResults] = React.useState([]);
 
-
-
   useEffect(() => {
-   if(props.user){
-    props.getUserDetails(props.user.uid);
-   }
+    if (props.user) {
+      props.getUserDetails(props.user.uid);
+    }
   }, [props.user]);
 
   const handleSearchQueryChange = (event) => {
@@ -45,7 +43,7 @@ const Header = (props) => {
 
   return (
     <Container>
-     {!props.user && <Navigate to="/" />}
+      {!props.user && <Navigate to="/" />}
       <Content>
         <a href="/" style={{ textDecoration: 'none', marginBottom: '7px' }}>
           <h1>
@@ -140,7 +138,7 @@ const Header = (props) => {
                             key={result.userid}
                             to={{
                               pathname: `/profile/${result.userid}`,
-                              state:{ownerId:props.user.uid}
+                              state: { ownerId: props.user.uid },
                             }}
                             style={{ textDecoration: 'none' }}
                           >
@@ -174,10 +172,7 @@ const Header = (props) => {
             <User style={{ position: 'relative', left: '50px' }}>
               <a>
                 <Link to="/profile">
-                  {props.user &&
-                  props.userDetails &&
-                  props.userDetails.photoUrl &&
-                  props.userDetails.userid === props.user.uid ? (
+                  {props.user ? (
                     <img src={props.userDetails.photoUrl} alt="" referrerPolicy="no-referrer" />
                   ) : (
                     <img src="/images/user.svg" alt="" />

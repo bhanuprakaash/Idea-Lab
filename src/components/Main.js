@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { getArticlesAPI } from '../actions';
 import { getUserDetailsAPI } from '../actions';
-import { handleLikeAPI, handleCommentAPI, getLikesAPI } from '../actions';
+import { handleLikeAPI, handleCommentAPI, getLikesAPI, connectionsArticlesAPI } from '../actions';
 import ReactPlayer from 'react-player';
 import Greeting from './Greeting';
 
@@ -35,6 +35,12 @@ const Main = (props) => {
   useEffect(() => {
     if (props.user) {
       props.getArticles(props.user.uid);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (props.user) {
+      props.connectionsArticles(props.user.uid);
     }
   }, []);
 
@@ -129,11 +135,11 @@ const Main = (props) => {
                     </button>
                 </div>
             </ShareBox> */}
-
         {props.articles && props.articles.length === 0 ? (
           <p>There are no articles</p>
         ) : (
           <Content>
+            {console.log(props.article)}
             {props.loading && <img src="/images/spinner.svg" alt="" />}
             {props.articles &&
               props.articles.length > 0 &&
@@ -549,6 +555,7 @@ const mapStateToProps = (state) => {
     articles: state.articleState.articles,
     userDetails: state.userDetailsState.userDetails,
     likes: state.likesState.likes,
+    article: state.articlesState.article,
   };
 };
 
@@ -559,5 +566,6 @@ const mapDispatchToProps = (dispatch) => ({
   handleComment: (postId, userId, ownerId, comment) =>
     dispatch(handleCommentAPI(postId, userId, ownerId, comment)),
   getLikes: (userId) => dispatch(getLikesAPI(userId)),
+  connectionsArticles: (userId) => dispatch(connectionsArticlesAPI(userId)),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(Main);

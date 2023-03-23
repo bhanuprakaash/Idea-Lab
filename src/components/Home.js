@@ -9,7 +9,6 @@ import { useEffect } from 'react';
 const Home = (props) => {
   // const [delayComplete, setDelayComplete] = React.useState(false);
 
-
   useEffect(() => {
     document.title = 'Home | Idea Lab';
   }, []);

@@ -1,25 +1,33 @@
 import { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { getUserDetailsAPI, getArticlesAPI,handleFollowAPI } from '../actions';
+import {
+  getUserDetailsAPI,
+  getArticlesAPI,
+  handleFollowAPI,
+  retrieveConnectionsAPI,
+} from '../actions';
 import styled from 'styled-components';
 import React from 'react';
 import ReactPlayer from 'react-player';
-import {useParams} from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 function OtherUsersProfile(props) {
   const [comment, setComment] = useState('');
   const commentRef = React.useRef({});
-  const {id} = useParams();
-  console.log("userparams",id);
-  const location = useLocation();
-  const ownerId =location.state?.ownerId;
-  console.log("ownerId",ownerId);
+  const { id } = useParams();
   useEffect(() => {
-    if(id){
+    if (id) {
       props.getUserDetails(id);
     }
-  }, [id]);
+  }, [id !== props.userDetails.userid]);
+
+  useEffect(() => {
+    if (props.user) {
+      console.log('user inside the useeffect', props.user.uid);
+      props.retrieveConnections(props.user.uid);
+    }
+  }, [props.user]);
 
   useEffect(() => {
     const newCommentRef = {};
@@ -41,7 +49,6 @@ function OtherUsersProfile(props) {
     document.title = `${props.userDetails.name} | Idea Lab`;
   }, [props.userDetails]);
 
-
   const handleShowComment = (pid) => {
     commentRef.current[pid] = !commentRef.current[pid];
   };
@@ -62,8 +69,8 @@ function OtherUsersProfile(props) {
   return (
     <>
       <Container>
-        {console.log("userDetails",props.userDetails.userid)}
-        {props.user && console.log("user",props.user.uid)}
+        {console.log('userDetails', props.userDetails.userid)}
+        {props.user && console.log('user', props.user.uid)}
         <CoverImg>
           {props.userDetails.backGroundImageURL === '' ? (
             <img src="/images/cover.png" alt="cover" />
@@ -103,14 +110,19 @@ function OtherUsersProfile(props) {
               </div>
             </Details>
             <Follow>
-                {props.user && (
-                  <button 
-                  disabled={props.user.uid === props.userDetails.userid}
+              {console.log(props.connections)}
+              {props.user && (
+                <button
+                  disabled={props.user.uid === id}
                   onClick={() => handleFollowers(props.user.uid, props.userDetails.userid)}
-                  >Follow</button>
-                )}
+                >
+                  {props.connections && props.connections.includes(props.userDetails.userid)
+                    ? 'Unfollow'
+                    : 'Follow'}
+                </button>
+              )}
               <div>
-                <p>12</p>
+                <p>{!props.userDetails.followers ? 0 : props.userDetails.followers.length}</p>
                 <p style={{ fontSize: '13px' }}>Followers</p>
               </div>
             </Follow>
@@ -538,11 +550,13 @@ const mapStateToProps = (state) => {
     userDetails: state.userDetailsState.userDetails,
     articles: state.articleState.articles,
     handleFollow: state.followState.handleFollow,
+    connections: state.connectionsState.connections,
   };
 };
 const mapDispatchToProps = (dispatch) => ({
   getUserDetails: (userId) => dispatch(getUserDetailsAPI(userId)),
   getArticles: (userId) => dispatch(getArticlesAPI(userId)),
-  handleFollow: (ownerId,userId) => dispatch(handleFollowAPI(ownerId,userId)),
+  handleFollow: (ownerId, userId) => dispatch(handleFollowAPI(ownerId, userId)),
+  retrieveConnections: (userId) => dispatch(retrieveConnectionsAPI(userId)),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(OtherUsersProfile);

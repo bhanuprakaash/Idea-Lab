@@ -12,6 +12,8 @@ import {
   SEARCH_USERS,
   SAVE_PROFILE_CHANGES,
   HANDLE_FOLLOW,
+  RETRIEVE_CONNECTIONS,
+  CONNECTIONS_ARTICLES,
 } from './actionType';
 import { db } from '../firebase.js';
 import firebase from 'firebase/compat/app';
@@ -67,6 +69,15 @@ export const saveProfileChanges = (payload) => ({
 });
 export const handleFollow = (payload) => ({
   type: HANDLE_FOLLOW,
+  payload: payload,
+});
+export const retrieveConnections = (payload) => ({
+  type: RETRIEVE_CONNECTIONS,
+  payload: payload,
+});
+
+export const connectionsArticles = (payload) => ({
+  type: CONNECTIONS_ARTICLES,
   payload: payload,
 });
 
@@ -629,12 +640,13 @@ export function uploadImageAPI(userId, image, type) {
     });
   };
 }
-// handleFollowAPI for realTimeDb. OwnerId is the current login userId and userId is the user to follow. Only we have user/userid/connections array. So we have to check if the userId is already in connections array or not. If not then add it to connections array and if it is already there then remove it from connections array
+// handleFollowAPI for realTimeDb. OwnerId is the current login userId and userId is the user to follow. Only we have user/userid/connections array. So we have to check if the userId is already in connections array or not. If not then add it to connections array and if it is already there then remove it from connections array and also add following array in user/userid/following array
 export function handleFollowAPI(ownerId, userId) {
   console.log('ownerId:', ownerId);
   console.log('userId:', userId);
   return (dispatch) => {
     const connectionsRef = realTimeDb.ref(`users/${ownerId}/connections`);
+    const followersRef = realTimeDb.ref(`users/${userId}/followers`);
     connectionsRef.once('value', (snapshot) => {
       let payload = snapshot.val();
       if (payload) {
@@ -646,7 +658,55 @@ export function handleFollowAPI(ownerId, userId) {
       } else {
         connectionsRef.set([userId]);
       }
-      dispatch(handleFollow(userId));
+
+      followersRef.once('value', (snapshot) => {
+        let followersPayload = snapshot.val();
+        if (followersPayload) {
+          if (followersPayload.includes(ownerId)) {
+            followersRef.set(followersPayload.filter((id) => id !== ownerId));
+          } else {
+            followersRef.set([...followersPayload, ownerId]);
+          }
+        } else {
+          followersRef.set([ownerId]);
+        }
+        dispatch(handleFollow(userId));
+      });
+    });
+  };
+}
+
+export function retrieveConnectionsAPI(userId) {
+  console.log('Inside the api : userId:', userId);
+  return (dispatch) => {
+    const connectionsRef = realTimeDb.ref(`users/${userId}/connections`);
+    connectionsRef.on('value', (snapshot) => {
+      console.log('snapshot.val():', snapshot.val());
+      dispatch(retrieveConnections(snapshot.val()));
+    });
+  };
+}
+
+// create the function connectionsArticlesAPI to get the articles of the connections of the current login user and himself also.
+export function connectionsArticlesAPI(userId) {
+  return (dispatch) => {
+    const connectionsRef = realTimeDb.ref(`users/${userId}/connections`);
+    connectionsRef.on('value', (snapshot) => {
+      let payload = snapshot.val();
+      let articles = [];
+      if (payload) {
+        payload.forEach((id) => {
+          const articlesRef = realTimeDb.ref(`articles/${id}`);
+          articlesRef.on('value', (snapshot) => {
+            let payload = snapshot.val();
+            if (payload) {
+              articles.push(payload);
+            }
+          });
+        });
+      }
+      console.log('articles:', articles);
+      dispatch(connectionsArticles(articles));
     });
   };
 }

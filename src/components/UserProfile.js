@@ -251,11 +251,11 @@ function UserProfile(props) {
               </Details>
               <Follow>
                 <div>
-                  <p>12</p>
+                  <p>{!props.userDetails.connections ? 0 : props.userDetails.connections.length}</p>
                   <p style={{ fontSize: '13px' }}>Following</p>
                 </div>
                 <div>
-                  <p>12</p>
+                  <p>{!props.userDetails.followers ? 0 : props.userDetails.followers.length}</p>
                   <p style={{ fontSize: '13px' }}>Followers</p>
                 </div>
                 <div>

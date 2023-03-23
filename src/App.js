@@ -27,7 +27,7 @@ function App(props) {
           <Route path="/profile" element={[<Header />, <UserProfile />]} />
           <Route path="/my-network" element={[<MyNetwork />, <ExplorePeople />]} />
           <Route path="/tech-today" element={[<Header />, <News />]} />
-          <Route path="/profile/:id" element={[<Header/>,<OtherUsersProfile/>]} />
+          <Route path="/profile/:id" element={[<Header />, <OtherUsersProfile />]} />
         </Routes>
       </Router>
     </div>
