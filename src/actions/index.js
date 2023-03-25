@@ -13,7 +13,7 @@ import {
   SAVE_PROFILE_CHANGES,
   HANDLE_FOLLOW,
   RETRIEVE_CONNECTIONS,
-  CONNECTIONS_ARTICLES,
+  COMMUNITY_ARTICLES,
 } from './actionType';
 import { db } from '../firebase.js';
 import firebase from 'firebase/compat/app';
@@ -75,9 +75,8 @@ export const retrieveConnections = (payload) => ({
   type: RETRIEVE_CONNECTIONS,
   payload: payload,
 });
-
-export const connectionsArticles = (payload) => ({
-  type: CONNECTIONS_ARTICLES,
+export const getCommunityArticles = (payload) => ({
+  type: COMMUNITY_ARTICLES,
   payload: payload,
 });
 
@@ -559,16 +558,21 @@ export function getCommentsAPI(postId, ownerId) {
   };
 }
 
-export function getLikesAPI(postId) {
+//create getLikesAPI function to get comments from firebase realtime database which is in articles/userid/postid/likes count
+export function getLikesAPI(postId, ownerId) {
   return (dispatch) => {
-    let payload;
-    db.collection('likes')
-      .doc(postId)
-      .onSnapshot((snapshot) => {
-        payload = snapshot.data();
-        dispatch(getLikes(payload));
-      });
+    const likesRef = realTimeDb.ref(`articles/${ownerId}/${postId}/likes`);
+    likesRef.on('value', (snapshot) => {
+      dispatch(getLikes(snapshot.val()));
+    });
   };
+}
+
+export function getArticleLikes(postId, ownerId) {
+  const likesRef = realTimeDb.ref(`articles/${ownerId}/${postId}/likes`);
+  likesRef.on('value', (snapshot) => {
+    return snapshot.val();
+  });
 }
 
 export function searchUserAPI(searchTerm) {
@@ -688,25 +692,71 @@ export function retrieveConnectionsAPI(userId) {
 }
 
 // create the function connectionsArticlesAPI to get the articles of the connections of the current login user and himself also.
-export function connectionsArticlesAPI(userId) {
+
+export function getCommunityArticlesAPI(userId) {
+  let payload;
   return (dispatch) => {
     const connectionsRef = realTimeDb.ref(`users/${userId}/connections`);
     connectionsRef.on('value', (snapshot) => {
-      let payload = snapshot.val();
+      payload = snapshot.val();
       let articles = [];
       if (payload) {
         payload.forEach((id) => {
           const articlesRef = realTimeDb.ref(`articles/${id}`);
           articlesRef.on('value', (snapshot) => {
-            let payload = snapshot.val();
-            if (payload) {
-              articles.push(payload);
+            let payload2 = snapshot.val();
+            if (payload2) {
+              const keys = Object.keys(payload2);
+              const payloadList = [];
+              for (let i = 0; i < keys.length; i++) {
+                payloadList.push(payload2[keys[i]]);
+              }
+              articles.push(payloadList);
             }
           });
         });
       }
-      console.log('articles:', articles);
-      dispatch(connectionsArticles(articles));
+      articles = articles.flat();
+      dispatch(getCommunityArticles(articles));
     });
   };
 }
+
+// export function getCommunityArticlesAPI(userId) {
+//   return (dispatch) => {
+//     const connectionsRef = realTimeDb.ref(`users/${userId}/connections`);
+//     connectionsRef.on('value', async (snapshot) => {
+//       let payload = snapshot.val();
+//       let articles = [];
+//       if (payload) {
+//         const promises = payload.map((id) => {
+//           return new Promise((resolve, reject) => {
+//             const articlesRef = realTimeDb.ref(`articles/${id}`);
+//             articlesRef.on('value', (snapshot) => {
+//               let payload = snapshot.val();
+//               if (payload) {
+//                 const keys = Object.keys(payload);
+//                 const payloadList = [];
+//                 for (let i = 0; i < keys.length; i++) {
+//                   payloadList.push(payload[keys[i]]);
+//                 }
+//                 payloadList.reverse();
+//                 articles = [...articles, ...payloadList];
+//                 resolve();
+//               } else {
+//                 reject();
+//               }
+//             });
+//           });
+//         });
+//         try {
+//           await Promise.all(promises);
+//           console.log('articles:', articles);
+//           dispatch(getCommunityArticles(articles));
+//         } catch (error) {
+//           console.log('Error fetching articles:', error);
+//         }
+//       }
+//     });
+//   };
+// }

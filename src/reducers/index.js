@@ -8,7 +8,8 @@ import searchUsersReducer from './searchUsersReducer';
 import saveProfileChangesReducer from './saveProfileChangesReducer';
 import followReducer from './followReducer';
 import getFollowersReducer from './getFollowersReducer';
-import connectionsArticlesReducer from './connectionsArticlesReducer';
+import communityArticlesReducer from './communityArticlesReducer';
+
 const rootReducer = combineReducers({
   userState: userReducer,
   articleState: articleReducer,
@@ -19,6 +20,6 @@ const rootReducer = combineReducers({
   saveProfileChangesState: saveProfileChangesReducer,
   followState: followReducer,
   connectionsState: getFollowersReducer,
-  articlesState: connectionsArticlesReducer,
+  communityArticlesState: communityArticlesReducer,
 });
 export { rootReducer };
