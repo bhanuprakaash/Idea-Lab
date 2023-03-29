@@ -26,7 +26,6 @@ function UserProfile(props) {
   const [showEdit, setShowEdit] = useState(false);
   const [showComment, setShowComment] = useState('');
 
-
   useEffect(() => {
     const newCommentRef = {};
     if (props.articles && props.articles.length > 0) {
@@ -54,7 +53,6 @@ function UserProfile(props) {
       props.getArticles(props.user.uid);
     }
   }, [props.user]);
-
 
   useEffect(() => {
     if (coverPic) {
@@ -125,8 +123,6 @@ function UserProfile(props) {
     const file = e.target.files[0];
     setProfilePic(file);
   };
-
-
 
   const handleShowComment = (postId) => {
     setShowComment((prevState) => ({
@@ -379,41 +375,41 @@ function UserProfile(props) {
                       </SocialCounts>
 
                       {showComment[article.pid] && (
-                      <CommentInput>
-                        <textarea
-                          value={comment}
-                          type="text"
-                          placeholder="Add a comment"
-                          onChange={handleChangeComment}
-                        />
-                        <button
-                          onClick={() => {
-                            commentHandler(article.pid, props.user.uid, article.userId, comment);
-                          }}
-                          style={{ border: 'none', backgroundColor: 'white', cursor: 'pointer' }}
-                          disabled={!comment.trim()}
-                        >
-                          <img src="/images/icons8-send-comment.svg" alt="" class="svg-icon" />
-                        </button>
-                      </CommentInput>
-                    )}
-                    {
-                      <CommentContainer>
-                        {showComment[article.pid] &&
-                          article.comments &&
-                          article.comments.map((comment, key) => {
-                            return (
-                              <Comment key={key}>
-                                <CommentHeader>
-                                  <CommentAvatar src={props.userDetails.photoUrl} alt="" />
-                                  <CommentUserName>{props.userDetails.name}</CommentUserName>
-                                </CommentHeader>
-                                <CommentText>{comment.comment}</CommentText>
-                              </Comment>
-                            );
-                          })}
-                      </CommentContainer>
-                    }
+                        <CommentInput>
+                          <textarea
+                            value={comment}
+                            type="text"
+                            placeholder="Add a comment"
+                            onChange={handleChangeComment}
+                          />
+                          <button
+                            onClick={() => {
+                              commentHandler(article.pid, props.user.uid, article.userId, comment);
+                            }}
+                            style={{ border: 'none', backgroundColor: 'white', cursor: 'pointer' }}
+                            disabled={!comment.trim()}
+                          >
+                            <img src="/images/icons8-send-comment.svg" alt="" class="svg-icon" />
+                          </button>
+                        </CommentInput>
+                      )}
+                      {
+                        <CommentContainer>
+                          {showComment[article.pid] &&
+                            article.comments &&
+                            article.comments.map((comment, key) => {
+                              return (
+                                <Comment key={key}>
+                                  <CommentHeader>
+                                    <CommentAvatar src={props.userDetails.photoUrl} alt="" />
+                                    <CommentUserName>{props.userDetails.name}</CommentUserName>
+                                  </CommentHeader>
+                                  <CommentText>{comment.comment}</CommentText>
+                                </Comment>
+                              );
+                            })}
+                        </CommentContainer>
+                      }
                     </Article>
                   );
                 })}
@@ -832,7 +828,8 @@ const mapDispatchToProps = (dispatch) => ({
       saveProfileChangesAPI(userId, name, bio, email, education, skills, location, currentRole),
     ),
   uploadImage: (userId, image, type) => dispatch(uploadImageAPI(userId, image, type)),
-  handleLike: (articleId, userId,ownerId) => dispatch(handleLikeAPI(articleId, userId,ownerId)),
-  handleComment: (postId, userId, ownerId, comment) => dispatch(handleCommentAPI(postId, userId, ownerId, comment)),
+  handleLike: (articleId, userId, ownerId) => dispatch(handleLikeAPI(articleId, userId, ownerId)),
+  handleComment: (postId, userId, ownerId, comment) =>
+    dispatch(handleCommentAPI(postId, userId, ownerId, comment)),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(UserProfile);

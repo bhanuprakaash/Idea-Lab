@@ -32,7 +32,7 @@ const Home = (props) => {
 const Container = styled.div`
   padding-top: 75px;
   max-width: 100%;
-  background:white;
+  background: white;
 `;
 
 const Layout = styled.div`

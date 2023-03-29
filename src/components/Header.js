@@ -112,14 +112,7 @@ const Header = (props) => {
             {}
           </searchResultsContainer>
         </Search>
-    */}     
-            <LineContainer>
-              <Line/>
-              <Line/>
-              <Line/>
-              <Line/>
-              <Line/>
-            </LineContainer>
+    */}
 
             <SearchForm>
               <Search>
@@ -197,6 +190,10 @@ const Header = (props) => {
             </User>
           </NavListWrap>
         </Nav>
+        <LineContainer>
+          <Line />
+          <Line />
+        </LineContainer>
       </Content>
     </Container>
   );
@@ -204,7 +201,7 @@ const Header = (props) => {
 
 const Container = styled.div`
   background-color: white;
-  //background: linear-gradient(135deg, white 58%, rgb(102, 103, 177) 42%);
+  background: linear-gradient(135deg, white 79%, rgb(102, 103, 177) 21%);
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   left: 0;
   padding: 0 24px;
@@ -222,6 +219,7 @@ const Content = styled.div`
   margin: 0 auto;
   min-height: 100%;
   max-width: 1128px;
+  position: relative;
 `;
 // const SearchResult = styled.div`
 //   display: flex;
@@ -528,17 +526,21 @@ const LineContainer = styled.div`
   height: 100px;
   width: 100%;
   display: flex;
-  align-items: left;
   position: absolute;
-  margin-left: 0;
   top: 0;
-  z-index: 0;
+  right: 0;
+  //move the line to the right
+  transform: translateX(105%);
+  //set the z-index to -1 so that it is behind the other elements
+  z-index: -1;
+  //set the containder to overflow hidden so that the line does not go outside the container
+  overflow: hidden;
 `;
 const Line = styled.div`
   width: 2px;
   height: 100%;
   background-color: rgb(102, 103, 171);
-  margin: 0 10px;
+  margin: 0 20px;
   padding: 0 5px;
 `;
 

@@ -610,8 +610,8 @@ const mapDispatchToProps = (dispatch) => ({
   getArticles: (userId) => dispatch(getArticlesAPI(userId)),
   handleFollow: (ownerId, userId) => dispatch(handleFollowAPI(ownerId, userId)),
   retrieveConnections: (userId) => dispatch(retrieveConnectionsAPI(userId)),
-  handleLike: (articleId, userId,ownerId) => dispatch(handleLikeAPI(articleId, userId,ownerId)),
-  handleComment: (postId, userId, ownerId, comment) => dispatch(handleCommentAPI(postId, userId, ownerId, comment)),
-
+  handleLike: (articleId, userId, ownerId) => dispatch(handleLikeAPI(articleId, userId, ownerId)),
+  handleComment: (postId, userId, ownerId, comment) =>
+    dispatch(handleCommentAPI(postId, userId, ownerId, comment)),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(OtherUsersProfile);

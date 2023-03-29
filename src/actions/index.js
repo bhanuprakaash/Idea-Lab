@@ -564,10 +564,8 @@ export function getLikesAPI(postId, ownerId) {
     likesRef.on('value', (snapshot) => {
       dispatch(getLikes(snapshot.val()));
     });
-
   };
 }
-
 
 export function searchUserAPI(searchTerm) {
   return (dispatch) => {
@@ -707,7 +705,7 @@ export function getCommunityArticlesAPI(userId) {
                 }
                 return payloadList;
               }
-            })
+            }),
           );
         });
       }
@@ -724,7 +722,7 @@ export function getCommunityArticlesAPI(userId) {
             }
             return payloadList.reverse();
           }
-        })
+        }),
       );
       Promise.all(articlesPromises).then((articles) => {
         articles = articles.flat();
@@ -733,8 +731,6 @@ export function getCommunityArticlesAPI(userId) {
     });
   };
 }
-
-
 
 // export function getCommunityArticlesAPI(userId) {
 //   return (dispatch) => {

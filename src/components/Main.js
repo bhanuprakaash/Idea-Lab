@@ -75,7 +75,7 @@ const Main = (props) => {
 
   const LikeHandler = async (postId, userId, ownerId) => {
     await props.handleLike(postId, userId, ownerId);
-    await props.getLikes(postId,ownerId);
+    await props.getLikes(postId, ownerId);
     props.getCommunityArticles(props.user.uid);
   };
 
@@ -311,7 +311,12 @@ const CommonCard = styled.div`
   margin-bottom: 8px;
   background-color: #fff;
   position: relative;
-  border: none;
+  border: 2px solid rgba(0, 0, 0, 0.08);
+  border-radius: 5px;
+  transition: box-shadow 83ms;
+  &:hover {
+    box-shadow: 0 0 0 2px rgba(102, 103, 171), 0 5px 5px rgba(0, 0, 0, 0.2);
+  }
 `;
 
 const Comment = styled.p`
@@ -560,8 +565,9 @@ const mapDispatchToProps = (dispatch) => ({
   getArticles: (userId) => dispatch(getArticlesAPI(userId)),
   getUserDetails: (userId) => dispatch(getUserDetailsAPI(userId)),
   handleLike: (articleId, userId, ownerId) => dispatch(handleLikeAPI(articleId, userId, ownerId)),
-  handleComment: (postId, userId, ownerId, comment) => dispatch(handleCommentAPI(postId, userId, ownerId, comment)),
-  getLikes: (postId,ownerId) => dispatch(getLikesAPI(postId,ownerId)),
+  handleComment: (postId, userId, ownerId, comment) =>
+    dispatch(handleCommentAPI(postId, userId, ownerId, comment)),
+  getLikes: (postId, ownerId) => dispatch(getLikesAPI(postId, ownerId)),
   getCommunityArticles: (userId) => dispatch(getCommunityArticlesAPI(userId)),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(Main);
