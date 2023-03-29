@@ -4,7 +4,7 @@ import PostModel from './PostModel';
 import '../App.css';
 import { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { getArticlesAPI } from '../actions';
+import { getArticleLikes, getArticlesAPI } from '../actions';
 import { getUserDetailsAPI } from '../actions';
 import { handleLikeAPI, handleCommentAPI, getLikesAPI, getCommunityArticlesAPI } from '../actions';
 import ReactPlayer from 'react-player';
@@ -42,18 +42,18 @@ const Main = (props) => {
     if (props.user) {
       props.getCommunityArticles(props.user.uid);
     }
-  }, [props.user]);
+  }, []);
 
-  useEffect(() => {
-    if (props.communityArticles) {
-      props.communityArticles.map((article) => {
-        setShowComment((prevState) => ({
-          ...prevState,
-          [article.pid]: false,
-        }));
-      });
-    }
-  }, [props.communityArticles]);
+  // useEffect(() => {
+  //   if (props.communityArticles) {
+  //     props.communityArticles.map((article) => {
+  //       setShowComment((prevState) => ({
+  //         ...prevState,
+  //         [article.pid]: false,
+  //       }));
+  //     });
+  //   }
+  // }, [props.communityArticles]);
 
   const handleClick = (e) => {
     e.preventDefault();
@@ -73,14 +73,17 @@ const Main = (props) => {
     }
   };
 
-  const LikeHandler = (postId, userId, ownerId) => {
-    props.handleLike(postId, userId, ownerId);
+  const LikeHandler = async (postId, userId, ownerId) => {
+    await props.handleLike(postId, userId, ownerId);
+    await props.getLikes(postId,ownerId);
+    props.getCommunityArticles(props.user.uid);
   };
 
   const commentHandler = (postId, userId, ownerId, comment) => {
     console.log(comment);
     props.handleComment(postId, userId, ownerId, comment);
     setComment('');
+    props.getCommunityArticles(props.user.uid);
   };
 
   const handleShowComment = (postId) => {
@@ -557,9 +560,8 @@ const mapDispatchToProps = (dispatch) => ({
   getArticles: (userId) => dispatch(getArticlesAPI(userId)),
   getUserDetails: (userId) => dispatch(getUserDetailsAPI(userId)),
   handleLike: (articleId, userId, ownerId) => dispatch(handleLikeAPI(articleId, userId, ownerId)),
-  handleComment: (postId, userId, ownerId, comment) =>
-    dispatch(handleCommentAPI(postId, userId, ownerId, comment)),
-  getLikes: (userId) => dispatch(getLikesAPI(userId)),
+  handleComment: (postId, userId, ownerId, comment) => dispatch(handleCommentAPI(postId, userId, ownerId, comment)),
+  getLikes: (postId,ownerId) => dispatch(getLikesAPI(postId,ownerId)),
   getCommunityArticles: (userId) => dispatch(getCommunityArticlesAPI(userId)),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(Main);

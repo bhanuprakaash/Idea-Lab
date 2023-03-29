@@ -479,7 +479,6 @@ export function handleLikeAPI(postId, userId, ownerId) {
     likesRef.once('value', (snapshot) => {
       let payload = snapshot.val();
       if (payload) {
-        console.log('payload:', payload);
         if (payload.userId === userId) {
           likesRef.remove();
           realTimeDb.ref(`articles/${ownerId}/${postId}/likes`).transaction((likes) => {
@@ -565,15 +564,10 @@ export function getLikesAPI(postId, ownerId) {
     likesRef.on('value', (snapshot) => {
       dispatch(getLikes(snapshot.val()));
     });
+
   };
 }
 
-export function getArticleLikes(postId, ownerId) {
-  const likesRef = realTimeDb.ref(`articles/${ownerId}/${postId}/likes`);
-  likesRef.on('value', (snapshot) => {
-    return snapshot.val();
-  });
-}
 
 export function searchUserAPI(searchTerm) {
   return (dispatch) => {
@@ -685,7 +679,6 @@ export function retrieveConnectionsAPI(userId) {
   return (dispatch) => {
     const connectionsRef = realTimeDb.ref(`users/${userId}/connections`);
     connectionsRef.on('value', (snapshot) => {
-      console.log('snapshot.val():', snapshot.val());
       dispatch(retrieveConnections(snapshot.val()));
     });
   };
@@ -697,30 +690,51 @@ export function getCommunityArticlesAPI(userId) {
   let payload;
   return (dispatch) => {
     const connectionsRef = realTimeDb.ref(`users/${userId}/connections`);
-    connectionsRef.on('value', (snapshot) => {
+    connectionsRef.once('value').then((snapshot) => {
       payload = snapshot.val();
-      let articles = [];
+      let articlesPromises = [];
       if (payload) {
         payload.forEach((id) => {
           const articlesRef = realTimeDb.ref(`articles/${id}`);
-          articlesRef.on('value', (snapshot) => {
-            let payload2 = snapshot.val();
-            if (payload2) {
-              const keys = Object.keys(payload2);
-              const payloadList = [];
-              for (let i = 0; i < keys.length; i++) {
-                payloadList.push(payload2[keys[i]]);
+          articlesPromises.push(
+            articlesRef.once('value').then((snapshot) => {
+              let payload2 = snapshot.val();
+              if (payload2) {
+                const keys = Object.keys(payload2);
+                const payloadList = [];
+                for (let i = 0; i < keys.length; i++) {
+                  payloadList.push(payload2[keys[i]]);
+                }
+                return payloadList;
               }
-              articles.push(payloadList);
-            }
-          });
+            })
+          );
         });
       }
-      articles = articles.flat();
-      dispatch(getCommunityArticles(articles));
+      // Add code to fetch your own articles
+      const myArticlesRef = realTimeDb.ref(`articles/${userId}`);
+      articlesPromises.push(
+        myArticlesRef.once('value').then((snapshot) => {
+          let payload2 = snapshot.val();
+          if (payload2) {
+            const keys = Object.keys(payload2);
+            const payloadList = [];
+            for (let i = 0; i < keys.length; i++) {
+              payloadList.push(payload2[keys[i]]);
+            }
+            return payloadList.reverse();
+          }
+        })
+      );
+      Promise.all(articlesPromises).then((articles) => {
+        articles = articles.flat();
+        dispatch(getCommunityArticles(articles));
+      });
     });
   };
 }
+
+
 
 // export function getCommunityArticlesAPI(userId) {
 //   return (dispatch) => {

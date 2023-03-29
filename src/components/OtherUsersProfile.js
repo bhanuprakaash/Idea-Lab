@@ -6,6 +6,8 @@ import {
   getArticlesAPI,
   handleFollowAPI,
   retrieveConnectionsAPI,
+  handleLikeAPI,
+  handleCommentAPI,
 } from '../actions';
 import styled from 'styled-components';
 import React from 'react';
@@ -15,6 +17,8 @@ import { useParams } from 'react-router-dom';
 function OtherUsersProfile(props) {
   const [comment, setComment] = useState('');
   const commentRef = React.useRef({});
+  const [showComment, setShowComment] = useState('');
+
   const { id } = useParams();
   useEffect(() => {
     if (id) {
@@ -24,7 +28,6 @@ function OtherUsersProfile(props) {
 
   useEffect(() => {
     if (props.user) {
-      console.log('user inside the useeffect', props.user.uid);
       props.retrieveConnections(props.user.uid);
     }
   }, [props.user]);
@@ -49,10 +52,6 @@ function OtherUsersProfile(props) {
     document.title = `${props.userDetails.name} | Idea Lab`;
   }, [props.userDetails]);
 
-  const handleShowComment = (pid) => {
-    commentRef.current[pid] = !commentRef.current[pid];
-  };
-
   const LikeHandler = (postId, userId, ownerId) => {
     props.handleLike(postId, userId, ownerId);
   };
@@ -65,12 +64,19 @@ function OtherUsersProfile(props) {
   const handleFollowers = (ownerId, userId) => {
     props.handleFollow(ownerId, userId);
   };
+  const handleShowComment = (postId) => {
+    setShowComment((prevState) => ({
+      ...prevState,
+      [postId]: !prevState[postId],
+    }));
+  };
+  const handleChangeComment = (e) => {
+    setComment(e.target.value);
+  };
 
   return (
     <>
       <Container>
-        {console.log('userDetails', props.userDetails.userid)}
-        {props.user && console.log('user', props.user.uid)}
         <CoverImg>
           {props.userDetails.backGroundImageURL === '' ? (
             <img src="/images/cover.png" alt="cover" />
@@ -110,7 +116,6 @@ function OtherUsersProfile(props) {
               </div>
             </Details>
             <Follow>
-              {console.log(props.connections)}
               {props.user && (
                 <button
                   disabled={props.user.uid === id}
@@ -226,38 +231,42 @@ function OtherUsersProfile(props) {
                       </li>
                     </SocialCounts>
 
-                    {!commentRef.current[article.pid] && (
+                    {showComment[article.pid] && (
                       <CommentInput>
-                        <textarea value={comment} onChange={(e) => setComment(e.target.value)} />
+                        <textarea
+                          value={comment}
+                          type="text"
+                          placeholder="Add a comment"
+                          onChange={handleChangeComment}
+                        />
                         <button
                           onClick={() => {
                             commentHandler(article.pid, props.user.uid, article.userId, comment);
                           }}
                           style={{ border: 'none', backgroundColor: 'white', cursor: 'pointer' }}
+                          disabled={!comment.trim()}
                         >
                           <img src="/images/icons8-send-comment.svg" alt="" class="svg-icon" />
                         </button>
                       </CommentInput>
                     )}
-                    {/*
-                            ( article.comments.length>0 &&
-                              !commentRef.current[article.pid] &&(
-                              article.comments.map((comment,key)=>(
-                                <CommentContainer key={key}>
-                                  <CommentHeader>
-                                    <CommentAvatar src={props.userDetails.photoUrl} alt="" />
-                                    <div>
-                                      <CommentUserName>{props.userDetails.name}</CommentUserName>
-                                      <span style={{fontSize:"10px"}}>{
-                                          new Date().toLocaleDateString()
-                                      }</span>
-                                    </div>
-                                  </CommentHeader>
-                                  <CommentText>{comment.comment}</CommentText>
-                                </CommentContainer>
-                              ))
-                            ))
-                            */}
+                    {
+                      <CommentContainer>
+                        {showComment[article.pid] &&
+                          article.comments &&
+                          article.comments.map((comment, key) => {
+                            return (
+                              <Comment key={key}>
+                                <CommentHeader>
+                                  <CommentAvatar src={props.userDetails.photoUrl} alt="" />
+                                  <CommentUserName>{props.userDetails.name}</CommentUserName>
+                                </CommentHeader>
+                                <CommentText>{comment.comment}</CommentText>
+                              </Comment>
+                            );
+                          })}
+                      </CommentContainer>
+                    }
                   </Article>
                 );
               })}
@@ -544,6 +553,49 @@ const CommentInput = styled.div`
   }
 `;
 
+const CommentContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  margin: 10px;
+  border-radius: 8px;
+`;
+
+const CommentHeader = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+`;
+
+const CommentAvatar = styled.img`
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  margin-right: 8px;
+  object-fit: cover;
+`;
+
+const CommentUserName = styled.span`
+  font-weight: 400;
+  font-size: 14px;
+  margin-right: 8px;
+  font-family: Arial, Helvetica, sans-serif;
+`;
+
+const CommentText = styled.p`
+  margin-left: 50px;
+  margin-bottom: 8px;
+  font-size: 15px;
+  color: black;
+  text-align: left;
+`;
+
+const Comment = styled.p`
+  font-size: 14px;
+  margin-bottom: 5px;
+  color: rgba(0, 0, 0, 0.6);
+`;
+
 const mapStateToProps = (state) => {
   return {
     user: state.userState.user,
@@ -558,5 +610,8 @@ const mapDispatchToProps = (dispatch) => ({
   getArticles: (userId) => dispatch(getArticlesAPI(userId)),
   handleFollow: (ownerId, userId) => dispatch(handleFollowAPI(ownerId, userId)),
   retrieveConnections: (userId) => dispatch(retrieveConnectionsAPI(userId)),
+  handleLike: (articleId, userId,ownerId) => dispatch(handleLikeAPI(articleId, userId,ownerId)),
+  handleComment: (postId, userId, ownerId, comment) => dispatch(handleCommentAPI(postId, userId, ownerId, comment)),
+
 });
 export default connect(mapStateToProps, mapDispatchToProps)(OtherUsersProfile);

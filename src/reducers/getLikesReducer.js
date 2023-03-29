@@ -1,6 +1,6 @@
 import { GET_LIKES } from '../actions/actionType.js';
 const initState = {
-  likes: [],
+  likes: null,
   loading: false,
 };
 const getlikesReducer = (state = initState, action) => {
