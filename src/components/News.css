@@ -1,0 +1,147 @@
+.root{
+    background-color: #f6f6f6;
+    padding: 0 0 0 0;
+    margin-top: 170px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: rgb(102, 103, 171);;
+    font-weight: 400;
+    text-align: left;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+
+.organizrow {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 60px 0 20px;
+    margin: -100px 0 10px;
+}
+
+.organizrow .organizcols {
+    position: relative;
+    cursor: pointer;
+    height: 180px;
+    width: 30%;
+    margin: -10% 1.2% 12%;
+    /*margin: -6% 1.2% 12%;*/
+}
+
+.organizrow .organizcols .orcol {
+    height: 195px;
+    transition: 0.5s;
+}
+
+.organizrow .organizcols .orcol.orcol1 {
+    position: relative;
+    background: #F6F6F6;
+    display: flex;
+    /*justify-content: center;*/
+    align-items: center;
+    z-index: 1;
+    transform: translateY(100px);
+    padding: 20px;
+    text-align: left;
+    border-bottom: 1px solid #AECFDC;
+}
+
+.organizrow .organizcols:hover .orcol.orcol1 {
+    background:rgb(102, 103, 171);;
+    border-color: #ECF6FA;
+    transform: translateY(0);
+}
+
+.organizrow .organizcols:hover {
+    z-index: 3;
+}
+
+.organizrow .organizcols .orcol.orcol1 .content {
+    opacity: 1;
+    transition: 0.5s;
+}
+
+.organizrow .organizcols:hover .orcol.orcol1 .content {
+    opacity: 1;
+}
+
+.organizrow .organizcols .orcol.orcol1 .content img {
+    max-width: 100%;
+    margin-bottom: 18px;
+}
+
+.organizrow .organizcols .orcol.orcol1.makeinindia .content img {
+    height: 36px;
+    max-width: 100%;
+    margin: 18px 0 19px;
+}
+
+.organizrow .organizcols .orcol.orcol1 .content h2 {
+    margin: 10px 0;
+    padding: 0;
+    text-align: left;
+    font-size: 22px;
+    line-height: 1.1;
+    font-weight: 700;
+    color: rgb(102, 103, 171);
+    letter-spacing: -0.025em;
+}
+
+.organizrow .organizcols .orcol.orcol1 .content p {
+    font-size: 18px;
+    line-height: 1.4;
+    font-weight:400;
+    color: rgb(102, 103, 171);;
+}
+
+.organizrow .organizcols .orcol.orcol2 {
+    position: relative;
+    background: #f6f6f6;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+    box-sizing: border-box;
+    /*box-shadow: 0 10px 25px rgb(0 0 0 / 16%);*/
+    transform: translateY(-120px);
+    height: auto;
+}
+
+.organizrow .organizcols:hover .orcol.orcol2 {
+    transform: translateY(0);
+    background: #fff;
+    box-shadow: 0 5px 28px rgb(0 0 0 / 12%);
+}
+
+.organizrow .organizcols:before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 220px;
+    left: 0;
+    right: 0;
+    top: 8px;
+    bottom: 0;
+    background: rgb(0 0 0 / 15%);
+    filter: blur(19px);
+    opacity: 0;
+}
+
+.organizrow .organizcols:hover:before {
+    opacity: 1;
+    transition: 0.5s;
+    height: 100%;
+}
+
+.organizrow .organizcols .orcol.orcol2 .content p {
+    font-size: 15px;
+    line-height: 1.2;
+    padding: 5px 0;
+    font-weight: 400;
+    list-style: square;
+    margin: 0 0 5px;
+}
