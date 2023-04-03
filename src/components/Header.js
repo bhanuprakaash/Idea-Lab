@@ -143,7 +143,6 @@ const Header = (props) => {
                             }}
                             style={{ textDecoration: 'none' }}
                           >
-                            {console.log(props.user.userid)}
                             <section>
                               <img src={result.photoUrl} alt="" referrerPolicy="no-referrer" />
                               <div>

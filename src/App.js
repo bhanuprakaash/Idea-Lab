@@ -11,6 +11,7 @@ import ExplorePeople from './components/ExplorePeople';
 import News from './components/News';
 import UserProfile from './components/UserProfile';
 import OtherUsersProfile from './components/OtherUsersProfile';
+import LabCommunity from './components/LabCommunity';
 
 function App(props) {
   useEffect(() => {
@@ -24,7 +25,7 @@ function App(props) {
           <Route path="/" element={<Login />} />
           <Route path="/home" element={[<Header />, <Home />]} />
           <Route path="/profile" element={[<Header />, <UserProfile />]} />
-          <Route path="/my-network" element={[<MyNetwork />, <ExplorePeople />]} />
+          <Route path="/my-network" element={<LabCommunity />} />
           <Route path="/tech-today" element={[<Header />, <News />]} />
           <Route path="/profile/:id" element={[<Header />, <OtherUsersProfile />]} />
         </Routes>

@@ -311,12 +311,6 @@ const CommonCard = styled.div`
   margin-bottom: 8px;
   background-color: #fff;
   position: relative;
-  border: 2px solid rgba(0, 0, 0, 0.08);
-  border-radius: 5px;
-  transition: box-shadow 83ms;
-  &:hover {
-    box-shadow: 0 0 0 2px rgba(102, 103, 171), 0 5px 5px rgba(0, 0, 0, 0.2);
-  }
 `;
 
 const Comment = styled.p`

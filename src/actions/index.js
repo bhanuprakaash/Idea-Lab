@@ -14,6 +14,7 @@ import {
   HANDLE_FOLLOW,
   RETRIEVE_CONNECTIONS,
   COMMUNITY_ARTICLES,
+  GET_CONNECTIONS,
 } from './actionType';
 import { db } from '../firebase.js';
 import firebase from 'firebase/compat/app';
@@ -77,6 +78,10 @@ export const retrieveConnections = (payload) => ({
 });
 export const getCommunityArticles = (payload) => ({
   type: COMMUNITY_ARTICLES,
+  payload: payload,
+});
+export const getConnections = (payload) => ({
+  type: GET_CONNECTIONS,
   payload: payload,
 });
 
@@ -770,3 +775,30 @@ export function getCommunityArticlesAPI(userId) {
 //     });
 //   };
 // }
+// function which get the connections array in user/userid/connections and then get the user details of each user in connections array and store in redux store
+export function getConnectionsAPI(userId) {
+  return (dispatch) => {
+    const connectionsRef = realTimeDb.ref(`users/${userId}/connections`);
+    connectionsRef.on('value', (snapshot) => {
+      let payload = snapshot.val();
+      if (payload) {
+        const promises = payload.map((id) => {
+          return new Promise((resolve, reject) => {
+            const userRef = realTimeDb.ref(`users/${id}`);
+            userRef.on('value', (snapshot) => {
+              let payload = snapshot.val();
+              if (payload) {
+                resolve(payload);
+              } else {
+                reject();
+              }
+            });
+          });
+        });
+        Promise.all(promises).then((users) => {
+          dispatch(getConnections(users));
+        });
+      }
+    });
+  };
+}

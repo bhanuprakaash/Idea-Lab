@@ -9,6 +9,7 @@ import saveProfileChangesReducer from './saveProfileChangesReducer';
 import followReducer from './followReducer';
 import getFollowersReducer from './getFollowersReducer';
 import communityArticlesReducer from './communityArticlesReducer';
+import getConnectionsReducer from './getConnectionsReducer';
 
 const rootReducer = combineReducers({
   userState: userReducer,
@@ -21,5 +22,6 @@ const rootReducer = combineReducers({
   followState: followReducer,
   connectionsState: getFollowersReducer,
   communityArticlesState: communityArticlesReducer,
+  networkState: getConnectionsReducer,
 });
 export { rootReducer };
