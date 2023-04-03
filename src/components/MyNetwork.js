@@ -7,36 +7,53 @@ import { Link } from 'react-router-dom';
 const MyNetwork = (props) => {
   useEffect(() => {
     if (props.user) {
-      props.getConnections(props.user.uid);
+      props.getUserDetails(props.user.uid);
     }
   }, [props.user]);
 
+  useEffect(() => {
+    if (props.user) {
+      props.getConnections(props.user.uid);
+    }
+  }, [props.user, props.userDetails]);
+
   return (
-    <Container style={{ backgroundColor: 'white' }}>
-      <h1 style={{ color: 'rgb(85, 85, 85)' }}>
-        My <span style={{ color: 'rgb(102,103,171)' }}>Network</span>
-      </h1>
-      <Connections>
-        {props.connections &&
-          props.connections.map((connection) => (
-            <div>
-              {connection.photoUrl === '' ? (
-                <img src="/images/default-profile-icon.jpg" alt="user" />
-              ) : (
-                <img src={connection.photoUrl} alt="profile" />
-              )}
-              <h3>{connection.name}</h3>
-              <Link
-                key={connection.userid}
-                to={`/profile/${connection.userid}`}
-                style={{ textDecoration: 'none' }}
-              >
-                <button>View profile</button>
-              </Link>
-            </div>
-          ))}
-      </Connections>
-    </Container>
+    <>
+      {props.connections && props.connections.length === 0 ? (
+        <Container style={{ backgroundColor: 'white' }}>
+          <h1 style={{ color: 'rgb(85, 85, 85)' }}>
+            My <span style={{ color: 'rgb(102,103,171)' }}>Network</span>
+          </h1>
+          <h2 style={{ color: 'rgb(85, 85, 85)', textAlign: 'center' }}>You have no connections</h2>
+        </Container>
+      ) : (
+        <Container style={{ backgroundColor: 'white' }}>
+          <h1 style={{ color: 'rgb(85, 85, 85)' }}>
+            My <span style={{ color: 'rgb(102,103,171)' }}>Network</span>
+          </h1>
+          <Connections>
+            {props.connections &&
+              props.connections.map((connection) => (
+                <div>
+                  {connection.photoUrl === '' ? (
+                    <img src="/images/default-profile-icon.jpg" alt="user" />
+                  ) : (
+                    <img src={connection.photoUrl} alt="profile" />
+                  )}
+                  <h3>{connection.name}</h3>
+                  <Link
+                    key={connection.userid}
+                    to={`/profile/${connection.userid}`}
+                    style={{ textDecoration: 'none' }}
+                  >
+                    <button>View profile</button>
+                  </Link>
+                </div>
+              ))}
+          </Connections>
+        </Container>
+      )}
+    </>
   );
 };
 

@@ -15,6 +15,7 @@ import {
   RETRIEVE_CONNECTIONS,
   COMMUNITY_ARTICLES,
   GET_CONNECTIONS,
+  GET_PROFILES,
 } from './actionType';
 import { db } from '../firebase.js';
 import firebase from 'firebase/compat/app';
@@ -82,6 +83,10 @@ export const getCommunityArticles = (payload) => ({
 });
 export const getConnections = (payload) => ({
   type: GET_CONNECTIONS,
+  payload: payload,
+});
+export const getProfiles = (payload) => ({
+  type: GET_PROFILES,
   payload: payload,
 });
 
@@ -798,6 +803,25 @@ export function getConnectionsAPI(userId) {
         Promise.all(promises).then((users) => {
           dispatch(getConnections(users));
         });
+      }
+    });
+  };
+}
+// function which get all user profiles object from firebase and store in redux store except the userid of current login user
+export function getProfilesAPI(userId) {
+  return (dispatch) => {
+    const usersRef = realTimeDb.ref('users');
+    usersRef.on('value', (snapshot) => {
+      let payload = snapshot.val();
+      if (payload) {
+        const keys = Object.keys(payload);
+        const users = [];
+        for (let i = 0; i < keys.length; i++) {
+          if (keys[i] !== userId) {
+            users.push(payload[keys[i]]);
+          }
+        }
+        dispatch(getProfiles(users));
       }
     });
   };

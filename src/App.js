@@ -12,7 +12,8 @@ import News from './components/News';
 import UserProfile from './components/UserProfile';
 import OtherUsersProfile from './components/OtherUsersProfile';
 import LabCommunity from './components/LabCommunity';
-
+import MindShare from './components/MindShare';
+import Notifications from './components/Notifications';
 function App(props) {
   useEffect(() => {
     props.getUserAuth();
@@ -28,6 +29,8 @@ function App(props) {
           <Route path="/my-network" element={<LabCommunity />} />
           <Route path="/tech-today" element={[<Header />, <News />]} />
           <Route path="/profile/:id" element={[<Header />, <OtherUsersProfile />]} />
+          <Route path="/mind-share" element={[<Header />, <MindShare />]} />
+          <Route path="/notifications" element={[<Header />, <Notifications />]} />
         </Routes>
       </Router>
     </div>

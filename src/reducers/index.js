@@ -10,6 +10,7 @@ import followReducer from './followReducer';
 import getFollowersReducer from './getFollowersReducer';
 import communityArticlesReducer from './communityArticlesReducer';
 import getConnectionsReducer from './getConnectionsReducer';
+import getProfilesReducer from './getProfilesReducer';
 
 const rootReducer = combineReducers({
   userState: userReducer,
@@ -23,5 +24,6 @@ const rootReducer = combineReducers({
   connectionsState: getFollowersReducer,
   communityArticlesState: communityArticlesReducer,
   networkState: getConnectionsReducer,
+  explorePeopleState: getProfilesReducer,
 });
 export { rootReducer };

@@ -88,14 +88,22 @@ const Header = (props) => {
 
               <NavList>
                 <a href="">
-                  <img src="/images/icons8-message-exchange.svg" alt="" style={{ width: '30px' }} />
-                  <span>Mind Share</span>
+                  <Link to="/mind-share">
+                    <img
+                      src="/images/icons8-message-exchange.svg"
+                      alt=""
+                      style={{ width: '30px' }}
+                    />
+                    <span>Mind Share</span>
+                  </Link>
                 </a>
               </NavList>
               <NavList>
                 <a href="">
-                  <img src="/images/icons8-notification.svg" alt="" style={{ width: '30px' }} />
-                  <span>Notifications</span>
+                  <Link to="/notifications">
+                    <img src="/images/icons8-notification.svg" alt="" style={{ width: '30px' }} />
+                    <span>Notifications</span>
+                  </Link>
                 </a>
               </NavList>
             </NavList>
