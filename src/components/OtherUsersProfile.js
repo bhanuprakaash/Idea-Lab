@@ -182,7 +182,10 @@ function OtherUsersProfile(props) {
                         </div>
                       </a>
                       <button>
-                        <img src="/images/ell.png" alt="" />
+                        <img src="/images/icons8-more.svg" alt="" width="20px" />
+                        <Menu>
+                          <a>Report</a>
+                        </Menu>
                       </button>
                     </SharedActor>
                     <Description>{article.description}</Description>
@@ -426,6 +429,18 @@ const Article = styled(CommonCard)`
   min-width: 700px;
   overflow: visible;
 `;
+const Menu = styled.div`
+  position: absolute;
+  top: 25px;
+  right: -20px;
+  background: white;
+  border-radius: 5px;
+  display: none;
+  height: 20px;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+`;
 const SharedActor = styled.div`
   padding-right: 40px;
   flex-wrap: nowrap;
@@ -471,6 +486,12 @@ const SharedActor = styled.div`
     background: transparent;
     border: none;
     outline: none;
+    cursor: pointer;
+    &:hover {
+      ${Menu} {
+        display: block;
+      }
+    }
   }
 `;
 const Description = styled.div`

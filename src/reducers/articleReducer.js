@@ -1,4 +1,4 @@
-import { SET_LOADING_STATUS, GET_ARTICLES } from '../actions/actionType';
+import { SET_LOADING_STATUS, GET_ARTICLES, DELETE_ARTICLE } from '../actions/actionType';
 
 export const initState = {
   articles: [],
@@ -11,7 +11,11 @@ const articleReducer = (state = initState, action) => {
       return { ...state, articles: action.payload, loading: false };
     case SET_LOADING_STATUS:
       return { ...state, loading: action.loading };
-
+    case DELETE_ARTICLE:
+      return {
+        ...state,
+        articles: state.articles.filter((article) => article.articleId !== action.payload),
+      };
     default:
       return state;
   }

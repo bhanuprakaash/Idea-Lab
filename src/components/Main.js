@@ -42,7 +42,7 @@ const Main = (props) => {
     if (props.user) {
       props.getCommunityArticles(props.user.uid);
     }
-  }, []);
+  }, [props.user]);
 
   // useEffect(() => {
   //   if (props.communityArticles) {
@@ -73,17 +73,13 @@ const Main = (props) => {
     }
   };
 
-  const LikeHandler = async (postId, userId, ownerId) => {
-    await props.handleLike(postId, userId, ownerId);
-    await props.getLikes(postId, ownerId);
-    props.getCommunityArticles(props.user.uid);
+  const LikeHandler = (postId, userId, ownerId) => {
+    props.handleLike(postId, userId, ownerId);
   };
 
   const commentHandler = (postId, userId, ownerId, comment) => {
-    console.log(comment);
     props.handleComment(postId, userId, ownerId, comment);
     setComment('');
-    props.getCommunityArticles(props.user.uid);
   };
 
   const handleShowComment = (postId) => {
@@ -102,43 +98,11 @@ const Main = (props) => {
         <GreetingBox>
           <Greeting displayWord={displayedWord} />
         </GreetingBox>
-
-        {/* <ShareBox>
-            <div>
-                { props.user && props.user.photoURL ?
-                <img
-                 src={props.userDetails?.photoUrl || "/images/user.svg"}
-                 alt=""
-                 referrerPolicy="no-referrer"
-        />
-                :
-                <img src="/images/user.svg" alt="" />
-                }
-                    <button onClick={handleClick} 
-                    disabled={props.loading ?true:false}>Start a post</button> 
-                </div>
-                <div>
-                    <button>
-                        <img src="/images/camera.svg" alt="" />
-                        <span>Photo</span>
-                    </button>
-                    <button>
-                        <img src="/images/video-icon.svg" alt="" />
-                        <span>Video</span>
-                    </button> 
-                    <button>
-                        <img src="/images/icons8-idea(1).svg" alt=""/>
-                        <span>Idea</span>
-                    </button>
-                </div>
-            </ShareBox> */}
-
         {props.communityArticles && props.communityArticles.length === 0 ? (
           <p>There are no articles</p>
         ) : (
           <Content>
             {props.loading && <img src="/images/spinner.svg" alt="" />}
-            {props.communityArticles && console.log(props.communityArticles)}
             {props.communityArticles &&
               props.communityArticles.length > 0 &&
               props.communityArticles.map((article, key) => {
@@ -169,7 +133,10 @@ const Main = (props) => {
                         </div>
                       </a>
                       <button>
-                        <img src="/images/ell.png" alt="" />
+                        <img src="/images/icons8-more.svg" alt="" width="20px" />
+                        <Menu>
+                          <a>Report</a>
+                        </Menu>
                       </button>
                     </SharedActor>
                     <Description>{article.description}</Description>
@@ -408,6 +375,19 @@ const Article = styled(CommonCard)`
   margin: 0 0 8px;
   overflow: visible;
 `;
+
+const Menu = styled.div`
+  position: absolute;
+  top: 25px;
+  right: -20px;
+  background: white;
+  border-radius: 5px;
+  display: none;
+  height: 20px;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+`;
 const SharedActor = styled.div`
   padding-right: 40px;
   flex-wrap: nowrap;
@@ -453,8 +433,15 @@ const SharedActor = styled.div`
     background: transparent;
     border: none;
     outline: none;
+    cursor: pointer;
+    &:hover {
+      ${Menu} {
+        display: block;
+      }
+    }
   }
 `;
+
 const Description = styled.div`
   padding: 0 16px;
   overflow: hidden;

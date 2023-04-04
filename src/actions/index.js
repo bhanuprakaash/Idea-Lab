@@ -16,6 +16,7 @@ import {
   COMMUNITY_ARTICLES,
   GET_CONNECTIONS,
   GET_PROFILES,
+  DELETE_ARTICLE,
 } from './actionType';
 import { db } from '../firebase.js';
 import firebase from 'firebase/compat/app';
@@ -89,6 +90,10 @@ export const getProfiles = (payload) => ({
   type: GET_PROFILES,
   payload: payload,
 });
+export const deleteArticle = (payload) => ({
+  type: DELETE_ARTICLE,
+  payload: payload,
+});
 
 export function signInAPI(providerName) {
   let providerx;
@@ -110,40 +115,6 @@ export function signInAPI(providerName) {
               var name = user.displayName;
               var email = user.email;
               var photoUrl = user.photoURL;
-
-              // firebase
-              //   .firestore()
-              //   .collection('users')
-              //   .doc(userId)
-              //   .get()
-              //   .then(function (doc) {
-              //     if (doc.exists) {
-              //       console.log('User details already exist in the database');
-              //     } else {
-              // Create a new document in the users collection
-              //     firebase
-              //       .firestore()
-              //       .collection('users')
-              //       .doc(userId)
-              //       .set({
-              //         userid: userId,
-              //         name: name,
-              //         email: email,
-              //         photoUrl: photoUrl,
-              //         backGroundImageURL: '',
-              //         bio: '',
-              //       })
-              //       .then(function () {
-              //         console.log('User details added to the database!');
-              //       })
-              //       .catch(function (error) {
-              //         console.error('Error adding user details to the database: ', error);
-              //       });
-              //   }
-              // })
-              // .catch(function (error) {
-              //   console.error('Error getting user details from the database: ', error);
-              // });
               realTimeDb.ref(`users/${userId}`).once('value', (snapshot) => {
                 if (snapshot.exists()) {
                   console.log('User details already exist in the database');
@@ -171,7 +142,6 @@ export function signInAPI(providerName) {
                 }
               });
             } else {
-              // No user is signed in.
               console.log('No user is signed in');
             }
           });
@@ -290,113 +260,6 @@ export function postArticleAPI(payload) {
   };
 }
 
-/* export function postArticleAPI(payload){
-    return (dispatch)=>{
-        dispatch(setLoadingStatus(true));
-        const postRef = db.collection("articles").doc();
-        const postId = postRef.id;
-        if(payload.image && payload.video===""){
-            const upload=storage.ref(`images/${payload.image.name}`).put(payload.image);
-            upload.on("state_changed",snapshot=>{},error=>{console.log(error)},()=>{
-                storage.ref("images").child(payload.image.name).getDownloadURL().then(url=>{
-                    postRef.set({
-                        pid:postId,
-                        actor:{
-                            description:payload.user.email,
-                            title:payload.user.displayName,
-                            date:payload.timestamp,
-                            image:payload.user.photoURL,
-                        },
-                        userId:payload.user.uid,
-                        video:payload.video,
-                        sharedImg: url,
-                        likes:0,
-                        comments:0,
-                        test:"image",
-                        description:payload.description,
-                    });
-                    dispatch(setLoadingStatus(false));
-                })
-            })
-        }else if(payload.video && payload.image===""){
-                console.log(payload.video);
-                    postRef.set({
-                        pid:postId,
-                        actor:{
-                            description:payload.user.email,
-                            title:payload.user.displayName,
-                            date:payload.timestamp,
-                            image:payload.user.photoURL,
-                        },
-                        userId:payload.user.uid,
-                        video:payload.video,
-                        sharedImg: "",
-                        likes:0,
-                        comments:0,
-                        test:"video",
-                        description:payload.description,
-                    });
-                
-            dispatch(setLoadingStatus(false));
-        }
-        else if(payload.video==="" && payload.image===""){
-            postRef.set({
-                pid:postId,
-                actor:{
-                    description:payload.user.email,
-                    title:payload.user.displayName,
-                    date:payload.timestamp,
-                    image:payload.user.photoURL,
-                },
-                userId:payload.user.uid,
-                video:payload.video,
-                sharedImg: "",
-                likes:0,
-                comments:0,
-                test:"text",
-                description:payload.description,
-            });
-        
-    dispatch(setLoadingStatus(false));
-        }
-    }
-} 
-*/
-
-/*
-export function getArticlesAPI(userId){
-    return (dispatch)=>{
-        let payload;
-        db.collection("articles").orderBy("actor.date","desc").onSnapshot((snapshot)=>{
-            payload=snapshot.docs.map((doc)=>{
-                if(doc.data().userId===userId){
-                    return doc.data();
-                }
-            });
-            dispatch(getArticles(payload));
-        })
-    }
-}
-*/
-
-// export function getArticlesAPI(userId) {
-//   let payload;
-//   return (dispatch) => {
-//     realTimeDb.ref(`articles/${userId}`).on('value', (snapshot) => {
-//       console.log(userId);
-//       payload = snapshot.val();
-//       const keys = Object.keys(payload);
-//       const payloadList = [];
-//       for (let i = 0; i < keys.length; i++) {
-//         payloadList.push(payload[keys[i]]);
-//       }
-//       payloadList.reverse();
-//       dispatch(getArticles(payloadList));
-//     });
-//   };
-// }
-
-// write a function to fetch the articles of the particular id only in realtimedb and structure is articles -> userid -> pid -> data . if the user is not found it just returns null
 export function getArticlesAPI(userId) {
   let payload;
   return (dispatch) => {
@@ -417,17 +280,6 @@ export function getArticlesAPI(userId) {
   };
 }
 
-// export function getUserDetailsAPI(userId){
-//     return (dispatch)=>{
-//         let payload;
-//         db.collection("users").doc(userId).onSnapshot((snapshot)=>{
-//             payload=snapshot.data();
-//             dispatch(getUserDetails(payload));
-//         })
-//     }
-// }
-
-//getUserDetailsAPI for realTimeDb
 export function getUserDetailsAPI(userId) {
   return (dispatch) => {
     let payload;
@@ -438,51 +290,6 @@ export function getUserDetailsAPI(userId) {
   };
 }
 
-/*
-    export function handleLikeAPI(postId, userId,ownerId) {
-        return (dispatch) => {
-        db.collection("likes")
-            .where("postId", "==", postId)
-            .where("userId", "==", userId)
-            .get()
-            .then((snapshot) => {
-            if (snapshot.empty) {
-                db.collection("likes").doc(postId).set({
-                postId: postId,
-                userId: userId,
-                });
-                db.collection("articles")
-                .doc(postId)
-                .get()
-                .then((snapshot) => {
-                    db.collection("articles")
-                    .doc(postId)
-                    .update({
-                        likes: snapshot.data().likes + 1,
-                    });
-                });
-                dispatch(handleLike(postId, userId));
-            } else {
-                snapshot.forEach((doc) => {
-                doc.ref.delete();
-                });
-                db.collection("articles")
-                .doc(postId)
-                .get()
-                .then((snapshot) => {
-                    db.collection("articles")
-                    .doc(postId)
-                    .update({
-                        likes: snapshot.data().likes - 1,
-                    });
-                });
-                dispatch(handleLike(postId, userId));
-            }
-            });
-        };
-    }
-    
-*/
 export function handleLikeAPI(postId, userId, ownerId) {
   return (dispatch) => {
     const likesRef = realTimeDb.ref(`likes/${postId}`);
@@ -515,17 +322,14 @@ export function handleLikeAPI(postId, userId, ownerId) {
   };
 }
 
-//create handleCommentAPI function to add comment to firebase realtime database which in articles/userid/postid/comments array
 export function handleCommentAPI(postId, userId, ownerId, comment) {
   return (dispatch) => {
     const commentsRef = realTimeDb.ref(`articles/${ownerId}/${postId}/comments`);
     commentsRef
       .transaction((comments) => {
         if (!comments) {
-          // If there are no comments yet, initialize an empty array
           comments = [];
         }
-        // Add the new comment to the array
         comments.push({
           userId: userId,
           comment: comment,
@@ -533,7 +337,6 @@ export function handleCommentAPI(postId, userId, ownerId, comment) {
         return comments;
       })
       .then(() => {
-        // Dispatch the action after the transaction completes successfully
         dispatch(handleComment(postId, userId, comment));
       })
       .catch((error) => {
@@ -542,22 +345,6 @@ export function handleCommentAPI(postId, userId, ownerId, comment) {
   };
 }
 
-/*
-export function handleCommentAPI(postId,userId,comment){
-    return (dispatch)=>{
-        db.collection("articles").doc(postId).update({
-            comments:firebase.firestore.FieldValue.arrayUnion({
-                userId:userId,
-                comment:comment,
-            })
-        }).then(()=>{
-            dispatch(handleComment(postId,userId,comment));
-        })
-    }
-};
-*/
-
-//create getCommentsAPI function to get comments from firebase realtime database which is in articles/userid/postid/comments array
 export function getCommentsAPI(postId, ownerId) {
   return (dispatch) => {
     const commentsRef = realTimeDb.ref(`articles/${ownerId}/${postId}/comments`);
@@ -567,7 +354,6 @@ export function getCommentsAPI(postId, ownerId) {
   };
 }
 
-//create getLikesAPI function to get comments from firebase realtime database which is in articles/userid/postid/likes count
 export function getLikesAPI(postId, ownerId) {
   return (dispatch) => {
     const likesRef = realTimeDb.ref(`articles/${ownerId}/${postId}/likes`);
@@ -593,7 +379,7 @@ export function searchUserAPI(searchTerm) {
     });
   };
 }
-//saveProfileChangesAPI for realTimeDb
+
 export function saveProfileChangesAPI(
   userId,
   name,
@@ -626,7 +412,6 @@ export function saveProfileChangesAPI(
       });
   };
 }
-// uploadImageAPI for realTimeDb which first store in firestore db and then get the url and store in realTimeDb, which have last param based on profile or background
 export function uploadImageAPI(userId, image, type) {
   return (dispatch) => {
     const storageRef = storage.ref();
@@ -646,10 +431,7 @@ export function uploadImageAPI(userId, image, type) {
     });
   };
 }
-// handleFollowAPI for realTimeDb. OwnerId is the current login userId and userId is the user to follow. Only we have user/userid/connections array. So we have to check if the userId is already in connections array or not. If not then add it to connections array and if it is already there then remove it from connections array and also add following array in user/userid/following array
 export function handleFollowAPI(ownerId, userId) {
-  console.log('ownerId:', ownerId);
-  console.log('userId:', userId);
   return (dispatch) => {
     const connectionsRef = realTimeDb.ref(`users/${ownerId}/connections`);
     const followersRef = realTimeDb.ref(`users/${userId}/followers`);
@@ -683,7 +465,6 @@ export function handleFollowAPI(ownerId, userId) {
 }
 
 export function retrieveConnectionsAPI(userId) {
-  console.log('Inside the api : userId:', userId);
   return (dispatch) => {
     const connectionsRef = realTimeDb.ref(`users/${userId}/connections`);
     connectionsRef.on('value', (snapshot) => {
@@ -692,50 +473,84 @@ export function retrieveConnectionsAPI(userId) {
   };
 }
 
-// create the function connectionsArticlesAPI to get the articles of the connections of the current login user and himself also.
+// export function getCommunityArticlesAPI(userId) {
+//   let payload;
+//   return (dispatch) => {
+//     const connectionsRef = realTimeDb.ref(`users/${userId}/connections`);
+//     connectionsRef.once('value').then((snapshot) => {
+//       payload = snapshot.val();
+//       let articlesPromises = [];
+//       if (payload) {
+//         payload.forEach((id) => {
+//           const articlesRef = realTimeDb.ref(`articles/${id}`);
+//           articlesPromises.push(
+//             articlesRef.once('value').then((snapshot) => {
+//               let payload2 = snapshot.val();
+//               if (payload2) {
+//                 const keys = Object.keys(payload2);
+//                 const payloadList = [];
+//                 for (let i = 0; i < keys.length; i++) {
+//                   payloadList.push(payload2[keys[i]]);
+//                 }
+//                 return payloadList;
+//               }
+//             }),
+//           );
+//         });
+//       }
+//       // Add code to fetch your own articles
+//       const myArticlesRef = realTimeDb.ref(`articles/${userId}`);
+//       articlesPromises.push(
+//         myArticlesRef.once('value').then((snapshot) => {
+//           let payload2 = snapshot.val();
+//           if (payload2) {
+//             const keys = Object.keys(payload2);
+//             const payloadList = [];
+//             for (let i = 0; i < keys.length; i++) {
+//               payloadList.push(payload2[keys[i]]);
+//             }
+//             return payloadList.reverse();
+//           }
+//         }),
+//       );
+//       Promise.all(articlesPromises).then((articles) => {
+//         articles = articles.flat();
+//         dispatch(getCommunityArticles(articles));
+//       });
+//     });
+//   };
+// }
+
+// create the function to get connections articles with real time updates based on time which is in actor/date in realTimeDb and also get the articles of the current login user also and if i like it show the count in frontedn
 
 export function getCommunityArticlesAPI(userId) {
-  let payload;
+  console.log('userId:', userId);
   return (dispatch) => {
     const connectionsRef = realTimeDb.ref(`users/${userId}/connections`);
-    connectionsRef.once('value').then((snapshot) => {
-      payload = snapshot.val();
-      let articlesPromises = [];
-      if (payload) {
-        payload.forEach((id) => {
-          const articlesRef = realTimeDb.ref(`articles/${id}`);
-          articlesPromises.push(
-            articlesRef.once('value').then((snapshot) => {
-              let payload2 = snapshot.val();
-              if (payload2) {
-                const keys = Object.keys(payload2);
-                const payloadList = [];
-                for (let i = 0; i < keys.length; i++) {
-                  payloadList.push(payload2[keys[i]]);
-                }
-                return payloadList;
-              }
-            }),
-          );
-        });
+    connectionsRef.on('value', async (snapshot) => {
+      const connectionIds = snapshot.val();
+      if (!connectionIds || connectionIds.length === 0) {
+        dispatch(getCommunityArticles([]));
+        return;
       }
-      // Add code to fetch your own articles
-      const myArticlesRef = realTimeDb.ref(`articles/${userId}`);
-      articlesPromises.push(
-        myArticlesRef.once('value').then((snapshot) => {
-          let payload2 = snapshot.val();
-          if (payload2) {
-            const keys = Object.keys(payload2);
-            const payloadList = [];
-            for (let i = 0; i < keys.length; i++) {
-              payloadList.push(payload2[keys[i]]);
+
+      const promises = connectionIds.map((connectionId) => {
+        return new Promise((resolve, reject) => {
+          const articlesRef = realTimeDb.ref(`articles/${connectionId}`);
+          articlesRef.on('value', (snapshot) => {
+            const payload = snapshot.val();
+            if (payload) {
+              const articles = Object.values(payload).reverse();
+              resolve(articles);
+            } else {
+              resolve([]);
             }
-            return payloadList.reverse();
-          }
-        }),
-      );
-      Promise.all(articlesPromises).then((articles) => {
-        articles = articles.flat();
+          });
+        });
+      });
+
+      Promise.all(promises).then((articlesList) => {
+        const articles = articlesList.flat();
         dispatch(getCommunityArticles(articles));
       });
     });
@@ -807,7 +622,7 @@ export function getConnectionsAPI(userId) {
     });
   };
 }
-// function which get all user profiles object from firebase and store in redux store except the userid of current login user
+
 export function getProfilesAPI(userId) {
   return (dispatch) => {
     const usersRef = realTimeDb.ref('users');
@@ -824,5 +639,13 @@ export function getProfilesAPI(userId) {
         dispatch(getProfiles(users));
       }
     });
+  };
+}
+
+export function deleteArticleAPI(articleId, userId) {
+  return (dispatch) => {
+    const articleRef = realTimeDb.ref(`articles/${userId}/${articleId}`);
+    articleRef.remove();
+    dispatch(deleteArticle(articleId));
   };
 }
