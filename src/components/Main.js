@@ -114,7 +114,7 @@ const Main = (props) => {
                     <SharedActor>
                       <a>
                         <img
-                          src={props.userDetails.photoUrl}
+                          src={article.actor.image}
                           alt=""
                           style={{
                             width: '48px',
@@ -126,7 +126,7 @@ const Main = (props) => {
                         />
                         <div>
                           <span style={{ color: 'rgb(102,103,171)', fontWeight: 'bold' }}>
-                            {props.userDetails.name}
+                            {article.actor.title}
                           </span>
                           {article.actor && <span>{article.actor.description}</span>}
                           {article.actor && <span>{article.actor.date}</span>}

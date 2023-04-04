@@ -473,89 +473,89 @@ export function retrieveConnectionsAPI(userId) {
   };
 }
 
-// export function getCommunityArticlesAPI(userId) {
-//   let payload;
-//   return (dispatch) => {
-//     const connectionsRef = realTimeDb.ref(`users/${userId}/connections`);
-//     connectionsRef.once('value').then((snapshot) => {
-//       payload = snapshot.val();
-//       let articlesPromises = [];
-//       if (payload) {
-//         payload.forEach((id) => {
-//           const articlesRef = realTimeDb.ref(`articles/${id}`);
-//           articlesPromises.push(
-//             articlesRef.once('value').then((snapshot) => {
-//               let payload2 = snapshot.val();
-//               if (payload2) {
-//                 const keys = Object.keys(payload2);
-//                 const payloadList = [];
-//                 for (let i = 0; i < keys.length; i++) {
-//                   payloadList.push(payload2[keys[i]]);
-//                 }
-//                 return payloadList;
-//               }
-//             }),
-//           );
-//         });
-//       }
-//       // Add code to fetch your own articles
-//       const myArticlesRef = realTimeDb.ref(`articles/${userId}`);
-//       articlesPromises.push(
-//         myArticlesRef.once('value').then((snapshot) => {
-//           let payload2 = snapshot.val();
-//           if (payload2) {
-//             const keys = Object.keys(payload2);
-//             const payloadList = [];
-//             for (let i = 0; i < keys.length; i++) {
-//               payloadList.push(payload2[keys[i]]);
-//             }
-//             return payloadList.reverse();
-//           }
-//         }),
-//       );
-//       Promise.all(articlesPromises).then((articles) => {
-//         articles = articles.flat();
-//         dispatch(getCommunityArticles(articles));
-//       });
-//     });
-//   };
-// }
-
-// create the function to get connections articles with real time updates based on time which is in actor/date in realTimeDb and also get the articles of the current login user also and if i like it show the count in frontedn
-
 export function getCommunityArticlesAPI(userId) {
-  console.log('userId:', userId);
+  let payload;
   return (dispatch) => {
     const connectionsRef = realTimeDb.ref(`users/${userId}/connections`);
-    connectionsRef.on('value', async (snapshot) => {
-      const connectionIds = snapshot.val();
-      if (!connectionIds || connectionIds.length === 0) {
-        dispatch(getCommunityArticles([]));
-        return;
-      }
-
-      const promises = connectionIds.map((connectionId) => {
-        return new Promise((resolve, reject) => {
-          const articlesRef = realTimeDb.ref(`articles/${connectionId}`);
-          articlesRef.on('value', (snapshot) => {
-            const payload = snapshot.val();
-            if (payload) {
-              const articles = Object.values(payload).reverse();
-              resolve(articles);
-            } else {
-              resolve([]);
-            }
-          });
+    connectionsRef.once('value').then((snapshot) => {
+      payload = snapshot.val();
+      let articlesPromises = [];
+      if (payload) {
+        payload.forEach((id) => {
+          const articlesRef = realTimeDb.ref(`articles/${id}`);
+          articlesPromises.push(
+            articlesRef.once('value').then((snapshot) => {
+              let payload2 = snapshot.val();
+              if (payload2) {
+                const keys = Object.keys(payload2);
+                const payloadList = [];
+                for (let i = 0; i < keys.length; i++) {
+                  payloadList.push(payload2[keys[i]]);
+                }
+                return payloadList;
+              }
+            }),
+          );
         });
-      });
-
-      Promise.all(promises).then((articlesList) => {
-        const articles = articlesList.flat();
+      }
+      // Add code to fetch your own articles
+      const myArticlesRef = realTimeDb.ref(`articles/${userId}`);
+      articlesPromises.push(
+        myArticlesRef.once('value').then((snapshot) => {
+          let payload2 = snapshot.val();
+          if (payload2) {
+            const keys = Object.keys(payload2);
+            const payloadList = [];
+            for (let i = 0; i < keys.length; i++) {
+              payloadList.push(payload2[keys[i]]);
+            }
+            return payloadList.reverse();
+          }
+        }),
+      );
+      Promise.all(articlesPromises).then((articles) => {
+        articles = articles.flat();
         dispatch(getCommunityArticles(articles));
       });
     });
   };
 }
+
+// create the function to get connections articles with real time updates based on time which is in actor/date in realTimeDb and also get the articles of the current login user also and if i like it show the count in frontedn
+
+// export function getCommunityArticlesAPI(userId) {
+//   console.log('userId:', userId);
+//   return (dispatch) => {
+//     const connectionsRef = realTimeDb.ref(`users/${userId}/connections`);
+//     connectionsRef.on('value', async (snapshot) => {
+//       const connectionIds = snapshot.val();
+//       if (!connectionIds || connectionIds.length === 0) {
+//         dispatch(getCommunityArticles([]));
+//         return;
+//       }
+
+//       const promises = connectionIds.map((connectionId) => {
+//         return new Promise((resolve, reject) => {
+//           const articlesRef = realTimeDb.ref(`articles/${connectionId}`);
+//           articlesRef.on('value', (snapshot) => {
+//             const payload = snapshot.val();
+//             if (payload) {
+//               const articles = Object.values(payload).reverse();
+//               resolve(articles);
+//             } else {
+//               resolve([]);
+//             }
+//           });
+//         });
+//       });
+
+//       Promise.all(promises).then((articlesList) => {
+//         const articles = articlesList.flat();
+//         dispatch(getCommunityArticles(articles));
+//       });
+//     });
+//   };
+// }
 
 // export function getCommunityArticlesAPI(userId) {
 //   return (dispatch) => {
