@@ -1,4 +1,5 @@
 import { auth, provider, provider2, storage, realTimeDb } from '../firebase.js';
+import moment from 'moment';
 import {
   SET_USER,
   SET_LOADING_STATUS,
@@ -162,6 +163,7 @@ export function getUserAuth() {
     });
   };
 }
+
 export function signOutAPI() {
   return (dispatch) => {
     auth
@@ -203,6 +205,7 @@ export function postArticleAPI(payload) {
                   description: payload.user.email,
                   title: payload.user.displayName,
                   date: newDate,
+                  time: new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),
                   image: payload.user.photoURL,
                 },
                 userId: userId,
@@ -225,6 +228,7 @@ export function postArticleAPI(payload) {
           description: payload.user.email,
           title: payload.user.displayName,
           date: newDate,
+          time: new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),
           image: payload.user.photoURL,
         },
         userId: userId,
@@ -244,6 +248,7 @@ export function postArticleAPI(payload) {
           description: payload.user.email,
           title: payload.user.displayName,
           date: newDate,
+          time: new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),
           image: payload.user.photoURL,
         },
         userId: userId,
@@ -278,6 +283,24 @@ export function getArticlesAPI(userId) {
       }
     });
   };
+}
+export function connectionArticlesx(userId){
+  let payload;
+  realTimeDb.ref(`articles/${userId}`).on('value', (snapshot) => {
+    payload = snapshot.val();
+    if (payload) {
+      const keys = Object.keys(payload);
+      const payloadList = [];
+      for (let i = 0; i < keys.length; i++) {
+        payloadList.push(payload[keys[i]]);
+      }
+      payloadList.reverse();
+      console.log(payloadList);
+      return payloadList;
+    } else {
+      return null;
+    }
+  });
 }
 
 export function getUserDetailsAPI(userId) {
@@ -498,7 +521,6 @@ export function getCommunityArticlesAPI(userId) {
           );
         });
       }
-      // Add code to fetch your own articles
       const myArticlesRef = realTimeDb.ref(`articles/${userId}`);
       articlesPromises.push(
         myArticlesRef.once('value').then((snapshot) => {
@@ -509,12 +531,17 @@ export function getCommunityArticlesAPI(userId) {
             for (let i = 0; i < keys.length; i++) {
               payloadList.push(payload2[keys[i]]);
             }
-            return payloadList.reverse();
+            return payloadList;
           }
         }),
       );
       Promise.all(articlesPromises).then((articles) => {
         articles = articles.flat();
+        articles.sort((a, b) => {
+          const aDate = new Date(a.actor.date);
+          const bDate = new Date(b.actor.date);
+          return bDate - aDate;
+        });  
         dispatch(getCommunityArticles(articles));
       });
     });
@@ -596,6 +623,9 @@ export function getCommunityArticlesAPI(userId) {
 //   };
 // }
 // function which get the connections array in user/userid/connections and then get the user details of each user in connections array and store in redux store
+
+
+
 export function getConnectionsAPI(userId) {
   return (dispatch) => {
     const connectionsRef = realTimeDb.ref(`users/${userId}/connections`);
@@ -616,12 +646,14 @@ export function getConnectionsAPI(userId) {
           });
         });
         Promise.all(promises).then((users) => {
+          console.log('users:', users)
           dispatch(getConnections(users));
         });
       }
     });
   };
 }
+
 
 export function getProfilesAPI(userId) {
   return (dispatch) => {

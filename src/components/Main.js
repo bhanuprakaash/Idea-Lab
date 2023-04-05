@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { getArticleLikes, getArticlesAPI } from '../actions';
 import { getUserDetailsAPI } from '../actions';
-import { handleLikeAPI, handleCommentAPI, getLikesAPI, getCommunityArticlesAPI } from '../actions';
+import { handleLikeAPI, handleCommentAPI, getLikesAPI, getCommunityArticlesAPI,getConnectionsAPI,connectionArticlesx } from '../actions';
 import ReactPlayer from 'react-player';
 import Greeting from './Greeting';
 
@@ -16,12 +16,28 @@ const Main = (props) => {
   const [showComment, setShowComment] = useState('');
   const commentInputRef = React.useRef(null);
   const [comment, setComment] = useState('');
+  const [connectionArticles, setConnectionArticles] = useState([]);
 
   useEffect(() => {
     if (props.user) {
       props.getUserDetails(props.user.uid);
     }
   }, [props.user]);
+
+  useEffect(() => {
+    if (props.user) {
+      props.getConnections(props.user.uid);
+    }
+  }, [props.user]);
+
+  useEffect(() => {
+    if(props.connections){
+      props.connections.map(async (connection)=>{
+        await props.getArticles(connection);
+        console.log(props.articles);
+        setConnectionArticles((prevState)=>[...prevState,props.articles])
+      })
+    }},[props.user]);
 
   useEffect(() => {
     let currentIndex = 0;
@@ -42,7 +58,9 @@ const Main = (props) => {
     if (props.user) {
       props.getCommunityArticles(props.user.uid);
     }
-  }, [props.user]);
+  }, [props.user,props.likes]);
+
+
 
   // useEffect(() => {
   //   if (props.communityArticles) {
@@ -73,13 +91,15 @@ const Main = (props) => {
     }
   };
 
-  const LikeHandler = (postId, userId, ownerId) => {
-    props.handleLike(postId, userId, ownerId);
+  const LikeHandler = async (postId, userId, ownerId) => {
+    await props.handleLike(postId, userId, ownerId);  
+    props.getLikes(postId,ownerId);
   };
 
   const commentHandler = (postId, userId, ownerId, comment) => {
     props.handleComment(postId, userId, ownerId, comment);
     setComment('');
+    props.getCommunityArticles(props.user.uid);
   };
 
   const handleShowComment = (postId) => {
@@ -92,12 +112,15 @@ const Main = (props) => {
     setComment(e.target.value);
   };
 
+
+
   return (
     <>
       <Container>
         <GreetingBox>
           <Greeting displayWord={displayedWord} />
         </GreetingBox>
+        {props.connections && console.log(props.connections)}
         {props.communityArticles && props.communityArticles.length === 0 ? (
           <p>There are no articles</p>
         ) : (
@@ -539,6 +562,7 @@ const mapStateToProps = (state) => {
     userDetails: state.userDetailsState.userDetails,
     likes: state.likesState.likes,
     communityArticles: state.communityArticlesState.communityArticles,
+    connections: state.connectionsState.connections,
   };
 };
 
@@ -550,5 +574,6 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(handleCommentAPI(postId, userId, ownerId, comment)),
   getLikes: (postId, ownerId) => dispatch(getLikesAPI(postId, ownerId)),
   getCommunityArticles: (userId) => dispatch(getCommunityArticlesAPI(userId)),
+  getConnections: (userId) => dispatch(getConnectionsAPI(userId)),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(Main);
