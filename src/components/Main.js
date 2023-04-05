@@ -34,7 +34,6 @@ const Main = (props) => {
     if(props.connections){
       props.connections.map(async (connection)=>{
         await props.getArticles(connection);
-        console.log(props.articles);
         setConnectionArticles((prevState)=>[...prevState,props.articles])
       })
     }},[props.user]);
@@ -120,7 +119,6 @@ const Main = (props) => {
         <GreetingBox>
           <Greeting displayWord={displayedWord} />
         </GreetingBox>
-        {props.connections && console.log(props.connections)}
         {props.communityArticles && props.communityArticles.length === 0 ? (
           <p>There are no articles</p>
         ) : (

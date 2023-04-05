@@ -181,7 +181,6 @@ export function postArticleAPI(payload) {
     const postId = realTimeDb.ref(`articles/${userId}`).push().key; // generate unique ID
     const postRef = realTimeDb.ref(`articles/${userId}/${postId}`);
     const timestamp = payload.timestamp;
-    console.log(timestamp);
     const newDate = new Date(
       timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000,
     ).toLocaleDateString('en-US');
@@ -221,7 +220,6 @@ export function postArticleAPI(payload) {
         },
       );
     } else if (payload.video && payload.image === '') {
-      console.log(payload.video);
       postRef.set({
         pid: postId,
         actor: {
@@ -295,7 +293,6 @@ export function connectionArticlesx(userId){
         payloadList.push(payload[keys[i]]);
       }
       payloadList.reverse();
-      console.log(payloadList);
       return payloadList;
     } else {
       return null;
@@ -423,7 +420,6 @@ export function saveProfileChangesAPI(
     if (location) updates.location = location;
     if (currentRole) updates.currentRole = currentRole;
 
-    console.log('userId:', userId);
     realTimeDb
       .ref(`users/${userId}`)
       .update(updates)
@@ -646,7 +642,6 @@ export function getConnectionsAPI(userId) {
           });
         });
         Promise.all(promises).then((users) => {
-          console.log('users:', users)
           dispatch(getConnections(users));
         });
       }
