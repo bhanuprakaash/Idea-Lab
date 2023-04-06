@@ -2,7 +2,11 @@ import Header from './Header';
 import MyNetwork from './MyNetwork';
 import ExplorePeople from './ExplorePeople';
 import styled from 'styled-components';
+import { useEffect } from 'react';
 const LabCommunity = () => {
+  useEffect(() => {
+    document.title = 'Lab Community | Idea Lab';
+  }, []);
   return (
     <Container>
       <Header />

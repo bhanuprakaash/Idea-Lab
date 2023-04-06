@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 const Notifications = () => {
+  useEffect(() => {
+    document.title = 'Notifications | Idea Lab';
+  }, []);
+
   return (
     <Container>
       <img src="/images/notifications.svg" alt="notifications" />

@@ -28,6 +28,10 @@ function UserProfile(props) {
   const [showComment, setShowComment] = useState('');
 
   useEffect(() => {
+    document.title = 'Profile | Idea Lab';
+  }, []);
+
+  useEffect(() => {
     const newCommentRef = {};
     if (props.articles && props.articles.length > 0) {
       props.articles.forEach((article) => {

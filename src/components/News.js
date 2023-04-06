@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import axios from 'axios';
 
 const News = () => {
   const [articles, setArticles] = useState([]);
@@ -8,13 +7,18 @@ const News = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const result = await axios(
-        'https://newsapi.org/v2/top-headlines?country=us&category=technology&apiKey=70697cf9e48f4099a26835ff0a84a9e7',
-      );
-      setArticles(result.data.articles);
-      setIsFetchData(false);
+      const apikey = 'c299eee1d750bf5caf033eb567f73fd1';
+      const url = 'https://gnews.io/api/v4/search?q=technology&lang=en&country=us&max=10&apikey=' + apikey;
+      fetch(url)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          setArticles(data.articles);
+          setIsFetchData(false);
+        });
     };
     fetchData();
+    console.log('articles', articles);
   }, []);
   if (isFetchData) {
     return (
@@ -44,8 +48,8 @@ const News = () => {
             <div className="orcol orcol1">
               <div className="content">
                 <a href={article.url} target="_blank" rel="noreferrer">
-                  {article.urlToImage ? (
-                    <img src={article.urlToImage} alt={article.title} />
+                  {article.image ? (
+                    <img src={article.image} alt={article.title} />
                   ) : (
                     <img src="./images/newss.bmp" alt={article.title} />
                   )}
@@ -99,8 +103,9 @@ const Root = styled.div`
     cursor: pointer;
     height: 180px;
     width: 30%;
-    margin: -10% 1.2% 12%;
+    margin: -10% 1.2% 20%;
     /*margin: -6% 1.2% 12%;*/
+    
   }
   .organizrow .organizcols .orcol {
     height: 195px;

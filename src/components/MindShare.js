@@ -1,6 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useEffect } from 'react';
 const MindShare = () => {
+  useEffect(() => {
+    document.title = 'Mind Share | Idea Lab';
+  }, []);
   return (
     <Container>
       <img src="/images/bubble-gum-message-sent.gif" alt="message" />
